@@ -13,6 +13,9 @@ class ListTypeAttribute(ObjectAttribute):
     def __init__(self, field_type):
         super().__init__(field_type)
         args_type = typing.get_args(field_type)
+        if not args_type:
+            self.value_att = self.get_TypeManager(None)
+            return
         self.value_att = self.get_TypeManager(args_type[0])(args_type[0])
 
     def get_att_priority(self):

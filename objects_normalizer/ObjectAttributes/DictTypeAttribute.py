@@ -18,11 +18,10 @@ class DictTypeAttribute(ObjectAttribute):
             self.key_att = self.get_TypeManager(None)
             self.value_att = self.get_TypeManager(None)
             return
-
-        key_type = args_type[0]
-        self.key_att = self.get_TypeManager(key_type)(key_type)
-        value_type = args_type[1]
-        self.value_att = self.get_TypeManager(value_type)(value_type)
+        self.key_type = args_type[0]
+        self.key_att = self.get_TypeManager(self.key_type)(self.key_type)
+        self.value_type = args_type[1]
+        self.value_att = self.get_TypeManager(self.value_type)(self.value_type)
 
     def get_att_priority(self):
         return max(Config.DictAtt_priority, self.key_att.get_att_priority(), self.value_att.get_att_priority())

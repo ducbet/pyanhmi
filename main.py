@@ -1,16 +1,12 @@
+import typing
+
 from common.schema_classes_test import Level4, AttributeTypesChild
+from objects_normalizer.Config import Config
+from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
 from objects_normalizer.ObjectCreator import ObjectCreator
 
 if __name__ == '__main__':
     # mysql_client = MysqlClient()
-    # x = typing.Union[typing.Union[int, str], float]
-    # y = typing.Union
-    # z = typing.Optional[typing.Union[typing.Union[int, str], float]]
-    # print(x, typing.get_origin(x), typing.get_args(x))
-    # print(y, typing.get_origin(y))
-    # print(z, typing.get_origin(z), typing.get_args(z))
-    # exit()
-
     data = {
         "a_tuple": ("a_tuple_1", "a_tuple_2"),
         "a_dict": {"a_dict_key": "a_dict_val"},
@@ -35,6 +31,9 @@ if __name__ == '__main__':
     }
     tmp = ObjectCreator.create_obj(data, AttributeTypesChild)
     print()
+    rules = getattr(AttributeTypesChild, Config.normalize_rules_field_name_2)
+    print()
+    tmp.a_DefaultDict["new_key"].append("asdadadad")
     print(tmp)
     print()
 

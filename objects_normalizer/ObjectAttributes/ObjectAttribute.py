@@ -7,7 +7,7 @@ def register_attribute(cls):
         return cls
 
     TypeCheckManager.SUPPORT_TYPES.update({cls_type: cls for cls_type in cls.TYPES})
-    # print(f"cls: {cls}, cls.SUPPORT_TYPES {TypeCheckManager.SUPPORT_TYPES}")
+    print(f"cls: {cls}, cls.SUPPORT_TYPES {TypeCheckManager.SUPPORT_TYPES}")
     return cls
 
 

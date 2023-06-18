@@ -8,6 +8,7 @@ from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level
 from objects_normalizer import TypeCheckManager
 from objects_normalizer.ObjectAttributes.AnyTypeAttribute import AnyTypeAttribute
 from objects_normalizer.Config import Config
+from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
 from objects_normalizer.ObjectAttributes.DictTypeAttribute import DictTypeAttribute
 from objects_normalizer.ObjectAttributes.ListTypeAttribute import ListTypeAttribute
 from objects_normalizer.ObjectAttributes.TupleTypeAttribute import TupleTypeAttribute
@@ -61,6 +62,28 @@ def test_hash_Att():
 
     # set_atts = {uniton_obj_1, uniton_obj_2}
     # print(f"set_atts: {len(set_atts)}, {set_atts}")
+
+
+def test_defaultdict_value_constructor():
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, int]).value_constructor == int
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, float]).value_constructor == float
+
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, list]).value_constructor == list
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, list[int]]).value_constructor == list
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, typing.List[int]]).value_constructor == list
+
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, set]).value_constructor == set
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, set[int]]).value_constructor == set
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, typing.Set[int]]).value_constructor == set
+
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, dict]).value_constructor == dict
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, dict[str, int]]).value_constructor == dict
+
+    try:
+        ObjectCreator.create_obj({}, AttributeTypesParent)
+    except:
+        pass
+    assert DefaultDictTypeAttribute(typing.DefaultDict[str, dict[str, AttributeTypesParent]]).value_constructor == dict
 
 
 def test_sort_union_args():

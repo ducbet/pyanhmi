@@ -2,6 +2,7 @@ from objects_normalizer.TypeCheckManager import TypeCheckManager
 from objects_normalizer.objects_normalizer import ObjectsNormalizer
 from .ObjectAttributes.AnyTypeAttribute import AnyTypeAttribute
 from .ObjectAttributes.CustomTypeAttribute import CustomTypeAttribute
+from .ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
 from .ObjectAttributes.DictTypeAttribute import DictTypeAttribute
 from .ObjectAttributes.IntTypeAttribute import IntTypeAttribute
 from .ObjectAttributes.ListTypeAttribute import ListTypeAttribute
