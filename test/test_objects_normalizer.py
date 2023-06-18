@@ -5,6 +5,7 @@ from typing import get_type_hints, Optional, Tuple, Dict, List, Any, Set, Union
 from common.schema_class import Product, ProductDescription, ProductOuter
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, \
     AttributeTypesComposite
+from objects_normalizer import TypeCheckManager
 from objects_normalizer.ObjectAttributes.AnyTypeAttribute import AnyTypeAttribute
 from objects_normalizer.Config import Config
 from objects_normalizer.ObjectAttributes.DictTypeAttribute import DictTypeAttribute
@@ -25,8 +26,8 @@ def test_hash_Att():
     except:
         pass
 
-    any_1 = AnyTypeAttribute(None)
-    any_2 = AnyTypeAttribute(None)
+    any_1 = AnyTypeAttribute(int)
+    any_2 = AnyTypeAttribute(str)
     list_str = ListTypeAttribute(List[str])
     list_int = ListTypeAttribute(List[int])
     list_dict_1 = ListTypeAttribute(List[Dict[str, str]])
@@ -62,43 +63,56 @@ def test_hash_Att():
     # print(f"set_atts: {len(set_atts)}, {set_atts}")
 
 
+def test_sort_union_args():
+    try:
+        ObjectCreator.create_obj({}, AttributeTypesParent)
+    except:
+        pass
+    value_atts = UnionTypeAttribute(Union[int, str, Any]).value_atts
+    assert len(value_atts) == 1
+    assert value_atts[0].__class__ == AnyTypeAttribute
+
+    value_atts = UnionTypeAttribute(Union[int, List[str]]).value_atts
+    assert len(value_atts) == 2
+    assert value_atts[0].__class__ == ListTypeAttribute
+    assert value_atts[1].__class__ == AnyTypeAttribute
+
+    value_atts = UnionTypeAttribute(Union[int, List[str], List[int]]).value_atts
+    assert len(value_atts) == 2
+    assert value_atts[0].__class__ == ListTypeAttribute
+    assert value_atts[1].__class__ == AnyTypeAttribute
+
+    value_atts = UnionTypeAttribute(Union[List[str], int, Dict[str, int]]).value_atts
+    assert len(value_atts) == 3
+    assert value_atts[-1].__class__ == AnyTypeAttribute
+
+    value_atts = UnionTypeAttribute(Union[List[str], int, Dict[str, AttributeTypesParent]]).value_atts
+    assert len(value_atts) == 3
+    assert value_atts[0].__class__ == DictTypeAttribute
+    assert value_atts[1].__class__ == ListTypeAttribute
+
+
 def test_get_att_priority():
-    a = [
-        AnyTypeAttribute(str),
-        ListTypeAttribute(typing.List[int]),
-        DictTypeAttribute(typing.Dict[str, AttributeTypesParent]),
-        ListTypeAttribute(typing.List[AttributeTypesParent]),
-        UnionTypeAttribute(typing.Union[typing.Dict[str, AttributeTypesParent], typing.Tuple[str, int]]),
-        ListTypeAttribute(typing.List[str]),
-        AnyTypeAttribute(int),
-        # ListAtt(typing.List[int]),
-    ]
-    print()
-    print(f"list a: {len(a)} items: {a}")
-    print(f"set a: {len(set(a))} items: : {set(a)}")
-    print()
-    print(f"sorted(a,")
-    for i in sorted(a, reverse=True):
-        print(i)
-
-    print()
-    print(ListTypeAttribute(typing.List[int]).field_type)
-    print(ListTypeAttribute(typing.List[int]).get_att_priority())
-
-
-def test_sort_important_att():
-    tmp = ObjectCreator.create_obj({}, AttributeTypesChild)
-    print()
-    print()
-    a = [ListTypeAttribute(List[AttributeTypesParent]), ListTypeAttribute(List[int]), DictTypeAttribute(Dict[str, AttributeTypesParent]),
-         ListTypeAttribute(List[str])]
-    print()
-    print(a)
-    # a.sort()
-    # print(a)
+    try:
+        ObjectCreator.create_obj({}, AttributeTypesParent)
+    except:
+        pass
+    try:
+        ObjectCreator.create_obj({}, AttributeTypesChild)
+    except:
+        pass
+    assert AnyTypeAttribute(str).get_att_priority() == Config.AnyAtt_priority
+    assert ListTypeAttribute(typing.List[int]).get_att_priority() == Config.ListAtt_priority
+    assert DictTypeAttribute(typing.Dict[str, AttributeTypesParent]).get_att_priority() == Config.ObjAtt_priority
+    assert ListTypeAttribute(typing.List[AttributeTypesParent]).get_att_priority() == Config.ObjAtt_priority
+    assert UnionTypeAttribute(typing.Union[typing.Dict[str, AttributeTypesParent], typing.Tuple[str, int]]).get_att_priority() == Config.ObjAtt_priority
+    assert ListTypeAttribute(typing.List[str]).get_att_priority() == Config.ListAtt_priority
+    assert UnionTypeAttribute(Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]).get_att_priority() == Config.ObjAtt_priority
+    assert UnionTypeAttribute(Optional[Tuple[Dict[str, Union[List[str], Set[int]]], Any]]).get_att_priority() == Config.TupleAtt_priority
 
 
 def test_create_obj():
+    # todo: fix
     print("test_create_obj"),
     data = {
         "a_dict":{"a_dict_key": "a_dict_val"},
@@ -162,6 +176,7 @@ def test_create_sources():
 
 
 def test_set_normalize_rule():
+    # todo: fix
     # product = Product(id=1, name="Pro")
     # product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
 
@@ -203,7 +218,6 @@ def test_add_source():
     objects_normalizer = ObjectsNormalizer()
     objects_normalizer.add(product)
 
-
     assert (0, product) == objects_normalizer.sources[type(product)][0]
 
     objects_normalizer.add(product_2)
@@ -222,6 +236,7 @@ def test_add_source():
 
 
 def test_export():
+    # todo: fix
     product = Product(id=1, name="Pro")
     product_2 = Product(id=2, name="Pro 2")
     product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
@@ -332,36 +347,5 @@ def test_get_all_objs():
 
 
 def test_get_normalizable_fields():
-    # att_types_obj = AttributeTypesChild(**mock_data)
-    normalizable_fields = ObjectsNormalizer.get_normalizable_fields(AttributeTypesChild)
-    print()
-    print(f"normalizable_fields: {normalizable_fields}")
-    assert normalizable_fields == {
-        "a_Level4": Level4,
-        "a_list_2": list[AttributeTypesComposite],
-        "a_List": List[AttributeTypesParent],
-        "a_Optional": Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]],
-        "a_Parent": AttributeTypesParent,
-    }
-
-
-def test_embedded():
-    data = {
-        "id": 5,
-        "name": "Pro",
-        "details": {
-            "product_id": 5,
-            "description": "Pro 5 Desc",
-            "image": "",
-        },
-
-    }
-    print()
-    classic_parent = ClassicParent("cls parent")
-    print(get_type_hints(classic_parent))
-    # print()
-    # objects_normalizer = ObjectsNormalizer(data, ProductOuter)
-    # print()
-    # print(objects_normalizer.get_latest_objs(ProductOuter).__annotations__)
-    # print(objects_normalizer.sources)
-
+    normalizable_fields = TypeCheckManager.get_normalizable_fields(AttributeTypesChild)
+    assert normalizable_fields == {AttributeTypesChild, AttributeTypesParent}

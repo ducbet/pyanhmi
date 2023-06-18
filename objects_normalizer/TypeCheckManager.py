@@ -29,7 +29,8 @@ class TypeCheckManager:
             # note https://docs.python.org/3/library/collections.html
             return c.__module__ not in ("builtins", "typing")
 
-        return [field for field in TypeCheckManager.get_field_types(cls) if _is_normalizable_fields(field)]
+        # return [field for field in TypeCheckManager.get_field_types(cls) if _is_normalizable_fields(field)]
+        return {field for field in TypeCheckManager.get_field_types(cls) if _is_normalizable_fields(field)}
 
     @staticmethod
     def get_field_types(cls):
