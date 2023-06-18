@@ -9,6 +9,7 @@ from objects_normalizer.ObjectAttributes.AnyTypeAttribute import AnyTypeAttribut
 from objects_normalizer.Config import Config
 from objects_normalizer.ObjectAttributes.DictTypeAttribute import DictTypeAttribute
 from objects_normalizer.ObjectAttributes.ListTypeAttribute import ListTypeAttribute
+from objects_normalizer.ObjectAttributes.TupleTypeAttribute import TupleTypeAttribute
 from objects_normalizer.ObjectCreator import ObjectCreator
 from objects_normalizer.ObjectAttributes.UnionTypeAttribute import UnionTypeAttribute
 from objects_normalizer.objects_normalizer import ObjectsNormalizer
@@ -23,10 +24,6 @@ def test_hash_Att():
         ObjectCreator.create_obj({}, AttributeTypesChild)
     except:
         pass
-
-    uniton_obj_1 = UnionTypeAttribute(typing.Union[typing.Tuple[str, AttributeTypesParent], typing.Tuple[int, AttributeTypesChild]])
-    return
-    print()
 
     any_1 = AnyTypeAttribute(None)
     any_2 = AnyTypeAttribute(None)

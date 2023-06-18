@@ -2,19 +2,20 @@ import typing
 from dataclasses import dataclass
 
 from objects_normalizer.Config import Config
-from objects_normalizer.ObjectAttributes.ObjectAttribute import ObjectAttribute, register_att
+from objects_normalizer.ObjectAttributes.ObjectAttribute import ObjectAttribute, register_attribute
 
 
-@register_att
+@register_attribute
 @dataclass
 class AnyTypeAttribute(ObjectAttribute):
-    TYPES = [typing.Any]
+    TYPES: typing.ClassVar[list] = [typing.Any]
 
     def __init__(self, field_type):
         super().__init__(field_type)
 
     def __repr__(self):
-        return f"AnyAtt()"
+        # print(f"AnyTypeAttribute __repr__ ", f"{self.__class__.__name__}({self.field_type})")
+        return f"{self.__class__.__name__}({self.field_type})"
 
     def get_att_priority(self):
         return Config.AnyAtt_priority

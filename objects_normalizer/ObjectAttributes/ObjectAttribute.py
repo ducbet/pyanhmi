@@ -1,9 +1,8 @@
 from objects_normalizer import TypeCheckManager
 from objects_normalizer.Config import Config
-from objects_normalizer.ObjectCreator import ObjectCreator
 
 
-def register_att(cls):
+def register_attribute(cls):
     if not Config.DISCRIMINATE_PRIMITIVE_TYPES and getattr(cls, "IS_PRIMITIVE_TYPE", False):
         return cls
 
@@ -19,8 +18,9 @@ class ObjectAttribute:
     def __lt__(self, other):
         return self.get_att_priority() < other.get_att_priority()
 
+    def __repr__(self):
+        print(f"ObjectAttribute: __repr__ ",  f"{self.__class__.__name__}({self.field_type})")
+        return f"{self.__class__.__name__}({self.field_type})"
+
     def get_TypeManager(self, value_type):
-        print()
-        print(f"TypeCheckManager.SUPPORT_TYPES: {TypeCheckManager.SUPPORT_TYPES}")
-        print(f"value_type: {value_type}, TypeCheckManager.get_TypeManager(value_type): {TypeCheckManager.get_TypeManager(value_type)}")
         return TypeCheckManager.get_TypeManager(value_type)

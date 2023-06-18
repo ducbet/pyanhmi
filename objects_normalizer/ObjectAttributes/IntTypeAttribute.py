@@ -1,25 +1,26 @@
+import typing
 from dataclasses import dataclass
 
-from objects_normalizer.ObjectAttributes.ObjectAttribute import register_att
+from objects_normalizer.ObjectAttributes.ObjectAttribute import register_attribute
 from objects_normalizer.ObjectAttributes.PrimitiveTypeAttribute import PrimitiveTypeAttribute
 
 
-@register_att
+@register_attribute
 @dataclass
 class IntTypeAttribute(PrimitiveTypeAttribute):
-    TYPES = [int]
+    TYPES: typing.ClassVar[list] = [int]
 
     def __init__(self, field_type):
         super().__init__(field_type)
 
     def __repr__(self):
-        return f"IntAtt()"
+        return super().__repr__()
 
     def get_hash_content(self):
         return self.__class__
 
     def __hash__(self):
-        print(f"IntAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
+        # print(f"IntAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
     def create(self, data: int):

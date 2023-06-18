@@ -2,13 +2,13 @@ import typing
 from dataclasses import dataclass
 
 from objects_normalizer.Config import Config
-from objects_normalizer.ObjectAttributes.ObjectAttribute import register_att, ObjectAttribute
+from objects_normalizer.ObjectAttributes.ObjectAttribute import register_attribute, ObjectAttribute
 
 
-@register_att
+@register_attribute
 @dataclass
 class TupleTypeAttribute(ObjectAttribute):
-    TYPES = [tuple]
+    TYPES: typing.ClassVar[list] = [tuple]
     priority = Config.TupleAtt_priority
 
     def __init__(self, field_type):
@@ -23,7 +23,7 @@ class TupleTypeAttribute(ObjectAttribute):
         return max(Config.TupleAtt_priority, *[field.get_att_priority() for field in self.value_atts])
 
     def __repr__(self):
-        return f"TupleAtt(self.tuple_types: {self.value_atts})"
+        return f"{self.__class__.__name__}({self.value_atts})"
 
     def get_hash_content(self):
         hash_content = [self.__class__]
@@ -32,7 +32,7 @@ class TupleTypeAttribute(ObjectAttribute):
         return tuple(hash_content)
 
     def __hash__(self):
-        print(f"TupleAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
+        # print(f"TupleAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
     def create(self, data: tuple):
