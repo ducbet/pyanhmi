@@ -4,6 +4,7 @@ from objects_normalizer.TypeCheckManager import TypeCheckManager
 class NormalizeRule:
     def __init__(self, localized_field_name: str,
                  field_type,
+                 is_class_var,
                  normalized_field_name: str = "",
                  getter_func_name: str = "",):
         self.localized_field_name = localized_field_name
@@ -12,6 +13,7 @@ class NormalizeRule:
         self.is_ignored = False
         self.field_type = field_type
         self.is_final_att = TypeCheckManager.is_final_type(field_type)
+        self.is_class_var = is_class_var
         self.auto_init = self.get_auto_init(field_type)
         print(f"get_auto_init. field_type: {field_type}, self.auto_init: {self.auto_init}")
         # print()
@@ -58,6 +60,7 @@ class NormalizeRule:
         return f"NormalizeRule(" \
                f"localized_field_name: {self.localized_field_name}, " \
                f"field_type: {self.field_type}, " \
+               f"is_class_var: {self.is_class_var}, " \
                f"auto_init: {self.auto_init}, " \
                f"is_normalize: {self.is_normalize()}, " \
                f"normalized_field_name: {self.normalized_field_name}, " \

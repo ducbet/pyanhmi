@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import ClassVar, List, Final, FrozenSet, Optional, Tuple, Dict, Union, Set, Any
+from typing import ClassVar, List, Final, FrozenSet, Optional, Tuple, Dict, Union, Set, Any, DefaultDict, OrderedDict, \
+    Callable
 
 
 @dataclass
@@ -194,18 +195,19 @@ class AttributeTypesComposite:
 @dataclass
 # class AttributeTypesChild(AttributeTypesParent):
 class AttributeTypesChild:
-    # a_dict: dict
-    # a_Optional: Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]
-    # a_Any: Any
+    a_dict: dict
+    a_Optional: Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]
+    a_Any: Any
     a_FrozenSet: FrozenSet[int]
     a_FrozenSet_str: FrozenSet[str]
-    # a_attParent: AttributeTypesParent
-    # a_DefaultDict: DefaultDict[str, list[AttributeTypesComposite]]
-    # a_DefaultDict_int: DefaultDict[str, list[int]]
-    # a_OrderedDict: OrderedDict[str, int]
-    # a_OrderedDict_list_tuple: OrderedDict[str, int]
-    # a_Callable: Callable
-            # a_ClassVar: ClassVar[dict] = {}
+    a_attParent: AttributeTypesParent
+    a_DefaultDict: DefaultDict[str, list[AttributeTypesComposite]]
+    a_DefaultDict_int: DefaultDict[str, list[int]]
+    a_OrderedDict: OrderedDict[str, int]
+    a_OrderedDict_list_tuple: OrderedDict[str, int]
+    a_Callable: Callable
+    a_ClassVar: ClassVar[AttributeTypesComposite] = None
+    a_ClassVar_2: ClassVar[int] = 13123
     # a_Final: Final[int] = 4
 
 

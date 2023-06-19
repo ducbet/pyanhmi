@@ -63,6 +63,8 @@ class ObjectCreator:
                 continue
             if normalize_rules[param].is_final_att:
                 continue
+            if normalize_rules[param].is_class_var:
+                continue
             # print(f"create_obj: param {param}")
             # print(f"create_obj: normalize_rules[param]: {normalize_rules[param]}")
             params[param] = normalize_rules[param].create(obj_param)

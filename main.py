@@ -1,16 +1,33 @@
 import typing
 from collections import OrderedDict
 
-from common.schema_classes_test import Level4, AttributeTypesChild
+from common.schema_classes_test import Level4, AttributeTypesChild, AttributeTypesComposite
 from objects_normalizer.CacheRule import CacheRule
 from objects_normalizer.Config import Config
 from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
 from objects_normalizer.ObjectCreator import ObjectCreator
 
 if __name__ == '__main__':
-    # vowels = ('a', 'e', 'i', 'o', 'u')
-    # s: typing.FrozenSet[str] = frozenset(vowels)
-    # print(s)
+    # l = AttributeTypesComposite([1, 2, 4])
+    # a = AttributeTypesChild()
+    #
+    # a.a_ClassVar = l
+    # print(f"a: {a}")
+    # print(f"a.a_ClassVar: {a.a_ClassVar}")
+    #
+    # print()
+    # print(f"AttributeTypesChild.a_ClassVar: {AttributeTypesChild.a_ClassVar}")
+    #
+    # print()
+    # b = AttributeTypesChild()
+    # print(f"b: {b}")
+    # print(f"b.a_ClassVar: {b.a_ClassVar}")
+    # print()
+    #
+    # AttributeTypesChild.a_ClassVar = l
+    # print(f"AttributeTypesChild.a_ClassVar: {AttributeTypesChild.a_ClassVar}")
+    # print(f"a.a_ClassVar: {a.a_ClassVar}")
+    # print(f"b.a_ClassVar: {b.a_ClassVar}")
     # exit()
     # mysql_client = MysqlClient()
 
@@ -47,13 +64,18 @@ if __name__ == '__main__':
         ],
         "a_Callable": lambda a, b: a + b,
         "a_Final": 8866,  # should not affect final value defined in the class
+        "a_ClassVar": {"a_List": [{"a_tuple": ("a_DefaultDict_1", "a_DefaultDict_2")}]},
+        "a_ClassVar_2": 1,
 
     }
     print()
     tmp = ObjectCreator.create_obj(data, AttributeTypesChild)
     print()
     rules = getattr(AttributeTypesChild, Config.normalize_rules_field_name_2)
+    # for rule in rules.values():
+    #     print(f"rule: {rule}")
     print()
-    print(tmp)
+    print(tmp.a_ClassVar_2)
+    print()
     print()
 

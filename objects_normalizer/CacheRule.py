@@ -45,6 +45,7 @@ class CacheRule:
         field_types = typing.get_type_hints(cls)
         print(f"_create_normalize_rules obj: {obj}")
         for att in CacheRule.get_instance_attributes(obj):
+            is_class_var = hasattr(cls, att)
             field_type = field_types.get(att, typing.Any)
             normalizable_fields = TypeCheckManager.get_normalizable_fields(field_type)
             for normalizable_field in normalizable_fields:
@@ -52,15 +53,16 @@ class CacheRule:
 
             if att not in rules:
                 # print(f"att not in rules. att: {att}. field_type: {field_type}. rules: {rules}")
-                rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type)
+                rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type, is_class_var=is_class_var)
                 continue
             # re-format rule
             if isinstance(rules[att], str):
-                rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type, normalized_field_name=rules[att])
+                rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type, is_class_var=is_class_var, normalized_field_name=rules[att])
                 continue
 
             rules[att] = NormalizeRule(localized_field_name=att,
                                        field_type=field_type,
+                                       is_class_var=is_class_var,
                                        normalized_field_name=rules[att]["name"],
                                        getter_func_name=rules[att]["getter_func"])
 
