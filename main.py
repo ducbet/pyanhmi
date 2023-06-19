@@ -8,6 +8,10 @@ from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import Default
 from objects_normalizer.ObjectCreator import ObjectCreator
 
 if __name__ == '__main__':
+    # vowels = ('a', 'e', 'i', 'o', 'u')
+    # s: typing.FrozenSet[str] = frozenset(vowels)
+    # print(s)
+    # exit()
     # mysql_client = MysqlClient()
 
     data = {
@@ -22,6 +26,8 @@ if __name__ == '__main__':
                            "a_Optional_key_set": {1, 5, 8}
                        }, 5.2),
         "a_Any": Level4,
+        "a_FrozenSet": {1, 5, 8},
+        "a_FrozenSet_str": {"k1": 1, "k2": 5, "k3": 8},
         "a_attParent": {"a_tuple": ("a_attParent_1", "a_attParent_2")},
         "a_DefaultDict": {
             "a_DefaultDict_key": [

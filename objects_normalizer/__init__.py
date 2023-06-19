@@ -4,9 +4,11 @@ from .ObjectAttributes.AnyTypeAttribute import AnyTypeAttribute
 from .ObjectAttributes.CustomTypeAttribute import CustomTypeAttribute
 from .ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
 from .ObjectAttributes.DictTypeAttribute import DictTypeAttribute
+from .ObjectAttributes.FrozenSetTypeAttribute import FrozenSetTypeAttribute
 from .ObjectAttributes.IntTypeAttribute import IntTypeAttribute
 from .ObjectAttributes.ListTypeAttribute import ListTypeAttribute
 from .ObjectAttributes.OrderedDictTypeAttribute import OrderedDictTypeAttribute
+from .ObjectAttributes.SetTypeAttribute import SetTypeAttribute
 from .ObjectAttributes.StrTypeAttribute import StrTypeAttribute
 from .ObjectAttributes.TupleTypeAttribute import TupleTypeAttribute
 from .ObjectAttributes.UnionTypeAttribute import UnionTypeAttribute

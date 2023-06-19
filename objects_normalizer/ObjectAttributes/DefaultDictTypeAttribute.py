@@ -36,4 +36,4 @@ class DefaultDictTypeAttribute(DictTypeAttribute):
         return defaultdict(self.value_constructor, dict_data)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.key_att}, {self.value_att})"
+        return super().__repr__()

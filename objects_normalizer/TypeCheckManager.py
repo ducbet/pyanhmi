@@ -27,9 +27,9 @@ class TypeCheckManager:
         if value_type in TypeCheckManager.SUPPORT_TYPES:
             return TypeCheckManager.SUPPORT_TYPES[value_type]
         origin_type = typing.get_origin(value_type)
-        print(f"get_TypeManager: value_type: {value_type}. origin_type: {origin_type}")
 
         result = TypeCheckManager.SUPPORT_TYPES.get(origin_type)
+        print(f"get_TypeManager: value_type: {value_type}. origin_type: {origin_type}. result: {result}")
         return result if result else TypeCheckManager.SUPPORT_TYPES.get(typing.Any)
 
     @staticmethod

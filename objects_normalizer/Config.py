@@ -8,6 +8,7 @@ class Config:
     OrderedDict_priority = 60
     DictAtt_priority = 50
     ListAtt_priority = 50
+    SetAtt_priority = 50
     TupleAtt_priority = 50
     UnionAtt_priority = 50
     PRIMITIVE_TYPE_PRIORITY = 10
