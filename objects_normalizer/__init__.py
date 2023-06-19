@@ -6,6 +6,9 @@ from .ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
 from .ObjectAttributes.DictTypeAttribute import DictTypeAttribute
 from .ObjectAttributes.IntTypeAttribute import IntTypeAttribute
 from .ObjectAttributes.ListTypeAttribute import ListTypeAttribute
+from .ObjectAttributes.OrderedDictTypeAttribute import OrderedDictTypeAttribute
 from .ObjectAttributes.StrTypeAttribute import StrTypeAttribute
 from .ObjectAttributes.TupleTypeAttribute import TupleTypeAttribute
 from .ObjectAttributes.UnionTypeAttribute import UnionTypeAttribute
+
+

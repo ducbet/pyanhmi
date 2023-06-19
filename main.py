@@ -1,4 +1,5 @@
 import typing
+from collections import OrderedDict
 
 from common.schema_classes_test import Level4, AttributeTypesChild
 from objects_normalizer.Config import Config
@@ -27,13 +28,22 @@ if __name__ == '__main__':
         },
         "a_DefaultDict_int": {
             "a_DefaultDict_int_key": [1, 5, 7]
-        }
+        },
+        "a_OrderedDict": {
+            "a_OrderedDict_key_2": 1,
+            "a_OrderedDict_key_1": 4,
+        },
+        "a_OrderedDict_list_tuple": [
+            ("a_OrderedDict_key_2", 1),
+            ("a_OrderedDict_key_1", 4),
+        ]
     }
     tmp = ObjectCreator.create_obj(data, AttributeTypesChild)
     print()
     rules = getattr(AttributeTypesChild, Config.normalize_rules_field_name_2)
     print()
-    tmp.a_DefaultDict["new_key"].append("asdadadad")
     print(tmp)
+    print()
+    print()
     print()
 

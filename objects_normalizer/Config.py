@@ -5,6 +5,7 @@ class Config:
     localize_rules_field_name = "LOCALIZE_RULES"
 
     ObjAtt_priority = 100
+    OrderedDict_priority = 60
     DictAtt_priority = 50
     ListAtt_priority = 50
     TupleAtt_priority = 50

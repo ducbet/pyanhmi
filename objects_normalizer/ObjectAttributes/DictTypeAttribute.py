@@ -9,7 +9,7 @@ from objects_normalizer.ObjectAttributes.ObjectAttribute import register_attribu
 @register_attribute
 @dataclass
 class DictTypeAttribute(ObjectAttribute):
-    TYPES: typing.ClassVar[list] = [dict, defaultdict, OrderedDict]
+    TYPES: typing.ClassVar[list] = [dict]
 
     def __init__(self, field_type):
         super().__init__(field_type)

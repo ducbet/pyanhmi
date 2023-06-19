@@ -200,9 +200,10 @@ class AttributeTypesChild:
     # a_Any: Any
                 # a_FrozenSet: FrozenSet
     # a_attParent: AttributeTypesParent
-    a_DefaultDict: DefaultDict[str, list[AttributeTypesComposite]]
+    # a_DefaultDict: DefaultDict[str, list[AttributeTypesComposite]]
     # a_DefaultDict_int: DefaultDict[str, list[int]]
-            # a_OrderedDict: OrderedDict[str]
+    a_OrderedDict: OrderedDict[str, int]
+    a_OrderedDict_list_tuple: OrderedDict[str, int]
             # a_Callable: Callable
             # a_ClassVar: ClassVar[dict] = {}
             # a_Final: Final[str] = ""
