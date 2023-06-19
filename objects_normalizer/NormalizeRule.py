@@ -2,14 +2,17 @@ from objects_normalizer.TypeCheckManager import TypeCheckManager
 
 
 class NormalizeRule:
-    def __init__(self, localized_field_name: str, field_type, normalized_field_name: str = "", getter_func_name: str = ""):
+    def __init__(self, localized_field_name: str,
+                 field_type,
+                 normalized_field_name: str = "",
+                 getter_func_name: str = "",):
         self.localized_field_name = localized_field_name
         self.normalized_field_name = normalized_field_name
         self.getter_func_name = getter_func_name
         self.is_ignored = False
         self.field_type = field_type
         self.is_final_att = TypeCheckManager.is_final_type(field_type)
-        self.auto_init = None if self.is_final_att else self.get_auto_init(field_type)
+        self.auto_init = self.get_auto_init(field_type)
         print(f"get_auto_init. field_type: {field_type}, self.auto_init: {self.auto_init}")
         # print()
 

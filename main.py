@@ -2,6 +2,7 @@ import typing
 from collections import OrderedDict
 
 from common.schema_classes_test import Level4, AttributeTypesChild
+from objects_normalizer.CacheRule import CacheRule
 from objects_normalizer.Config import Config
 from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
 from objects_normalizer.ObjectCreator import ObjectCreator
@@ -39,7 +40,7 @@ if __name__ == '__main__':
             ("a_OrderedDict_key_1", 4),
         ],
         "a_Callable": lambda a, b: a + b,
-        "a_Final": 8866,
+        "a_Final": 8866,  # should not affect final value defined in the class
 
     }
     print()

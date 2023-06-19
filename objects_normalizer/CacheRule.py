@@ -43,39 +43,21 @@ class CacheRule:
         setattr(cls, Config.normalize_rules_field_name_2, {})
         rules = getattr(cls, Config.normalize_rules_field_name_2)
         field_types = typing.get_type_hints(cls)
-        # print(f"_create_normalize_rules field_types: {field_types}")
+        print(f"_create_normalize_rules obj: {obj}")
         for att in CacheRule.get_instance_attributes(obj):
-
             field_type = field_types.get(att, typing.Any)
             normalizable_fields = TypeCheckManager.get_normalizable_fields(field_type)
             for normalizable_field in normalizable_fields:
                 CacheRule.cache_rules(cls=normalizable_field)
 
-            # print()
-            # print(f"for att: {att}, ")
-            # if att in normalizable_fields:
-            #     # print(f"normalizable_fields[att]: {normalizable_fields[att]}")
-            #     rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type)
-            #     continue
-
-                        # if att in normalizable_fields:
-                        #     print(f"normalizable_fields[att]: {normalizable_fields[att]}")
-                        #     rules[att] = NormalizeRule(localized_field_name=att)
-                        #     continue
-            # print(f"att: {att}. rules: {rules}")
             if att not in rules:
                 # print(f"att not in rules. att: {att}. field_type: {field_type}. rules: {rules}")
                 rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type)
                 continue
             # re-format rule
-            # print(f"att: {att}, type(rules[att]): {type(rules[att])}, rules[att]: {rules[att]}")
             if isinstance(rules[att], str):
-                # print(f"rules[att]: {rules[att]}")
-                # print(f"NormalizeRule(field_name=rules[att]): {NormalizeRule(field_name=rules[att])}")
                 rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type, normalized_field_name=rules[att])
                 continue
-            # if "func" not in rules[att]:
-            #     rules[att]["func"] = att
 
             rules[att] = NormalizeRule(localized_field_name=att,
                                        field_type=field_type,
@@ -112,16 +94,18 @@ class CacheRule:
                 raise e
             obj_params = {param: None for param in re.findall(r"'(.*?)'", err_msg)}
             return obj_type(**obj_params)
+
     @staticmethod
     def cache_rules(obj=None, cls=None):
         # print(f"cache_rules: obj: {obj}, cls: {cls}")
-        # priority obj
+        # priority cls to get default value
         if not obj and not cls:
             return
-        if not obj:
-            obj = CacheRule._try_mock_obj(cls)
-        # if type(obj) in CacheRule.cached_classes:
-        #     return
+        # if not obj:
+        #     obj = CacheRule._try_mock_obj(cls)
+        if not cls:
+            cls = type(obj)
+        obj = CacheRule._try_mock_obj(cls)
 
         CacheRule._create_normalize_rules(obj)
         CacheRule.cached_classes.add(type(obj))  # try to not go into infinite for loop
