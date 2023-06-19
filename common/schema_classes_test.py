@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import ClassVar, List, Optional, Any, Tuple, Dict, Union, Set, Callable, Final, DefaultDict, OrderedDict, \
-    FrozenSet
+from typing import ClassVar, List, Final
 
 
 @dataclass
@@ -202,10 +201,10 @@ class AttributeTypesChild:
     # a_attParent: AttributeTypesParent
     # a_DefaultDict: DefaultDict[str, list[AttributeTypesComposite]]
     # a_DefaultDict_int: DefaultDict[str, list[int]]
-    a_OrderedDict: OrderedDict[str, int]
-    a_OrderedDict_list_tuple: OrderedDict[str, int]
-            # a_Callable: Callable
+    # a_OrderedDict: OrderedDict[str, int]
+    # a_OrderedDict_list_tuple: OrderedDict[str, int]
+    # a_Callable: Callable
             # a_ClassVar: ClassVar[dict] = {}
-            # a_Final: Final[str] = ""
+    a_Final: Final[int] = 4
 
 

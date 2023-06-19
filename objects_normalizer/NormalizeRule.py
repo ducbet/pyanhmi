@@ -8,8 +8,9 @@ class NormalizeRule:
         self.getter_func_name = getter_func_name
         self.is_ignored = False
         self.field_type = field_type
-        self.auto_init = self.get_auto_init(field_type)
-        # print(f"get_auto_init. field_type: {field_type}, self.auto_init: {self.auto_init}")
+        self.is_final_att = TypeCheckManager.is_final_type(field_type)
+        self.auto_init = None if self.is_final_att else self.get_auto_init(field_type)
+        print(f"get_auto_init. field_type: {field_type}, self.auto_init: {self.auto_init}")
         # print()
 
     def create(self, data):

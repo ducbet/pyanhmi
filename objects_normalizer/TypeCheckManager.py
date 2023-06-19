@@ -11,6 +11,13 @@ class TypeCheckManager:
         return value_type.__module__ not in ("builtins", "typing")
 
     @staticmethod
+    def is_final_type(value_type):
+        origin_type = typing.get_origin(value_type)
+        if origin_type == typing.Final:
+            return True
+        return False
+
+    @staticmethod
     def get_TypeManager(value_type):
         if not value_type:
             return TypeCheckManager.SUPPORT_TYPES.get(typing.Any)
@@ -20,7 +27,7 @@ class TypeCheckManager:
         if value_type in TypeCheckManager.SUPPORT_TYPES:
             return TypeCheckManager.SUPPORT_TYPES[value_type]
         origin_type = typing.get_origin(value_type)
-        # print(f"get_TypeManager: value_type: {value_type}. origin_type: {origin_type}")
+        print(f"get_TypeManager: value_type: {value_type}. origin_type: {origin_type}")
 
         result = TypeCheckManager.SUPPORT_TYPES.get(origin_type)
         return result if result else TypeCheckManager.SUPPORT_TYPES.get(typing.Any)

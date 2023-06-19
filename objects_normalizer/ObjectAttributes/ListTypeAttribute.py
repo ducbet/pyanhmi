@@ -34,4 +34,6 @@ class ListTypeAttribute(ObjectAttribute):
     def create(self, data):
         if not isinstance(data, list):
             raise TypeError(f"data is not list: data: {data}")
+
+        print(f"{self.__class__} self.value_att: {self.value_att}, data: {data}")
         return [self.value_att.create(v) for v in data]

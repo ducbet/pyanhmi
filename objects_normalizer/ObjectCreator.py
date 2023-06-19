@@ -54,13 +54,16 @@ class ObjectCreator:
 
         # obj_type is cached
         normalize_rules = getattr(obj_type, Config.normalize_rules_field_name_2)
-        # print()
+        print(f"normalize_rules: {normalize_rules}")
         # print(f"create_obj: normalize_rules: {normalize_rules.keys()}")
         # obj_params = {k: v for k, v in obj_params.items() if k in normalize_rules}
         params = {}
         for param, obj_param in obj_params.items():
             if param not in normalize_rules:
                 continue
+            if normalize_rules[param].is_final_att:
+                continue
+            print(f"create_obj: param {param}")
             # print(f"create_obj: normalize_rules[param]: {normalize_rules[param]}")
             params[param] = normalize_rules[param].create(obj_param)
         # print(f"create_obj: obj_type: {obj_type}, {params}")

@@ -19,7 +19,7 @@ class ObjectAttribute:
         return self.get_att_priority() < other.get_att_priority()
 
     def __repr__(self):
-        print(f"ObjectAttribute: __repr__ ",  f"{self.__class__.__name__}({self.field_type})")
+        # print(f"ObjectAttribute: __repr__ ",  f"{self.__class__.__name__}({self.field_type})")
         return f"{self.__class__.__name__}({self.field_type})"
 
     def get_TypeManager(self, value_type):

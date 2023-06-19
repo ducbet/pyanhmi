@@ -8,6 +8,7 @@ from objects_normalizer.ObjectCreator import ObjectCreator
 
 if __name__ == '__main__':
     # mysql_client = MysqlClient()
+
     data = {
         "a_tuple": ("a_tuple_1", "a_tuple_2"),
         "a_dict": {"a_dict_key": "a_dict_val"},
@@ -36,14 +37,16 @@ if __name__ == '__main__':
         "a_OrderedDict_list_tuple": [
             ("a_OrderedDict_key_2", 1),
             ("a_OrderedDict_key_1", 4),
-        ]
+        ],
+        "a_Callable": lambda a, b: a + b,
+        "a_Final": 8866,
+
     }
+    print()
     tmp = ObjectCreator.create_obj(data, AttributeTypesChild)
     print()
     rules = getattr(AttributeTypesChild, Config.normalize_rules_field_name_2)
     print()
     print(tmp)
-    print()
-    print()
     print()
 
