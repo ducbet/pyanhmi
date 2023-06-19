@@ -99,7 +99,7 @@ class CacheRule:
 
     @staticmethod
     def cache_rules(obj=None, cls=None):
-        # print(f"cache_rules: obj: {obj}, cls: {cls}")
+        print(f"cache_rules: obj: {obj}, cls: {cls}")
         # priority cls to get default value
         if not obj and not cls:
             return

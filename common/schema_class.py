@@ -60,13 +60,12 @@ class ProductDescriptionEmbedded:
 
 @dataclass
 class ProductOuter:
-    # for test embedded
-    # id: int
-    # name: str
+    id: int
+    name: str
     details: Dict[str, ProductDescriptionEmbedded]
     NORMALIZE_RULES: ClassVar[dict] = {
-        # "id": "product_id",
-        # "name": "product_name",
+        "id": "product_id",
+        "name": "product_name",
     }
 
     def sample_Product_method(self):

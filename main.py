@@ -8,26 +8,7 @@ from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import Default
 from objects_normalizer.ObjectCreator import ObjectCreator
 
 if __name__ == '__main__':
-    # l = AttributeTypesComposite([1, 2, 4])
-    # a = AttributeTypesChild()
-    #
-    # a.a_ClassVar = l
-    # print(f"a: {a}")
-    # print(f"a.a_ClassVar: {a.a_ClassVar}")
-    #
-    # print()
-    # print(f"AttributeTypesChild.a_ClassVar: {AttributeTypesChild.a_ClassVar}")
-    #
-    # print()
-    # b = AttributeTypesChild()
-    # print(f"b: {b}")
-    # print(f"b.a_ClassVar: {b.a_ClassVar}")
-    # print()
-    #
-    # AttributeTypesChild.a_ClassVar = l
-    # print(f"AttributeTypesChild.a_ClassVar: {AttributeTypesChild.a_ClassVar}")
-    # print(f"a.a_ClassVar: {a.a_ClassVar}")
-    # print(f"b.a_ClassVar: {b.a_ClassVar}")
+
     # exit()
     # mysql_client = MysqlClient()
 
@@ -75,7 +56,7 @@ if __name__ == '__main__':
     # for rule in rules.values():
     #     print(f"rule: {rule}")
     print()
-    print(tmp.a_ClassVar_2)
+    print(tmp)
     print()
     print()
 

@@ -193,8 +193,7 @@ class AttributeTypesComposite:
 
 
 @dataclass
-# class AttributeTypesChild(AttributeTypesParent):
-class AttributeTypesChild:
+class AttributeTypesChild(AttributeTypesParent):
     a_dict: dict
     a_Optional: Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]
     a_Any: Any
@@ -208,6 +207,6 @@ class AttributeTypesChild:
     a_Callable: Callable
     a_ClassVar: ClassVar[AttributeTypesComposite] = None
     a_ClassVar_2: ClassVar[int] = 13123
-    # a_Final: Final[int] = 4
+    a_Final: Final[int] = 4
 
 

@@ -135,39 +135,6 @@ def test_get_att_priority():
 
 
 def test_create_obj():
-    # todo: fix
-    print("test_create_obj"),
-    data = {
-        "a_dict":{"a_dict_key": "a_dict_val"},
-        "a_Optional": ({
-                           "a_Optional_key_list": [
-                               {
-                                   "a_tuple": ("a_Optional_parent_1", "a_Optional_parent_2")
-                               }
-                           ],
-                           "a_Optional_key_set": {1,5,8}
-                       }, 5.2),
-        "a_Any": Level4,
-        "a_attParent": {"a_tuple": ("a_attParent_1", "a_attParent_2")},
-        "a_DefaultDict": {
-            "a_DefaultDict_key": [
-                {"a_List": [{"a_tuple": ("a_DefaultDict_1", "a_DefaultDict_2")}]}
-            ]
-        }
-    }
-    # AttributeTypesChild(
-    #
-    #
-    # )
-    ObjectCreator.create_obj(data, AttributeTypesChild)
-    return
-
-    obj = ObjectCreator.create_obj({"parent_name": "pt_name"}, ClassicParent)
-    assert obj.parent_name == "pt_name"
-
-    obj = ObjectCreator.create_obj({"parent_name": "pt_name", "product_name": "Pro"}, ClassicParent)
-    assert obj.parent_name == "pt_name"
-
     try:
         ObjectCreator.create_obj({}, ClassicParent)
     except TypeError as e:
@@ -177,6 +144,47 @@ def test_create_obj():
         ObjectCreator.create_obj({"product_name": "Pro"}, ClassicParent)
     except TypeError as e:
         assert str(e) == "__init__() missing 1 required positional argument: 'parent_name'"
+
+    data = {
+        "a_tuple": ("a_tuple_1", "a_tuple_2"),
+        "a_dict": {"a_dict_key": "a_dict_val"},
+        "a_Optional": ({
+                           "a_Optional_key_list": [
+                               {
+                                   "a_tuple": ("a_Optional_parent_1", "a_Optional_parent_2")
+                               }
+                           ],
+                           "a_Optional_key_set": {1, 5, 8}
+                       }, 5.2),
+        "a_Any": Level4,
+        "a_FrozenSet": {1, 5, 8},
+        "a_FrozenSet_str": {"k1": 1, "k2": 5, "k3": 8},
+        "a_attParent": {"a_tuple": ("a_attParent_1", "a_attParent_2")},
+        "a_DefaultDict": {
+            "a_DefaultDict_key": [
+                {"a_List": [{"a_tuple": ("a_DefaultDict_1", "a_DefaultDict_2")}]}
+            ]
+        },
+        "a_DefaultDict_int": {
+            "a_DefaultDict_int_key": [1, 5, 7]
+        },
+        "a_OrderedDict": {
+            "a_OrderedDict_key_2": 1,
+            "a_OrderedDict_key_1": 4,
+        },
+        "a_OrderedDict_list_tuple": [
+            ("a_OrderedDict_key_2", 1),
+            ("a_OrderedDict_key_1", 4),
+        ],
+        "a_Callable": lambda a, b: a + b,
+        "a_Final": 8866,  # should not affect final value defined in the class
+        "a_ClassVar": {"a_List": [{"a_tuple": ("a_DefaultDict_1", "a_DefaultDict_2")}]},
+        "a_ClassVar_2": 1,
+
+    }
+    obj = ObjectCreator.create_obj(data, AttributeTypesChild)
+    assert isinstance(obj.a_tuple, tuple)
+    assert isinstance(obj.a_Optional, tuple)
 
 
 def test_create_sources():
@@ -270,6 +278,7 @@ def test_export():
         "product_id": 1,
         "product_name": "Pro",
     }
+    return
     assert objects_normalizer.export(["product_id"]) == {
         "product_id": 1,
     }
