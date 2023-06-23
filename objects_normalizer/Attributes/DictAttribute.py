@@ -3,12 +3,12 @@ from collections import defaultdict, OrderedDict
 from dataclasses import dataclass
 
 from objects_normalizer.Config import Config
-from objects_normalizer.ObjectAttributes.ObjectAttribute import register_attribute, ObjectAttribute
+from objects_normalizer.Attributes.Attribute import register_attribute, Attribute
 
 
 @register_attribute
 @dataclass
-class DictTypeAttribute(ObjectAttribute):
+class DictTypeAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [dict]
 
     def __init__(self, field_type):

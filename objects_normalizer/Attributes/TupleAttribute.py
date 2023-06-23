@@ -2,12 +2,12 @@ import typing
 from dataclasses import dataclass
 
 from objects_normalizer.Config import Config
-from objects_normalizer.ObjectAttributes.ObjectAttribute import register_attribute, ObjectAttribute
+from objects_normalizer.Attributes.Attribute import register_attribute, Attribute
 
 
 @register_attribute
 @dataclass
-class TupleTypeAttribute(ObjectAttribute):
+class TupleTypeAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [tuple]
     priority = Config.TupleAtt_priority
 

@@ -14,16 +14,16 @@ from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import Nested
 from common.schema_class import Product, ProductDescription, ProductOuter
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, \
     AttributeTypesComposite
-from objects_normalizer import TypeCheckManager
+from objects_normalizer import AttributeManager
 from objects_normalizer.CacheRule import CacheRule
-from objects_normalizer.ObjectAttributes.AnyTypeAttribute import AnyTypeAttribute
+from objects_normalizer.Attributes.AnyAttribute import AnyTypeAttribute
 from objects_normalizer.Config import Config
-from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
-from objects_normalizer.ObjectAttributes.DictTypeAttribute import DictTypeAttribute
-from objects_normalizer.ObjectAttributes.ListTypeAttribute import ListTypeAttribute
-from objects_normalizer.ObjectAttributes.TupleTypeAttribute import TupleTypeAttribute
+from objects_normalizer.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
+from objects_normalizer.Attributes.DictAttribute import DictTypeAttribute
+from objects_normalizer.Attributes.ListAttribute import ListTypeAttribute
+from objects_normalizer.Attributes.TupleAttribute import TupleTypeAttribute
 from objects_normalizer.ObjectCreator import ObjectCreator
-from objects_normalizer.ObjectAttributes.UnionTypeAttribute import UnionTypeAttribute
+from objects_normalizer.Attributes.UnionAttribute import UnionTypeAttribute
 from objects_normalizer.objects_normalizer import ObjectsNormalizer
 
 
@@ -382,7 +382,7 @@ def test_get_all_objs():
 
 
 def test_get_normalizable_fields():
-    normalizable_fields = TypeCheckManager.get_normalizable_fields(AttributeTypesChild)
+    normalizable_fields = AttributeManager.get_user_defined_types(AttributeTypesChild)
     assert normalizable_fields == {AttributeTypesChild, AttributeTypesParent}
 
 
@@ -407,4 +407,4 @@ def test_is_normalizable_fields():
     }
     for cls, is_normalizable_field in checks.items():
         # print(f"normalizable: {TypeCheckManager.is_normalizable_fields(cls)}, {cls}, __module__: {cls.__module__}")
-        assert TypeCheckManager.is_normalizable_fields(cls) == is_normalizable_field
+        assert AttributeManager.is_user_defined_type(cls) == is_normalizable_field

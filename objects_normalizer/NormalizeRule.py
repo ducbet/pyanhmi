@@ -1,4 +1,4 @@
-from objects_normalizer.TypeCheckManager import TypeCheckManager
+from objects_normalizer.Attributes.AttributeManager import AttributeManager
 
 
 class NormalizeRule:
@@ -12,7 +12,7 @@ class NormalizeRule:
         self.getter_func_name = getter_func_name
         self.is_ignored = False
         self.field_type = field_type
-        self.is_final_att = TypeCheckManager.is_final_type(field_type)
+        self.is_final_att = AttributeManager.is_final_type(field_type)
         self.is_class_var = is_class_var
         self.auto_init = self.get_auto_init(field_type)
         # print(f"get_auto_init. field_type: {field_type}, self.auto_init: {self.auto_init}")
@@ -25,7 +25,7 @@ class NormalizeRule:
     def get_auto_init(self, field_type):
         # print(f"get_auto_init. field_type: {field_type}")
         # print(f"TypeCheckManager.get_TypeManager(field_type): {TypeCheckManager.get_TypeManager(field_type)}")
-        return TypeCheckManager.get_TypeManager(field_type)(field_type)
+        return AttributeManager.get_cached_attribute(field_type)(field_type)
         # pass
 
     def is_normalize(self):

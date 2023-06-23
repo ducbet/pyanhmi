@@ -1,8 +1,8 @@
 import typing
 from dataclasses import dataclass
 
-from objects_normalizer.ObjectAttributes.ObjectAttribute import register_attribute
-from objects_normalizer.ObjectAttributes.PrimitiveTypeAttribute import PrimitiveTypeAttribute
+from objects_normalizer.Attributes.Attribute import register_attribute
+from objects_normalizer.Attributes.PrimitiveAttribute import PrimitiveTypeAttribute
 
 
 @register_attribute

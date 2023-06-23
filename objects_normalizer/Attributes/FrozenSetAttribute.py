@@ -2,8 +2,8 @@ import typing
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from objects_normalizer.ObjectAttributes.ObjectAttribute import register_attribute
-from objects_normalizer.ObjectAttributes.SetTypeAttribute import SetTypeAttribute
+from objects_normalizer.Attributes.Attribute import register_attribute
+from objects_normalizer.Attributes.SetAttribute import SetTypeAttribute
 
 
 @register_attribute

@@ -2,13 +2,13 @@ import typing
 from dataclasses import dataclass
 
 from objects_normalizer.Config import Config
-from objects_normalizer.ObjectAttributes.AnyTypeAttribute import AnyTypeAttribute
-from objects_normalizer.ObjectAttributes.ObjectAttribute import ObjectAttribute, register_attribute
+from objects_normalizer.Attributes.AnyAttribute import AnyTypeAttribute
+from objects_normalizer.Attributes.Attribute import Attribute, register_attribute
 
 
 @register_attribute
 @dataclass
-class UnionTypeAttribute(ObjectAttribute):
+class UnionTypeAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [typing.Union]
 
     def __init__(self, field_type):

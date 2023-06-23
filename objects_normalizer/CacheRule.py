@@ -3,7 +3,7 @@ import typing
 
 from objects_normalizer.Config import Config
 from objects_normalizer.NormalizeRule import NormalizeRule
-from objects_normalizer.TypeCheckManager import TypeCheckManager
+from objects_normalizer.Attributes.AttributeManager import AttributeManager
 
 
 class CacheRule:
@@ -48,7 +48,7 @@ class CacheRule:
         for att in CacheRule.get_instance_attributes(obj):
             is_class_var = hasattr(cls, att)
             field_type = field_types.get(att, typing.Any)
-            normalizable_fields = TypeCheckManager.get_normalizable_fields(field_type)
+            normalizable_fields = AttributeManager.get_user_defined_types(field_type)
             for normalizable_field in normalizable_fields:
                 CacheRule.cache_rules(cls=normalizable_field)
 

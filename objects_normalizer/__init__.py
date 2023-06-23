@@ -1,17 +1,17 @@
-from objects_normalizer.TypeCheckManager import TypeCheckManager
+from objects_normalizer.Attributes.AttributeManager import AttributeManager
 from objects_normalizer.objects_normalizer import ObjectsNormalizer
-from .ObjectAttributes.AnyTypeAttribute import AnyTypeAttribute
-from .ObjectAttributes.CustomTypeAttribute import CustomTypeAttribute
-from .ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
-from .ObjectAttributes.DictTypeAttribute import DictTypeAttribute
-from .ObjectAttributes.FrozenSetTypeAttribute import FrozenSetTypeAttribute
-from .ObjectAttributes.IntTypeAttribute import IntTypeAttribute
-from .ObjectAttributes.ListTypeAttribute import ListTypeAttribute
-from .ObjectAttributes.OrderedDictTypeAttribute import OrderedDictTypeAttribute
-from .ObjectAttributes.SetTypeAttribute import SetTypeAttribute
-from .ObjectAttributes.StrTypeAttribute import StrTypeAttribute
-from .ObjectAttributes.TupleTypeAttribute import TupleTypeAttribute
-from .ObjectAttributes.UnionTypeAttribute import UnionTypeAttribute
+from .Attributes.AnyAttribute import AnyTypeAttribute
+from .Attributes.CustomAttribute import CustomTypeAttribute
+from .Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
+from .Attributes.DictAttribute import DictTypeAttribute
+from .Attributes.FrozenSetAttribute import FrozenSetTypeAttribute
+from .Attributes.IntAttribute import IntTypeAttribute
+from .Attributes.ListAttribute import ListTypeAttribute
+from .Attributes.OrderedDictAttribute import OrderedDictTypeAttribute
+from .Attributes.SetAttribute import SetTypeAttribute
+from .Attributes.StrAttribute import StrTypeAttribute
+from .Attributes.TupleAttribute import TupleTypeAttribute
+from .Attributes.UnionAttribute import UnionTypeAttribute
 
 
 

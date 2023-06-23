@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 from objects_normalizer.Config import Config
-from objects_normalizer.ObjectAttributes.ObjectAttribute import ObjectAttribute
+from objects_normalizer.Attributes.Attribute import Attribute
 
 
 @dataclass
-class PrimitiveTypeAttribute(ObjectAttribute):
+class PrimitiveTypeAttribute(Attribute):
     IS_PRIMITIVE_TYPE: ClassVar[bool] = True
 
     def __init__(self, field_type):
