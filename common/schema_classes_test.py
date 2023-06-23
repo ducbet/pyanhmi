@@ -210,3 +210,14 @@ class AttributeTypesChild(AttributeTypesParent):
     a_Final: Final[int] = 4
 
 
+@dataclass
+class StrClass:
+    id: str
+
+
+@dataclass
+class IntClass:
+    id: int
+
+
+

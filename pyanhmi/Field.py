@@ -16,13 +16,8 @@ class Field:
         self.attribute_type = attribute_type
         self.is_final = AttributeManager.is_final_type(attribute_type)
         self.is_class_var = is_class_var
-        self.auto_init = self.get_attribute()
 
-    def create(self, data):
-        return self.auto_init.create(data)
 
-    def get_attribute(self):
-        return AttributeManager.get_cached_attribute(self.attribute_type)(self.attribute_type)
 
     @property
     def alias(self) -> str:
@@ -46,6 +41,21 @@ class Field:
     def getter_func(self, func_name):
         self._getter_func = func_name
 
+    @property
+    def attribute_type(self) -> str:
+        return self._attribute_type
+
+    @attribute_type.setter
+    def attribute_type(self, attribute_type):
+        self._attribute_type = attribute_type
+        self._auto_init = self.get_attribute()
+
+    def get_attribute(self):
+        return AttributeManager.get_cached_attribute(self.attribute_type)(self.attribute_type)
+
+    def create(self, data):
+        return self._auto_init.create(data)
+
     def __eq__(self, other: "Field"):
         return (self.alias == other.alias and self.getter_func == other.getter_func)
 
@@ -54,6 +64,6 @@ class Field:
                f"localized_field_name: {self.name}, " \
                f"field_type: {self.attribute_type}, " \
                f"is_class_var: {self.is_class_var}, " \
-               f"auto_init: {self.auto_init}, " \
+               f"auto_init: {self._auto_init}, " \
                f"normalized_field_name: {self.alias}, " \
                f"getter_func_name: {self.getter_func})"

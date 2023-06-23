@@ -17,20 +17,11 @@ class Cookbook:
                     not attr.startswith("_") and
                     not hasattr(obj.__getattribute__(attr), "__call__")])
 
-    def has_complete_recipe(cls):
+    @staticmethod
+    def is_recipe_completed(cls):
         if not hasattr(cls, Config.PYANHMI_RECIPE):
             return False
         return getattr(cls, Config.PYANHMI_RECIPE).is_completed
-
-    @staticmethod
-    def create_recipe(obj=None, cls=None):
-        if not obj and not cls:
-            return
-        # prioritize cls to create a new object with minimal parameters
-        if not cls:
-            cls = type(obj)
-        obj = Cookbook.try_mock_obj(cls)
-        Cookbook._create_recipe(obj)
 
     @staticmethod
     def _create_blank_recipe(cls):
@@ -50,14 +41,15 @@ class Cookbook:
     @staticmethod
     def _create_recipe(obj):
         cls = type(obj)
-        if Cookbook.has_complete_recipe(cls):
-            return
+        if Cookbook.is_recipe_completed(cls):
+            return getattr(cls, Config.PYANHMI_RECIPE)
         recipe = Cookbook._prepare_recipe(cls)
         recipe.is_completed = True
 
         field_types = typing.get_type_hints(cls)
         for att in Cookbook.get_instance_attributes(obj):
             attribute_type = field_types.get(att, typing.Any)
+
             for user_defined_type in AttributeManager.get_user_defined_types(attribute_type):
                 Cookbook.create_recipe(cls=user_defined_type)
 
@@ -68,7 +60,18 @@ class Cookbook:
             field.name = att
             field.attribute_type = attribute_type
             field.is_class_var = hasattr(cls, att)
+        return recipe
 
+    @staticmethod
+    def create_recipe(obj=None, cls=None):
+        if not obj and not cls:
+            return
+        # prioritize cls to create a new object with minimal parameters
+        if not cls:
+            cls = type(obj)
+        obj = Cookbook.try_mock_obj(cls)
+        recipe = Cookbook._create_recipe(obj)
+        return recipe
 
     @staticmethod
     def get_normalize_rule(target) -> dict:

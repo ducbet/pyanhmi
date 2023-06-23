@@ -30,7 +30,7 @@ class Config:
     AnyAtt_priority = 0
 
     ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    DISCRIMINATE_PRIMITIVE_TYPES = False
+    DISCRIMINATE_PRIMITIVE_TYPES = True
 
 
 

@@ -24,6 +24,6 @@ class StrTypeAttribute(PrimitiveTypeAttribute):
         return hash(self.get_hash_content())
 
     def create(self, data: str):
-        if not isinstance(data, str):
-            raise TypeError(f"data is not str: data: {data}")
-        return data
+        # if not isinstance(data, str):
+        #     raise TypeError(f"data is not str: data: {data}")
+        return str(data)

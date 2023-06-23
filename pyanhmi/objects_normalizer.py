@@ -29,7 +29,7 @@ class ObjectsNormalizer:
         return obj[1]
 
     def add(self, obj):
-        if not Cookbook.has_complete_recipe(type(obj)):
+        if not Cookbook.is_recipe_completed(type(obj)):
             Cookbook.create_recipe(obj=obj)
         self.sources[type(obj)].append((self.obj_count, obj))
         self.obj_count += 1
@@ -137,7 +137,7 @@ class ObjectsNormalizer:
         return result
 
     def convert(self, cls):
-        if not Cookbook.has_complete_recipe(cls):
+        if not Cookbook.is_recipe_completed(cls):
             Cookbook.create_recipe(cls=cls)
 
         values = self.export()

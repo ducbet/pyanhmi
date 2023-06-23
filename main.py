@@ -14,7 +14,7 @@ from _decimal import Decimal
 from MostOuterSchemaclass import OuterClass
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from common.schema_class import Product
-from common.schema_classes_test import Level4, AttributeTypesChild, AttributeTypesComposite
+from common.schema_classes_test import Level4, AttributeTypesChild, AttributeTypesComposite, StrClass, IntClass
 from pyanhmi import AttributeManager
 from pyanhmi.Cookbook import Cookbook
 from pyanhmi.Config import Config, timer
@@ -41,15 +41,8 @@ def create_new_list(my_list):
 
 
 if __name__ == '__main__':
-    product = Product(id=1, name="Pro")
-    print(product.PYANHMI_RECIPE)
+    
 
-    # my_list = list(range(100000000))
-    # for i in range(10):
-    #     replace_in_place(my_list)
-    #     create_new_list(my_list)
-    #     sleep(5)
-    # print("All done")
     exit()
 
     # exit()

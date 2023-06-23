@@ -12,7 +12,8 @@ from _decimal import Decimal
 from MostOuterSchemaclass import OuterClass
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from common.schema_class import Product, ProductDescription
-from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent
+from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, StrClass, \
+    IntClass
 from pyanhmi import AttributeManager
 from pyanhmi.Attributes.AnyAttribute import AnyTypeAttribute
 from pyanhmi.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
@@ -193,6 +194,19 @@ def test_create_obj():
     obj = ObjectCreator.create_obj(data, AttributeTypesChild)
     assert isinstance(obj.a_tuple, tuple)
     assert isinstance(obj.a_Optional, tuple)
+
+
+def test_create_obj_runtime_recipe():
+    data = {"id": 123}
+    obj_str = ObjectCreator.create_obj(data, StrClass)
+    assert isinstance(obj_str.id, str)
+
+    obj_int = ObjectCreator.create_obj(data, IntClass)
+    int_recipe = getattr(IntClass, Config.PYANHMI_RECIPE)
+    assert isinstance(obj_int.id, int)
+
+    obj_str_int = ObjectCreator.create_obj(data, StrClass, int_recipe)
+    assert isinstance(obj_str_int.id, int)
 
 
 def test_create_sources():
