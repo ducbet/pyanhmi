@@ -1,4 +1,4 @@
-from pyanhmi.Attributes.AttributeManager import AttributeManager
+from pyanhmi.AttributeManager import AttributeManager
 from pyanhmi.objects_normalizer import ObjectsNormalizer
 from .Attributes.AnyAttribute import AnyTypeAttribute
 from .Attributes.CustomAttribute import CustomTypeAttribute

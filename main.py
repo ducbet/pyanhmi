@@ -13,9 +13,10 @@ from _decimal import Decimal
 
 from MostOuterSchemaclass import OuterClass
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
+from common.schema_class import Product
 from common.schema_classes_test import Level4, AttributeTypesChild, AttributeTypesComposite
 from pyanhmi import AttributeManager
-from pyanhmi.CacheRule import CacheRule
+from pyanhmi.Cookbook import Cookbook
 from pyanhmi.Config import Config, timer
 from pyanhmi.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
 from pyanhmi.ObjectCreator import ObjectCreator
@@ -40,8 +41,8 @@ def create_new_list(my_list):
 
 
 if __name__ == '__main__':
-
-    print(list({"a": 2}))
+    product = Product(id=1, name="Pro")
+    print(product.PYANHMI_RECIPE)
 
     # my_list = list(range(100000000))
     # for i in range(10):
@@ -94,7 +95,7 @@ if __name__ == '__main__':
     print()
     tmp = ObjectCreator.create_obj(data, AttributeTypesChild)
     print()
-    rules = getattr(AttributeTypesChild, Config.normalize_rules_field_name_2)
+    rules = getattr(AttributeTypesChild, Config.PYANHMI_RECIPE)
     # for rule in rules.values():
     #     print(f"rule: {rule}")
     print()

@@ -1,15 +1,21 @@
 from dataclasses import dataclass
 from typing import ClassVar, Dict
 
+from pyanhmi.Field import Field
+from pyanhmi.Recipe import Recipe
+
 
 @dataclass
 class Product:
     id: int
     name: str
-    NORMALIZE_RULES: ClassVar[dict] = {
-        "id": "product_id",
-        "name": "product_name",
-    }
+
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        ingredients={
+            "id": Field(alias="product_id"),
+            "name": Field(alias="product_name"),
+        }
+    )
 
     def sample_Product_method(self):
         return
@@ -20,10 +26,12 @@ class ProductDescription:
     product_id: int
     description: str
     image: str = ""
-    NORMALIZE_RULES: ClassVar[dict] = {
-        "description": {"name": "product_description",
-                        "getter_func": "normalize_description"}
-    }
+
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        ingredients={
+            "description": Field(alias="product_description", getter_func="normalize_description"),
+        }
+    )
 
     # @ObjectsNormalizer.normalize_func(att_name="description")
     def normalize_description(self):
@@ -36,11 +44,14 @@ class ProductReport:
     name: str
     description: str
     image: str = ""
-    NORMALIZE_RULES: ClassVar[dict] = {
-        "id": "product_id",
-        "name": "product_name",
-        "description": "product_description",
-    }
+
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        ingredients={
+            "id": Field(alias="product_id"),
+            "name": Field(alias="product_name"),
+            "description": Field(alias="product_description"),
+        }
+    )
 
 
 @dataclass
@@ -48,10 +59,12 @@ class ProductDescriptionEmbedded:
     # product_id: int
     description: str
     # image: str = ""
-    NORMALIZE_RULES: ClassVar[dict] = {
-        "description": {"name": "product_description",
-                        "getter_func": "normalize_description"}
-    }
+
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        ingredients={
+            "description": Field(alias="product_description", getter_func="normalize_description"),
+        }
+    )
 
     # @ObjectsNormalizer.normalize_func(att_name="description")
     def normalize_description(self):
@@ -63,10 +76,13 @@ class ProductOuter:
     id: int
     name: str
     details: Dict[str, ProductDescriptionEmbedded]
-    NORMALIZE_RULES: ClassVar[dict] = {
-        "id": "product_id",
-        "name": "product_name",
-    }
+
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        ingredients={
+            "id": Field(alias="product_id"),
+            "name": Field(alias="product_name"),
+        }
+    )
 
     def sample_Product_method(self):
         return

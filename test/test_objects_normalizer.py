@@ -4,26 +4,24 @@ from collections import defaultdict
 from datetime import datetime
 from enum import Enum
 from ipaddress import IPv4Address
-from typing import get_type_hints, Optional, Tuple, Dict, List, Any, Set, Union
+from typing import Optional, Tuple, Dict, List, Any, Set, Union
 from uuid import UUID
 
 from _decimal import Decimal
 
 from MostOuterSchemaclass import OuterClass
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
-from common.schema_class import Product, ProductDescription, ProductOuter
-from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, \
-    AttributeTypesComposite
+from common.schema_class import Product, ProductDescription
+from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent
 from pyanhmi import AttributeManager
-from pyanhmi.CacheRule import CacheRule
 from pyanhmi.Attributes.AnyAttribute import AnyTypeAttribute
-from pyanhmi.Config import Config
 from pyanhmi.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
 from pyanhmi.Attributes.DictAttribute import DictTypeAttribute
 from pyanhmi.Attributes.ListAttribute import ListTypeAttribute
-from pyanhmi.Attributes.TupleAttribute import TupleTypeAttribute
-from pyanhmi.ObjectCreator import ObjectCreator
 from pyanhmi.Attributes.UnionAttribute import UnionTypeAttribute
+from pyanhmi.Config import Config
+from pyanhmi.Cookbook import Cookbook
+from pyanhmi.ObjectCreator import ObjectCreator
 from pyanhmi.objects_normalizer import ObjectsNormalizer
 
 
@@ -223,7 +221,7 @@ def test_set_normalize_rule():
     objects_normalizer = ObjectsNormalizer()
     objects_normalizer.add(product)
 
-    product_rules = product.__getattribute__(Config.normalize_rules_field_name_2)
+    product_rules = product.__getattribute__(Config.PYANHMI_RECIPE).ingredients
 
     assert product_rules["id"].name == "id"
     assert product_rules["id"].alias == "product_id"
@@ -233,7 +231,7 @@ def test_set_normalize_rule():
     assert product_rules["name"].getter_func == "name"
 
     objects_normalizer.add(product_description)
-    product_description_rules = product_description.__getattribute__(Config.normalize_rules_field_name_2)
+    product_description_rules = product_description.__getattribute__(Config.PYANHMI_RECIPE).ingredients
     assert product_description_rules["description"].name == "description"
     assert product_description_rules["description"].alias == "product_description"
     assert product_description_rules["description"].getter_func == "normalize_description"
@@ -243,7 +241,7 @@ def test_set_normalize_rule():
     assert product_description_rules["image"].name == "image"
     assert product_description_rules["image"].alias == "image"
 
-    assert CacheRule.cached_classes == {type(product), type(product_description)}
+    assert Cookbook.RECIPES == {type(product), type(product_description)}
 
 
 def test_add_source():

@@ -1,13 +1,8 @@
-import re
-
-from pyanhmi.CacheRule import CacheRule
 from pyanhmi.Config import Config
+from pyanhmi.Cookbook import Cookbook
 
 
 class ObjectCreator:
-
-
-
     @staticmethod
     def _try_create_obj(obj_type, obj_params: dict = None):
         """
@@ -21,7 +16,7 @@ class ObjectCreator:
         :return:
         """
         if not obj_params:
-            obj = CacheRule._try_mock_obj(obj_type)
+            obj = Cookbook.try_mock_obj(obj_type)
             return obj
         for num_try in range(len(obj_params)):
             try:
@@ -47,26 +42,18 @@ class ObjectCreator:
         :return:
         """
         # print(f"create_obj: obj_type: {obj_type}, {obj_params}")
-        if not hasattr(obj_type, Config.normalize_rules_field_name_2):
-        # if obj_type not in CacheRule.cached_classes:
-            # obj = ObjectCreator._try_create_obj(obj_type, obj_params)
-            CacheRule.cache_rules(cls=obj_type)
+        if not Cookbook.has_complete_recipe(obj_type):
+            Cookbook.create_recipe(cls=obj_type)
 
         # obj_type is cached
-        normalize_rules = getattr(obj_type, Config.normalize_rules_field_name_2)
-        # print(f"normalize_rules: {normalize_rules}")
-        # print(f"create_obj: normalize_rules: {normalize_rules.keys()}")
-        # obj_params = {k: v for k, v in obj_params.items() if k in normalize_rules}
+        ingredients = getattr(obj_type, Config.PYANHMI_RECIPE).ingredients
         params = {}
         for param, obj_param in obj_params.items():
-            if param not in normalize_rules:
+            if param not in ingredients:
                 continue
-            if normalize_rules[param].is_final_att:
+            if ingredients[param].is_final:
                 continue
-            if normalize_rules[param].is_class_var:
+            if ingredients[param].is_class_var:
                 continue
-            # print(f"create_obj: param {param}")
-            # print(f"create_obj: normalize_rules[param]: {normalize_rules[param]}")
-            params[param] = normalize_rules[param].create(obj_param)
-        # print(f"create_obj: obj_type: {obj_type}, {params}")
+            params[param] = ingredients[param].create(obj_param)
         return obj_type(**params)

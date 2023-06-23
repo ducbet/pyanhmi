@@ -1,10 +1,12 @@
-from pyanhmi.Attributes.AttributeManager import AttributeManager
+from typing import Any
+
+from pyanhmi.AttributeManager import AttributeManager
 
 
-class NormalizeRule:
-    def __init__(self, name: str,
-                 attribute_type,
-                 is_class_var,
+class Field:
+    def __init__(self, name: str = None,
+                 attribute_type: Any = None,
+                 is_class_var: bool = None,
                  alias: str = None,
                  getter_func: str = None):
         self.name = name
@@ -12,7 +14,7 @@ class NormalizeRule:
         self.getter_func = getter_func
         self.is_ignored = False
         self.attribute_type = attribute_type
-        self.is_final_att = AttributeManager.is_final_type(attribute_type)
+        self.is_final = AttributeManager.is_final_type(attribute_type)
         self.is_class_var = is_class_var
         self.auto_init = self.get_attribute()
 
@@ -44,7 +46,7 @@ class NormalizeRule:
     def getter_func(self, func_name):
         self._getter_func = func_name
 
-    def __eq__(self, other: "NormalizeRule"):
+    def __eq__(self, other: "Field"):
         return (self.alias == other.alias and self.getter_func == other.getter_func)
 
     def __repr__(self):

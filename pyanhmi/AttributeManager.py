@@ -1,8 +1,6 @@
 import os
-import sys
 import typing
 
-from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from pyanhmi.Config import Config
 
 
@@ -21,7 +19,7 @@ class AttributeManager:
     def get_cached_attribute(value_type):
         if not value_type:
             return AttributeManager.CACHED_ATTRIBUTES.get(typing.Any)
-        if hasattr(value_type, Config.normalize_rules_field_name_2):
+        if hasattr(value_type, Config.PYANHMI_RECIPE):
             return AttributeManager.CACHED_ATTRIBUTES.get("CustomTypeAttribute")
 
         if value_type in AttributeManager.CACHED_ATTRIBUTES:

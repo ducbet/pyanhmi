@@ -2,7 +2,7 @@ from collections import defaultdict
 from collections import defaultdict
 from typing import Tuple, Any
 
-from pyanhmi.CacheRule import CacheRule
+from pyanhmi.Cookbook import Cookbook
 from pyanhmi.Config import Config
 from pyanhmi.ObjectCreator import ObjectCreator
 
@@ -29,14 +29,11 @@ class ObjectsNormalizer:
         return obj[1]
 
     def add(self, obj):
-        if not hasattr(type(obj), Config.normalize_rules_field_name_2):
-        # if type(obj) not in CacheRule.cached_classes:
-            CacheRule.cache_rules(obj=obj)
+        if not Cookbook.has_complete_recipe(type(obj)):
+            Cookbook.create_recipe(obj=obj)
         self.sources[type(obj)].append((self.obj_count, obj))
         self.obj_count += 1
         self.max_idx += 1
-        # for normalizable_field, field_cls in ObjectsNormalizer.get_normalizable_fields(type(obj)).items():
-        #     self.add(obj.__getattribute__(normalizable_field))
 
     def create_sources(self, data, *args):
         if not data or not args:
@@ -127,8 +124,7 @@ class ObjectsNormalizer:
                 # stop checking if all desired fields are collected
                  break
             source = ObjectsNormalizer.get_real_obj(latest_sources[i])
-            # print(f"source: {source}, {getattr(source, Config.normalize_rules_field_name_2)}")
-            for field, rule in getattr(source, Config.normalize_rules_field_name_2).items():
+            for field, rule in getattr(source, Config.PYANHMI_RECIPE).ingredients.items():
                 if target_normalize_fields and rule.alias not in target_normalize_fields:
                     continue
                 if rule.alias in result:
@@ -141,20 +137,13 @@ class ObjectsNormalizer:
         return result
 
     def convert(self, cls):
-        if hasattr(cls, Config.normalize_rules_field_name_2) :
-        # if cls not in CacheRule.cached_classes:
-            # obj = ObjectCreator._try_create_obj(cls)
-            # print(f"convert: params {params}")
-            # print(f"convert: obj {obj}")
-            CacheRule.cache_rules(cls=cls)
+        if not Cookbook.has_complete_recipe(cls):
+            Cookbook.create_recipe(cls=cls)
 
         values = self.export()
-        # print(f"convert: values {values}")
-        # print(f"cls.LOCALIZE_RULES: {cls.LOCALIZE_RULES}")
         obj_params = {cls.LOCALIZE_RULES[k]: v for k, v in values.items() if k in cls.LOCALIZE_RULES}
-        # print(f"convert: obj_params {obj_params}")
         return cls(**obj_params)
 
 
     def get_normalize_rules(self):
-        return {cls: CacheRule.get_normalize_rule(cls) for cls in self.sources.keys()}
+        return {cls: Cookbook.get_normalize_rule(cls) for cls in self.sources.keys()}
