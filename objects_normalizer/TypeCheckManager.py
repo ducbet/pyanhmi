@@ -1,5 +1,8 @@
+import os
+import sys
 import typing
 
+from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from objects_normalizer.Config import Config
 
 
@@ -8,7 +11,10 @@ class TypeCheckManager:
 
     @staticmethod
     def is_normalizable_fields(value_type):
-        return value_type.__module__ not in ("builtins", "typing")
+        ignore_folder = ("test", "venv")
+        user_define_modules = {module.split(".")[0] for module in os.listdir(Config.ROOT_PATH) if module[0] not in (".", "_") and module not in ignore_folder}
+        return value_type.__module__.split(".")[0] in user_define_modules
+        # return value_type.__module__ not in ("builtins", "typing", "ipaddress", "enum", "decimal", "uuid", "datetime")
 
     @staticmethod
     def is_final_type(value_type):
@@ -29,7 +35,7 @@ class TypeCheckManager:
         origin_type = typing.get_origin(value_type)
 
         result = TypeCheckManager.SUPPORT_TYPES.get(origin_type)
-        print(f"get_TypeManager: value_type: {value_type}. origin_type: {origin_type}. result: {result}")
+        # print(f"get_TypeManager: value_type: {value_type}. origin_type: {origin_type}. result: {result}")
         return result if result else TypeCheckManager.SUPPORT_TYPES.get(typing.Any)
 
     @staticmethod

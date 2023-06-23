@@ -24,6 +24,6 @@ class IntTypeAttribute(PrimitiveTypeAttribute):
         return hash(self.get_hash_content())
 
     def create(self, data: int):
-        if not isinstance(data, int):
-            raise TypeError(f"data is not int: data: {data}")
-        return data
+        # if not isinstance(data, int):
+        #     raise TypeError(f"data is not int: data: {data}")
+        return int(data)

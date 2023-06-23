@@ -41,9 +41,10 @@ class CacheRule:
         if hasattr(cls, Config.normalize_rules_field_name_2):
             return
         setattr(cls, Config.normalize_rules_field_name_2, {})
+        user_rules = getattr(cls, Config.normalize_rules_field_name, {})
         rules = getattr(cls, Config.normalize_rules_field_name_2)
         field_types = typing.get_type_hints(cls)
-        print(f"_create_normalize_rules obj: {obj}")
+        # print(f"_create_normalize_rules obj: {obj}")
         for att in CacheRule.get_instance_attributes(obj):
             is_class_var = hasattr(cls, att)
             field_type = field_types.get(att, typing.Any)
@@ -51,20 +52,19 @@ class CacheRule:
             for normalizable_field in normalizable_fields:
                 CacheRule.cache_rules(cls=normalizable_field)
 
-            if att not in rules:
-                # print(f"att not in rules. att: {att}. field_type: {field_type}. rules: {rules}")
-                rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type, is_class_var=is_class_var)
+            user__att_rule = user_rules.get(att)
+            rule = NormalizeRule(localized_field_name=att, field_type=field_type, is_class_var=is_class_var)
+            rules[att] = rule
+            if not user__att_rule:
                 continue
-            # re-format rule
-            if isinstance(rules[att], str):
-                rules[att] = NormalizeRule(localized_field_name=att, field_type=field_type, is_class_var=is_class_var, normalized_field_name=rules[att])
-                continue
+            if not isinstance(user__att_rule, dict) and not isinstance(user__att_rule, str):
+                raise TypeError("Field rule must be dict or string")
 
-            rules[att] = NormalizeRule(localized_field_name=att,
-                                       field_type=field_type,
-                                       is_class_var=is_class_var,
-                                       normalized_field_name=rules[att]["name"],
-                                       getter_func_name=rules[att]["getter_func"])
+            if isinstance(user__att_rule, str):
+                rule.normalized_field_name = user__att_rule
+                continue
+            rule.normalized_field_name = user__att_rule.get("name")
+            rule.getter_func_name = user__att_rule.get("getter_func")
 
     # @staticmethod
     # def _create_localize_rules(obj):

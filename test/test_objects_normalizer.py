@@ -1,11 +1,21 @@
 import random
 import typing
+from collections import defaultdict
+from datetime import datetime
+from enum import Enum
+from ipaddress import IPv4Address
 from typing import get_type_hints, Optional, Tuple, Dict, List, Any, Set, Union
+from uuid import UUID
 
+from _decimal import Decimal
+
+from MostOuterSchemaclass import OuterClass
+from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from common.schema_class import Product, ProductDescription, ProductOuter
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, \
     AttributeTypesComposite
 from objects_normalizer import TypeCheckManager
+from objects_normalizer.CacheRule import CacheRule
 from objects_normalizer.ObjectAttributes.AnyTypeAttribute import AnyTypeAttribute
 from objects_normalizer.Config import Config
 from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
@@ -207,39 +217,34 @@ def test_create_sources():
 
 
 def test_set_normalize_rule():
-    # todo: fix
-    # product = Product(id=1, name="Pro")
-    # product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
+    product = Product(id=1, name="Pro")
+    product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
 
     objects_normalizer = ObjectsNormalizer()
-    # objects_normalizer.add(product)
-    #
-    # product_rules = product.__getattribute__(ObjectsNormalizer.normalize_rules_field_name)
-    #
-    # assert product_rules["id"].localized_field_name == "id"
-    # assert product_rules["id"].normalized_field_name == "product_id"
-    # assert product_rules["id"].getter_func_name == "id"
-    # assert product_rules["name"].localized_field_name == "name"
-    # assert product_rules["name"].normalized_field_name == "product_name"
-    # assert product_rules["name"].getter_func_name == "name"
-    #
-    # objects_normalizer.add(product_description)
-    # product_description_rules = product_description.__getattribute__(ObjectsNormalizer.normalize_rules_field_name)
-    # assert product_description_rules["description"].localized_field_name == "description"
-    # assert product_description_rules["description"].normalized_field_name == "product_description"
-    # assert product_description_rules["description"].getter_func_name == "normalize_description"
-    # assert product_description_rules["product_id"].localized_field_name == "product_id"
-    # assert product_description_rules["product_id"].normalized_field_name == "product_id"
-    # assert product_description_rules["product_id"].getter_func_name == "product_id"
-    # assert product_description_rules["image"].localized_field_name == "image"
-    # assert product_description_rules["image"].normalized_field_name == "image"
-    #
-    # assert objects_normalizer.cached_classes == {type(product), type(product_description)}
-
-    product = ProductOuter(id=1, name="Pro", details=[])
     objects_normalizer.add(product)
-    product_rules = product.__getattribute__(Config.normalize_rules_field_name)
-    print(f"product_rules: {product_rules}")
+
+    product_rules = product.__getattribute__(Config.normalize_rules_field_name_2)
+
+    assert product_rules["id"].localized_field_name == "id"
+    assert product_rules["id"].normalized_field_name == "product_id"
+    assert product_rules["id"].getter_func_name == "id"
+    assert product_rules["name"].localized_field_name == "name"
+    assert product_rules["name"].normalized_field_name == "product_name"
+    assert product_rules["name"].getter_func_name == "name"
+
+    objects_normalizer.add(product_description)
+    product_description_rules = product_description.__getattribute__(Config.normalize_rules_field_name_2)
+    assert product_description_rules["description"].localized_field_name == "description"
+    assert product_description_rules["description"].normalized_field_name == "product_description"
+    assert product_description_rules["description"].getter_func_name == "normalize_description"
+    assert product_description_rules["product_id"].localized_field_name == "product_id"
+    assert product_description_rules["product_id"].normalized_field_name == "product_id"
+    assert product_description_rules["product_id"].getter_func_name == "product_id"
+    assert product_description_rules["image"].localized_field_name == "image"
+    assert product_description_rules["image"].normalized_field_name == "image"
+
+    assert CacheRule.cached_classes == {type(product), type(product_description)}
+
 
 def test_add_source():
     product = Product(id=1, name="Pro")
@@ -267,7 +272,6 @@ def test_add_source():
 
 
 def test_export():
-    # todo: fix
     product = Product(id=1, name="Pro")
     product_2 = Product(id=2, name="Pro 2")
     product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
@@ -278,7 +282,6 @@ def test_export():
         "product_id": 1,
         "product_name": "Pro",
     }
-    return
     assert objects_normalizer.export(["product_id"]) == {
         "product_id": 1,
     }
@@ -381,3 +384,27 @@ def test_get_all_objs():
 def test_get_normalizable_fields():
     normalizable_fields = TypeCheckManager.get_normalizable_fields(AttributeTypesChild)
     assert normalizable_fields == {AttributeTypesChild, AttributeTypesParent}
+
+
+def test_is_normalizable_fields():
+    checks = {
+        OuterClass: True,
+        NestedClass: True,
+        AttributeTypesChild: True,
+        Any: False,
+        Dict: False,
+        Union: False,
+        Decimal: False,
+        Enum: False,
+        IPv4Address: False,
+        UUID: False,
+        datetime: False,
+        defaultdict: False,
+        frozenset: False,
+        int: False,
+        float: False,
+        list: False,
+    }
+    for cls, is_normalizable_field in checks.items():
+        # print(f"normalizable: {TypeCheckManager.is_normalizable_fields(cls)}, {cls}, __module__: {cls.__module__}")
+        assert TypeCheckManager.is_normalizable_fields(cls) == is_normalizable_field

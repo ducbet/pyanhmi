@@ -34,4 +34,4 @@ class SetTypeAttribute(ObjectAttribute):
         if not isinstance(data, set):
             raise TypeError(f"data is not set: data: {data}")
         # print(f"{self.__class__} self.value_att: {self.value_att}, data: {data}")
-        return {self.value_att.create(v) for v in data}
+        return set(self.value_att.create(v) for v in data)

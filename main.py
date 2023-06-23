@@ -1,13 +1,55 @@
+import decimal
+import os
+import sys
 import typing
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
+from datetime import datetime
+from enum import Enum
+from ipaddress import IPv4Address
+from time import sleep
+from uuid import UUID
 
+from _decimal import Decimal
+
+from MostOuterSchemaclass import OuterClass
+from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from common.schema_classes_test import Level4, AttributeTypesChild, AttributeTypesComposite
+from objects_normalizer import TypeCheckManager
 from objects_normalizer.CacheRule import CacheRule
-from objects_normalizer.Config import Config
+from objects_normalizer.Config import Config, timer
 from objects_normalizer.ObjectAttributes.DefaultDictTypeAttribute import DefaultDictTypeAttribute
 from objects_normalizer.ObjectCreator import ObjectCreator
 
+from pydantic import BaseModel, NameEmail
+
+
+# class User(BaseModel):
+#     id: int
+#     email: NameEmail
+#     ip: IPv4Address
+#     name = 'Jane Doe'
+
+@timer
+def replace_in_place(my_list):
+    for i in range(len(my_list)):
+        my_list[i] *= 2
+
+@timer
+def create_new_list(my_list):
+    return [element * 2 for element in my_list]
+
+
 if __name__ == '__main__':
+
+    print(list({"a": 2}))
+
+    # my_list = list(range(100000000))
+    # for i in range(10):
+    #     replace_in_place(my_list)
+    #     create_new_list(my_list)
+    #     sleep(5)
+    # print("All done")
+    exit()
 
     # exit()
     # mysql_client = MysqlClient()

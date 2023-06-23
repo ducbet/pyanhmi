@@ -127,7 +127,7 @@ class ObjectsNormalizer:
                 # stop checking if all desired fields are collected
                  break
             source = ObjectsNormalizer.get_real_obj(latest_sources[i])
-            print(f"source: {source}, {getattr(source, Config.normalize_rules_field_name_2)}")
+            # print(f"source: {source}, {getattr(source, Config.normalize_rules_field_name_2)}")
             for field, rule in getattr(source, Config.normalize_rules_field_name_2).items():
                 if target_normalize_fields and rule.normalized_field_name not in target_normalize_fields:
                     continue

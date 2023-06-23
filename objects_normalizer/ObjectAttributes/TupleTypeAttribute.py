@@ -36,6 +36,8 @@ class TupleTypeAttribute(ObjectAttribute):
         return hash(self.get_hash_content())
 
     def create(self, data: tuple):
+        if not isinstance(data, tuple):
+            raise TypeError(f"data is not tuple: data: {data}")
         if not self.value_atts:
             return data
         return tuple(self.value_atts[i].create(val) for i, val in enumerate(data))

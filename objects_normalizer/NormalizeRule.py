@@ -5,8 +5,8 @@ class NormalizeRule:
     def __init__(self, localized_field_name: str,
                  field_type,
                  is_class_var,
-                 normalized_field_name: str = "",
-                 getter_func_name: str = "",):
+                 normalized_field_name: str = None,
+                 getter_func_name: str = None):
         self.localized_field_name = localized_field_name
         self.normalized_field_name = normalized_field_name
         self.getter_func_name = getter_func_name
@@ -15,7 +15,7 @@ class NormalizeRule:
         self.is_final_att = TypeCheckManager.is_final_type(field_type)
         self.is_class_var = is_class_var
         self.auto_init = self.get_auto_init(field_type)
-        print(f"get_auto_init. field_type: {field_type}, self.auto_init: {self.auto_init}")
+        # print(f"get_auto_init. field_type: {field_type}, self.auto_init: {self.auto_init}")
         # print()
 
     def create(self, data):

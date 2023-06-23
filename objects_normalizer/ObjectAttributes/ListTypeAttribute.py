@@ -31,9 +31,8 @@ class ListTypeAttribute(ObjectAttribute):
         # print(f"ListAtt: self.field_type: {self.field_type}, {hash(self.get_hash_content())}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def create(self, data):
+    def create(self, data: list):
         if not isinstance(data, list):
             raise TypeError(f"data is not list: data: {data}")
-
         # print(f"{self.__class__} self.value_att: {self.value_att}, data: {data}")
-        return [self.value_att.create(v) for v in data]
+        return list(self.value_att.create(v) for v in data)
