@@ -129,15 +129,15 @@ class ObjectsNormalizer:
             source = ObjectsNormalizer.get_real_obj(latest_sources[i])
             # print(f"source: {source}, {getattr(source, Config.normalize_rules_field_name_2)}")
             for field, rule in getattr(source, Config.normalize_rules_field_name_2).items():
-                if target_normalize_fields and rule.normalized_field_name not in target_normalize_fields:
+                if target_normalize_fields and rule.alias not in target_normalize_fields:
                     continue
-                if rule.normalized_field_name in result:
+                if rule.alias in result:
                     continue
-                normalized_func = source.__getattribute__(rule.getter_func_name)
+                normalized_func = source.__getattribute__(rule.getter_func)
                 if hasattr(normalized_func, "__call__"):
-                    result[rule.normalized_field_name] = normalized_func()  # call method
+                    result[rule.alias] = normalized_func()  # call method
                 else:
-                    result[rule.normalized_field_name] = normalized_func  # normalized_func is attribute value
+                    result[rule.alias] = normalized_func  # normalized_func is attribute value
         return result
 
     def convert(self, cls):

@@ -225,23 +225,23 @@ def test_set_normalize_rule():
 
     product_rules = product.__getattribute__(Config.normalize_rules_field_name_2)
 
-    assert product_rules["id"].localized_field_name == "id"
-    assert product_rules["id"].normalized_field_name == "product_id"
-    assert product_rules["id"].getter_func_name == "id"
-    assert product_rules["name"].localized_field_name == "name"
-    assert product_rules["name"].normalized_field_name == "product_name"
-    assert product_rules["name"].getter_func_name == "name"
+    assert product_rules["id"].name == "id"
+    assert product_rules["id"].alias == "product_id"
+    assert product_rules["id"].getter_func == "id"
+    assert product_rules["name"].name == "name"
+    assert product_rules["name"].alias == "product_name"
+    assert product_rules["name"].getter_func == "name"
 
     objects_normalizer.add(product_description)
     product_description_rules = product_description.__getattribute__(Config.normalize_rules_field_name_2)
-    assert product_description_rules["description"].localized_field_name == "description"
-    assert product_description_rules["description"].normalized_field_name == "product_description"
-    assert product_description_rules["description"].getter_func_name == "normalize_description"
-    assert product_description_rules["product_id"].localized_field_name == "product_id"
-    assert product_description_rules["product_id"].normalized_field_name == "product_id"
-    assert product_description_rules["product_id"].getter_func_name == "product_id"
-    assert product_description_rules["image"].localized_field_name == "image"
-    assert product_description_rules["image"].normalized_field_name == "image"
+    assert product_description_rules["description"].name == "description"
+    assert product_description_rules["description"].alias == "product_description"
+    assert product_description_rules["description"].getter_func == "normalize_description"
+    assert product_description_rules["product_id"].name == "product_id"
+    assert product_description_rules["product_id"].alias == "product_id"
+    assert product_description_rules["product_id"].getter_func == "product_id"
+    assert product_description_rules["image"].name == "image"
+    assert product_description_rules["image"].alias == "image"
 
     assert CacheRule.cached_classes == {type(product), type(product_description)}
 

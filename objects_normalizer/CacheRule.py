@@ -2,7 +2,7 @@ import re
 import typing
 
 from objects_normalizer.Config import Config
-from objects_normalizer.NormalizeRule import NormalizeRule
+from objects_normalizer.Field import NormalizeRule
 from objects_normalizer.Attributes.AttributeManager import AttributeManager
 
 
@@ -18,29 +18,14 @@ class CacheRule:
                     not attr.startswith("_") and
                     not hasattr(obj.__getattribute__(attr), "__call__")])
 
-    # @staticmethod
-    # def get_normalizable_fields(cls):
-    #
-    #     # if cls in ObjectsNormalizer.cached_classes:
-    #     #     normalize_rules = getattr(cls, Config.normalize_rules_field_name)
-    #     #     # print(f"get_normalizable_fields: {normalize_rules}")
-    #     #     return {att: rule["composite"] for att, rule in normalize_rules.items() if rule.get("composite")}
-    #     return TypeCheckManager.get_field_types(cls)
-    #     # result = {}
-    #     # for field, field_types in TypeCheckManager.get_field_types(cls).items():
-    #     #     for field_type in field_types:
-    #     #         if _is_normalizable_fields(field_type):
-    #     #             result[field] = field_types[0]
-    #     #             break
-    #     # return result
-    #     # return
-
     @staticmethod
     def _create_normalize_rules(obj):
         cls = type(obj)
         if hasattr(cls, Config.normalize_rules_field_name_2):
             return
         setattr(cls, Config.normalize_rules_field_name_2, {})
+        CacheRule.cached_classes.add(cls)
+
         user_rules = getattr(cls, Config.normalize_rules_field_name, {})
         rules = getattr(cls, Config.normalize_rules_field_name_2)
         field_types = typing.get_type_hints(cls)
@@ -53,7 +38,7 @@ class CacheRule:
                 CacheRule.cache_rules(cls=normalizable_field)
 
             user__att_rule = user_rules.get(att)
-            rule = NormalizeRule(localized_field_name=att, field_type=field_type, is_class_var=is_class_var)
+            rule = NormalizeRule(name=att, attribute_type=field_type, is_class_var=is_class_var)
             rules[att] = rule
             if not user__att_rule:
                 continue
@@ -61,21 +46,10 @@ class CacheRule:
                 raise TypeError("Field rule must be dict or string")
 
             if isinstance(user__att_rule, str):
-                rule.normalized_field_name = user__att_rule
+                rule.alias = user__att_rule
                 continue
-            rule.normalized_field_name = user__att_rule.get("name")
-            rule.getter_func_name = user__att_rule.get("getter_func")
-
-    # @staticmethod
-    # def _create_localize_rules(obj):
-    #     cls = type(obj)
-    #     normalize_rules: typing.Dict[str, NormalizeRule] = getattr(cls, Config.normalize_rules_field_name)
-    #     localize_rules = {}
-    #     for local_field, normalize_rule in normalize_rules.items():
-    #         # print(f"local_field: {local_field}, normalize_rule: {normalize_rule}")
-    #         localize_rules[normalize_rule.normalized_field_name] = NormalizeRule(localized_field_name=local_field)
-    #     setattr(cls, Config.localize_rules_field_name, localize_rules)
-
+            rule.alias = user__att_rule.get("name")
+            rule.getter_func = user__att_rule.get("getter_func")
 
     @staticmethod
     def get_normalize_rule(target) -> dict:
@@ -99,18 +73,12 @@ class CacheRule:
 
     @staticmethod
     def cache_rules(obj=None, cls=None):
-        print(f"cache_rules: obj: {obj}, cls: {cls}")
+        # print(f"cache_rules: obj: {obj}, cls: {cls}")
         # priority cls to get default value
         if not obj and not cls:
             return
-        # if not obj:
-        #     obj = CacheRule._try_mock_obj(cls)
         if not cls:
             cls = type(obj)
         obj = CacheRule._try_mock_obj(cls)
 
         CacheRule._create_normalize_rules(obj)
-        CacheRule.cached_classes.add(type(obj))  # try to not go into infinite for loop
-
-
-        # ObjectsNormalizer._create_localize_rules(obj)
