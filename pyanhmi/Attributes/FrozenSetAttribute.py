@@ -2,8 +2,8 @@ import typing
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from objects_normalizer.Attributes.Attribute import register_attribute
-from objects_normalizer.Attributes.SetAttribute import SetTypeAttribute
+from pyanhmi.Attributes.Attribute import register_attribute
+from pyanhmi.Attributes.SetAttribute import SetTypeAttribute
 
 
 @register_attribute

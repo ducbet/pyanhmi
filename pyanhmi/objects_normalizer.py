@@ -2,9 +2,9 @@ from collections import defaultdict
 from collections import defaultdict
 from typing import Tuple, Any
 
-from objects_normalizer.CacheRule import CacheRule
-from objects_normalizer.Config import Config
-from objects_normalizer.ObjectCreator import ObjectCreator
+from pyanhmi.CacheRule import CacheRule
+from pyanhmi.Config import Config
+from pyanhmi.ObjectCreator import ObjectCreator
 
 
 class ObjectsNormalizer:

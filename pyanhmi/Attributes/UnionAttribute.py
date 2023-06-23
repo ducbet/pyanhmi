@@ -1,9 +1,9 @@
 import typing
 from dataclasses import dataclass
 
-from objects_normalizer.Config import Config
-from objects_normalizer.Attributes.AnyAttribute import AnyTypeAttribute
-from objects_normalizer.Attributes.Attribute import Attribute, register_attribute
+from pyanhmi.Config import Config
+from pyanhmi.Attributes.AnyAttribute import AnyTypeAttribute
+from pyanhmi.Attributes.Attribute import Attribute, register_attribute
 
 
 @register_attribute

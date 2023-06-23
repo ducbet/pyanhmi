@@ -1,7 +1,7 @@
 import re
 
-from objects_normalizer.CacheRule import CacheRule
-from objects_normalizer.Config import Config
+from pyanhmi.CacheRule import CacheRule
+from pyanhmi.Config import Config
 
 
 class ObjectCreator:

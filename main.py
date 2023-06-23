@@ -14,11 +14,11 @@ from _decimal import Decimal
 from MostOuterSchemaclass import OuterClass
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from common.schema_classes_test import Level4, AttributeTypesChild, AttributeTypesComposite
-from objects_normalizer import AttributeManager
-from objects_normalizer.CacheRule import CacheRule
-from objects_normalizer.Config import Config, timer
-from objects_normalizer.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
-from objects_normalizer.ObjectCreator import ObjectCreator
+from pyanhmi import AttributeManager
+from pyanhmi.CacheRule import CacheRule
+from pyanhmi.Config import Config, timer
+from pyanhmi.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
+from pyanhmi.ObjectCreator import ObjectCreator
 
 from pydantic import BaseModel, NameEmail
 

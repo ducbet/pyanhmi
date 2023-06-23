@@ -1,9 +1,9 @@
 import re
 import typing
 
-from objects_normalizer.Config import Config
-from objects_normalizer.Field import NormalizeRule
-from objects_normalizer.Attributes.AttributeManager import AttributeManager
+from pyanhmi.Config import Config
+from pyanhmi.Field import NormalizeRule
+from pyanhmi.Attributes.AttributeManager import AttributeManager
 
 
 class CacheRule:

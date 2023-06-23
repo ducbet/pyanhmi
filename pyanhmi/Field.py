@@ -1,4 +1,4 @@
-from objects_normalizer.Attributes.AttributeManager import AttributeManager
+from pyanhmi.Attributes.AttributeManager import AttributeManager
 
 
 class NormalizeRule:

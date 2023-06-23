@@ -1,5 +1,5 @@
-from objects_normalizer import AttributeManager
-from objects_normalizer.Config import Config
+from pyanhmi import AttributeManager
+from pyanhmi.Config import Config
 
 
 def register_attribute(cls):

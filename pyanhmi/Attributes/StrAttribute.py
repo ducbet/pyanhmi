@@ -1,8 +1,8 @@
 import typing
 from dataclasses import dataclass
 
-from objects_normalizer.Attributes.Attribute import register_attribute
-from objects_normalizer.Attributes.PrimitiveAttribute import PrimitiveTypeAttribute
+from pyanhmi.Attributes.Attribute import register_attribute
+from pyanhmi.Attributes.PrimitiveAttribute import PrimitiveTypeAttribute
 
 
 @register_attribute

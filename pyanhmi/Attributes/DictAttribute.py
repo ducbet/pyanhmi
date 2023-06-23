@@ -2,8 +2,8 @@ import typing
 from collections import defaultdict, OrderedDict
 from dataclasses import dataclass
 
-from objects_normalizer.Config import Config
-from objects_normalizer.Attributes.Attribute import register_attribute, Attribute
+from pyanhmi.Config import Config
+from pyanhmi.Attributes.Attribute import register_attribute, Attribute
 
 
 @register_attribute

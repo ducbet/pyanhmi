@@ -3,7 +3,7 @@ import sys
 import typing
 
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
-from objects_normalizer.Config import Config
+from pyanhmi.Config import Config
 
 
 class AttributeManager:

@@ -2,8 +2,8 @@ import typing
 from collections import defaultdict
 from dataclasses import dataclass
 
-from objects_normalizer.Attributes.DictAttribute import DictTypeAttribute
-from objects_normalizer.Attributes.Attribute import register_attribute
+from pyanhmi.Attributes.DictAttribute import DictTypeAttribute
+from pyanhmi.Attributes.Attribute import register_attribute
 
 
 @register_attribute

@@ -14,17 +14,17 @@ from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import Nested
 from common.schema_class import Product, ProductDescription, ProductOuter
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, \
     AttributeTypesComposite
-from objects_normalizer import AttributeManager
-from objects_normalizer.CacheRule import CacheRule
-from objects_normalizer.Attributes.AnyAttribute import AnyTypeAttribute
-from objects_normalizer.Config import Config
-from objects_normalizer.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
-from objects_normalizer.Attributes.DictAttribute import DictTypeAttribute
-from objects_normalizer.Attributes.ListAttribute import ListTypeAttribute
-from objects_normalizer.Attributes.TupleAttribute import TupleTypeAttribute
-from objects_normalizer.ObjectCreator import ObjectCreator
-from objects_normalizer.Attributes.UnionAttribute import UnionTypeAttribute
-from objects_normalizer.objects_normalizer import ObjectsNormalizer
+from pyanhmi import AttributeManager
+from pyanhmi.CacheRule import CacheRule
+from pyanhmi.Attributes.AnyAttribute import AnyTypeAttribute
+from pyanhmi.Config import Config
+from pyanhmi.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
+from pyanhmi.Attributes.DictAttribute import DictTypeAttribute
+from pyanhmi.Attributes.ListAttribute import ListTypeAttribute
+from pyanhmi.Attributes.TupleAttribute import TupleTypeAttribute
+from pyanhmi.ObjectCreator import ObjectCreator
+from pyanhmi.Attributes.UnionAttribute import UnionTypeAttribute
+from pyanhmi.objects_normalizer import ObjectsNormalizer
 
 
 def test_hash_Att():

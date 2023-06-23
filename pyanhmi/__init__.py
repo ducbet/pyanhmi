@@ -1,5 +1,5 @@
-from objects_normalizer.Attributes.AttributeManager import AttributeManager
-from objects_normalizer.objects_normalizer import ObjectsNormalizer
+from pyanhmi.Attributes.AttributeManager import AttributeManager
+from pyanhmi.objects_normalizer import ObjectsNormalizer
 from .Attributes.AnyAttribute import AnyTypeAttribute
 from .Attributes.CustomAttribute import CustomTypeAttribute
 from .Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from objects_normalizer.Config import Config
-from objects_normalizer.Attributes.Attribute import Attribute
+from pyanhmi.Config import Config
+from pyanhmi.Attributes.Attribute import Attribute
 
 
 @dataclass
