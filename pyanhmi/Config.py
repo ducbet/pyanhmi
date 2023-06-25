@@ -1,6 +1,8 @@
 import functools
 import os
 import time
+from abc import ABC, abstractmethod
+from enum import Enum, unique
 
 
 def timer(func):
@@ -11,9 +13,17 @@ def timer(func):
         value = func(*args, **kwargs)
         end_time = time.perf_counter()      # 2
         run_time = end_time - start_time    # 3
-        print(f"Finished {func.__name__!r} in {run_time:.4f} secs")
+        ms = run_time * 1000
+        print(f"Finished {func.__name__!r} in {run_time:.4f} secs, {ms:.1f}: ms")
         return value
     return wrapper_timer
+
+
+@unique
+class Mode(Enum):
+    DUCK = 0
+    STRICT = 1
+    CASTING = 2
 
 
 class Config:
@@ -30,7 +40,8 @@ class Config:
     AnyAtt_priority = 0
 
     ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    DISCRIMINATE_PRIMITIVE_TYPES = True
+    MODE = Mode.STRICT
+
 
 
 

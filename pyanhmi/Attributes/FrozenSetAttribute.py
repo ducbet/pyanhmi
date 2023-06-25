@@ -3,12 +3,12 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 
 from pyanhmi.Attributes.Attribute import register_attribute
-from pyanhmi.Attributes.SetAttribute import SetTypeAttribute
+from pyanhmi.Attributes.SetAttribute import SetAttribute
 
 
 @register_attribute
 @dataclass
-class FrozenSetTypeAttribute(SetTypeAttribute):
+class FrozenSetAttribute(SetAttribute):
     TYPES: typing.ClassVar[list] = [typing.FrozenSet, frozenset]
 
     def __init__(self, field_type):
@@ -23,10 +23,20 @@ class FrozenSetTypeAttribute(SetTypeAttribute):
     def __hash__(self):
         return super().__hash__()
 
-    def create(self, data: dict):
-        if not isinstance(data, Iterable):
-            raise TypeError(f"data is not Iterable: data: {data}")
-        return frozenset([self.value_att.create(v) for v in data])
-
     def __repr__(self):
         return super().__repr__()
+
+    def duck_create(self, data):
+        try:
+            return frozenset([self.value_att.duck_create(v) for v in data])
+        except:
+            return data
+
+    def strict_create(self, data):
+        if not isinstance(data, Iterable):
+            raise TypeError(f"data is not Iterable: data: {data}")
+        return frozenset([self.value_att.strict_create(v) for v in data])
+
+    def casting_create(self, data):
+        return frozenset([self.value_att.casting_create(v) for v in data])
+

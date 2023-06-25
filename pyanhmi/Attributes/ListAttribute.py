@@ -7,14 +7,14 @@ from pyanhmi.Attributes.Attribute import register_attribute, Attribute
 
 @register_attribute
 @dataclass
-class ListTypeAttribute(Attribute):
+class ListAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [list]
 
     def __init__(self, field_type):
         super().__init__(field_type)
         args_type = typing.get_args(field_type)
         if not args_type:
-            self.value_att = self.get_TypeManager(None)
+            self.value_att = self.get_TypeManager(None)(None)
             return
         self.value_att = self.get_TypeManager(args_type[0])(args_type[0])
 
@@ -31,8 +31,17 @@ class ListTypeAttribute(Attribute):
         # print(f"ListAtt: self.field_type: {self.field_type}, {hash(self.get_hash_content())}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def create(self, data: list):
+    def duck_create(self, data):
+        try:
+            return list(self.value_att.duck_create(v) for v in data)
+        except:
+            return data
+
+    def strict_create(self, data: list):
         if not isinstance(data, list):
             raise TypeError(f"data is not list: data: {data}")
         # print(f"{self.__class__} self.value_att: {self.value_att}, data: {data}")
-        return list(self.value_att.create(v) for v in data)
+        return list(self.value_att.strict_create(v) for v in data)
+
+    def casting_create(self, data):
+        return list(self.value_att.casting_create(v) for v in data)

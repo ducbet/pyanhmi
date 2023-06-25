@@ -7,7 +7,7 @@ from pyanhmi.Attributes.Attribute import register_attribute, Attribute
 
 @register_attribute
 @dataclass
-class TupleTypeAttribute(Attribute):
+class TupleAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [tuple]
     priority = Config.TupleAtt_priority
 
@@ -35,9 +35,22 @@ class TupleTypeAttribute(Attribute):
         # print(f"TupleAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def create(self, data: tuple):
+    def duck_create(self, data):
+        try:
+            if not self.value_atts:
+                return data
+            return tuple(self.value_atts[i].duck_create(val) for i, val in enumerate(data))
+        except:
+            return data
+
+    def strict_create(self, data):
         if not isinstance(data, tuple):
             raise TypeError(f"data is not tuple: data: {data}")
         if not self.value_atts:
             return data
-        return tuple(self.value_atts[i].create(val) for i, val in enumerate(data))
+        return tuple(self.value_atts[i].strict_create(val) for i, val in enumerate(data))
+
+    def casting_create(self, data):
+        if not self.value_atts:
+            return data
+        return tuple(self.value_atts[i].casting_create(val) for i, val in enumerate(data))

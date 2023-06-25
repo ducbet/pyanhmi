@@ -1,27 +1,12 @@
-import decimal
-import os
-import sys
-import typing
-from collections import OrderedDict, defaultdict
-from datetime import datetime
-from enum import Enum
-from ipaddress import IPv4Address
-from time import sleep
-from uuid import UUID
+import inspect
 
-from _decimal import Decimal
-
-from MostOuterSchemaclass import OuterClass
-from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
-from common.schema_class import Product
-from common.schema_classes_test import Level4, AttributeTypesChild, AttributeTypesComposite, StrClass, IntClass
-from pyanhmi import AttributeManager
+from common.schema_class import Product, ProductDescription
+from common.schema_classes_test import StrClass, IntClass, ClassicParent, Level4, AttributeTypesChild, AttDict, AttAny, \
+    AttFrozenSet, AttDefaultDict, AttOrderedDict, AttClassVar
+from pyanhmi import ObjectsNormalizer, StrAttribute, AnyAttribute
+from pyanhmi.Config import timer, Mode, Config
 from pyanhmi.Cookbook import Cookbook
-from pyanhmi.Config import Config, timer
-from pyanhmi.Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
 from pyanhmi.ObjectCreator import ObjectCreator
-
-from pydantic import BaseModel, NameEmail
 
 
 # class User(BaseModel):
@@ -31,26 +16,28 @@ from pydantic import BaseModel, NameEmail
 #     name = 'Jane Doe'
 
 @timer
-def replace_in_place(my_list):
-    for i in range(len(my_list)):
-        my_list[i] *= 2
+def replace_in_place():
+    a = None
+    for i in range(1000):
+        a is None
 
-@timer
-def create_new_list(my_list):
-    return [element * 2 for element in my_list]
 
 
 if __name__ == '__main__':
-    
+    Config.MODE = Mode.CASTING
+    try:
+        ObjectCreator.create_obj({}, ClassicParent)
+    except TypeError as e:
+        assert str(e) == "__init__() missing 1 required positional argument: 'parent_name'"
 
-    exit()
-
-    # exit()
-    # mysql_client = MysqlClient()
+    try:
+        ObjectCreator.create_obj({"product_name": "Pro"}, ClassicParent)
+    except TypeError as e:
+        assert str(e) == "__init__() missing 1 required positional argument: 'parent_name'"
 
     data = {
         "a_tuple": ("a_tuple_1", "a_tuple_2"),
-        "a_dict": {"a_dict_key": "a_dict_val"},
+        # "a_dict": {"a_dict_key": "a_dict_val"},
         "a_Optional": ({
                            "a_Optional_key_list": [
                                {
@@ -59,40 +46,39 @@ if __name__ == '__main__':
                            ],
                            "a_Optional_key_set": {1, 5, 8}
                        }, 5.2),
-        "a_Any": Level4,
-        "a_FrozenSet": {1, 5, 8},
-        "a_FrozenSet_str": {"k1": 1, "k2": 5, "k3": 8},
-        "a_attParent": {"a_tuple": ("a_attParent_1", "a_attParent_2")},
-        "a_DefaultDict": {
-            "a_DefaultDict_key": [
-                {"a_List": [{"a_tuple": ("a_DefaultDict_1", "a_DefaultDict_2")}]}
-            ]
-        },
-        "a_DefaultDict_int": {
-            "a_DefaultDict_int_key": [1, 5, 7]
-        },
-        "a_OrderedDict": {
-            "a_OrderedDict_key_2": 1,
-            "a_OrderedDict_key_1": 4,
-        },
-        "a_OrderedDict_list_tuple": [
-            ("a_OrderedDict_key_2", 1),
-            ("a_OrderedDict_key_1", 4),
-        ],
-        "a_Callable": lambda a, b: a + b,
-        "a_Final": 8866,  # should not affect final value defined in the class
-        "a_ClassVar": {"a_List": [{"a_tuple": ("a_DefaultDict_1", "a_DefaultDict_2")}]},
-        "a_ClassVar_2": 1,
+        # "a_Any": Level4,
+        # "a_FrozenSet": {1, 5, 8},
+        # "a_FrozenSet_str": {"k1": 1, "k2": 5, "k3": 8},
+        # "a_attParent": {"a_tuple": ("a_attParent_1", "a_attParent_2")},
+        # "a_DefaultDict": {
+        #     "a_DefaultDict_key": [
+        #         {"a_List": [{"a_tuple": ("a_DefaultDict_1", "a_DefaultDict_2")}]}
+        #     ]
+        # },
+        # "a_DefaultDict_int": {
+        #     "a_DefaultDict_int_key": [1, 5, 7]
+        # },
+        # "a_OrderedDict": {
+        #     "a_OrderedDict_key_2": 1,
+        #     "a_OrderedDict_key_1": 4,
+        # },
+        # "a_OrderedDict_list_tuple": [
+        #     ("a_OrderedDict_key_2", 1),
+        #     ("a_OrderedDict_key_1", 4),
+        # ],
+        # "a_Callable": lambda a, b: a + b,
+        # "a_Final": 8866,  # should not affect final value defined in the class
+        # "a_ClassVar": {"a_List": [{"a_tuple": ("a_DefaultDict_1", "a_DefaultDict_2")}]},
+        # "a_ClassVar_2": 1,
 
     }
-    print()
-    tmp = ObjectCreator.create_obj(data, AttributeTypesChild)
-    print()
-    rules = getattr(AttributeTypesChild, Config.PYANHMI_RECIPE)
-    # for rule in rules.values():
-    #     print(f"rule: {rule}")
-    print()
-    print(tmp)
-    print()
-    print()
+    obj = ObjectCreator.create_obj(data, AttributeTypesChild)
+    print(obj)
+    # obj = ObjectCreator.create_obj(data, AttDict)
+    # obj = ObjectCreator.create_obj(data, AttAny)
+    # obj = ObjectCreator.create_obj(data, AttFrozenSet)
+    # obj = ObjectCreator.create_obj(data, AttDefaultDict)
+    # obj = ObjectCreator.create_obj(data, AttOrderedDict)
+    # obj = ObjectCreator.create_obj(data, AttClassVar)
 
+    exit()

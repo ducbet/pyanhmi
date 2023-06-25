@@ -27,7 +27,6 @@ class Cookbook:
     def _create_blank_recipe(cls):
         recipe = Recipe()
         setattr(cls, Config.PYANHMI_RECIPE, recipe)
-        Cookbook.RECIPES.add(cls)
         return recipe
 
     @staticmethod
@@ -44,6 +43,7 @@ class Cookbook:
         if Cookbook.is_recipe_completed(cls):
             return getattr(cls, Config.PYANHMI_RECIPE)
         recipe = Cookbook._prepare_recipe(cls)
+        Cookbook.RECIPES.add(cls)
         recipe.is_completed = True
 
         field_types = typing.get_type_hints(cls)

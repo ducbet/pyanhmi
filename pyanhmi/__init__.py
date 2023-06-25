@@ -1,17 +1,17 @@
 from pyanhmi.AttributeManager import AttributeManager
 from pyanhmi.objects_normalizer import ObjectsNormalizer
-from .Attributes.AnyAttribute import AnyTypeAttribute
-from .Attributes.CustomAttribute import CustomTypeAttribute
-from .Attributes.DefaultTypeAttribute import DefaultDictTypeAttribute
-from .Attributes.DictAttribute import DictTypeAttribute
-from .Attributes.FrozenSetAttribute import FrozenSetTypeAttribute
-from .Attributes.IntAttribute import IntTypeAttribute
-from .Attributes.ListAttribute import ListTypeAttribute
-from .Attributes.OrderedDictAttribute import OrderedDictTypeAttribute
-from .Attributes.SetAttribute import SetTypeAttribute
-from .Attributes.StrAttribute import StrTypeAttribute
-from .Attributes.TupleAttribute import TupleTypeAttribute
-from .Attributes.UnionAttribute import UnionTypeAttribute
+from .Attributes.AnyAttribute import AnyAttribute
+from .Attributes.CustomAttribute import CustomAttribute
+from .Attributes.DefaultDictAttribute import DefaultDictAttribute
+from .Attributes.DictAttribute import DictAttribute
+from .Attributes.FrozenSetAttribute import FrozenSetAttribute
+from .Attributes.IntAttribute import IntAttribute
+from .Attributes.ListAttribute import ListAttribute
+from .Attributes.OrderedDictAttribute import OrderedDictAttribute
+from .Attributes.SetAttribute import SetAttribute
+from .Attributes.StrAttribute import StrAttribute
+from .Attributes.TupleAttribute import TupleAttribute
+from .Attributes.UnionAttribute import UnionAttribute
 
 
 

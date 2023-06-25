@@ -7,7 +7,7 @@ from pyanhmi.Attributes.Attribute import Attribute, register_attribute
 
 @register_attribute
 @dataclass
-class AnyTypeAttribute(Attribute):
+class AnyAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [typing.Any]
 
     def __init__(self, field_type):
@@ -29,6 +29,11 @@ class AnyTypeAttribute(Attribute):
     def __hash__(self):
         return hash(self.get_hash_content())
 
-    @staticmethod
-    def create(data: dict):
+    def strict_create(self, data):
+        return data
+
+    def casting_create(self, data):
+        return data
+
+    def duck_create(self, data):
         return data

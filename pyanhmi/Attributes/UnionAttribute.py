@@ -1,14 +1,15 @@
 import typing
 from dataclasses import dataclass
+from enum import Enum
 
-from pyanhmi.Config import Config
-from pyanhmi.Attributes.AnyAttribute import AnyTypeAttribute
+from pyanhmi.Config import Config, Mode
+from pyanhmi.Attributes.AnyAttribute import AnyAttribute
 from pyanhmi.Attributes.Attribute import Attribute, register_attribute
 
 
 @register_attribute
 @dataclass
-class UnionTypeAttribute(Attribute):
+class UnionAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [typing.Union]
 
     def __init__(self, field_type):
@@ -16,10 +17,10 @@ class UnionTypeAttribute(Attribute):
         self.value_atts = set()
         for arg in typing.get_args(field_type):
             self.value_atts.add(self.get_TypeManager(arg)(arg))
-        if AnyTypeAttribute in self.value_atts:
-            self.value_atts.remove(AnyTypeAttribute)
+        if AnyAttribute in self.value_atts:
+            self.value_atts.remove(AnyAttribute)
             self.value_atts = list(self.value_atts)
-            self.value_atts.append(AnyTypeAttribute)
+            self.value_atts.append(AnyAttribute)
         else:
             self.value_atts = list(self.value_atts)
         self.value_atts = sorted(self.value_atts, reverse=True)
@@ -43,10 +44,29 @@ class UnionTypeAttribute(Attribute):
         # print(f"UnionAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def create(self, data: typing.Any):
+    def duck_create(self, data):
+        try:
+            for t in self.value_atts:
+                try:
+                    return t.duck_create(data)
+                except TypeError:
+                    pass
+            return data
+        except:
+            return data
+
+    def strict_create(self, data):
         for t in self.value_atts:
             try:
-                return t.create(data)
+                return t.strict_create(data)
+            except TypeError:
+                pass
+        return data
+
+    def casting_create(self, data):
+        for t in self.value_atts:
+            try:
+                return t.casting_create(data)
             except TypeError:
                 pass
         return data

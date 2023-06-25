@@ -8,14 +8,11 @@ from pyanhmi.ObjectCreator import ObjectCreator
 
 @register_attribute
 @dataclass
-class CustomTypeAttribute(Attribute):
+class CustomAttribute(Attribute):
     TYPES: typing.ClassVar[list] = ["CustomTypeAttribute"]  # special case
 
     def __init__(self, field_type):
         super().__init__(field_type)
-
-    def create(self, data: dict):
-        return ObjectCreator.create_obj(data, self.field_type)
 
     def get_att_priority(self):
         return Config.ObjAtt_priority
@@ -31,3 +28,11 @@ class CustomTypeAttribute(Attribute):
         # print(f"ObjAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
+    def duck_create(self, data):
+        return ObjectCreator.create_obj(data, self.field_type)
+
+    def strict_create(self, data):
+        return ObjectCreator.create_obj(data, self.field_type)
+
+    def casting_create(self, data):
+        return ObjectCreator.create_obj(data, self.field_type)

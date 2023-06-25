@@ -1,3 +1,4 @@
+from abc import ABC
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -6,7 +7,7 @@ from pyanhmi.Attributes.Attribute import Attribute
 
 
 @dataclass
-class PrimitiveTypeAttribute(Attribute):
+class PrimitiveAttribute(Attribute, ABC):
     IS_PRIMITIVE_TYPE: ClassVar[bool] = True
 
     def __init__(self, field_type):

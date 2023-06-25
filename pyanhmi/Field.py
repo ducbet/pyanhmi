@@ -1,6 +1,9 @@
+import inspect
+from enum import Enum
 from typing import Any
 
 from pyanhmi.AttributeManager import AttributeManager
+from pyanhmi.Config import Config, Mode
 
 
 class Field:
@@ -16,8 +19,6 @@ class Field:
         self.attribute_type = attribute_type
         self.is_final = AttributeManager.is_final_type(attribute_type)
         self.is_class_var = is_class_var
-
-
 
     @property
     def alias(self) -> str:
@@ -53,8 +54,9 @@ class Field:
     def get_attribute(self):
         return AttributeManager.get_cached_attribute(self.attribute_type)(self.attribute_type)
 
-    def create(self, data):
-        return self._auto_init.create(data)
+    def create(self, data, mode: Mode):
+        # print(f"Field self._auto_init: {self._auto_init}, {inspect.isclass(self._auto_init)}")
+        return self._auto_init.create(data, mode)
 
     def __eq__(self, other: "Field"):
         return (self.alias == other.alias and self.getter_func == other.getter_func)

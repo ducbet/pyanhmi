@@ -193,18 +193,40 @@ class AttributeTypesComposite:
 
 
 @dataclass
-class AttributeTypesChild(AttributeTypesParent):
-    a_dict: dict
+# class AttributeTypesChild(AttributeTypesParent):
+class AttributeTypesChild:
     a_Optional: Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]
+
+
+@dataclass
+class AttDict:
+    a_dict: dict
+
+
+@dataclass
+class AttAny:
     a_Any: Any
+    a_Callable: Callable
+
+@dataclass
+class AttFrozenSet:
     a_FrozenSet: FrozenSet[int]
     a_FrozenSet_str: FrozenSet[str]
-    a_attParent: AttributeTypesParent
+
+@dataclass
+class AttDefaultDict:
     a_DefaultDict: DefaultDict[str, list[AttributeTypesComposite]]
     a_DefaultDict_int: DefaultDict[str, list[int]]
+
+@dataclass
+class AttOrderedDict:
     a_OrderedDict: OrderedDict[str, int]
     a_OrderedDict_list_tuple: OrderedDict[str, int]
-    a_Callable: Callable
+
+
+@dataclass
+class AttClassVar:
+    a_dict: dict
     a_ClassVar: ClassVar[AttributeTypesComposite] = None
     a_ClassVar_2: ClassVar[int] = 13123
     a_Final: Final[int] = 4

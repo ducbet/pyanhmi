@@ -3,13 +3,13 @@ from collections import OrderedDict
 from dataclasses import dataclass
 
 from pyanhmi.Config import Config
-from pyanhmi.Attributes.DictAttribute import DictTypeAttribute
+from pyanhmi.Attributes.DictAttribute import DictAttribute
 from pyanhmi.Attributes.Attribute import register_attribute
 
 
 @register_attribute
 @dataclass
-class OrderedDictTypeAttribute(DictTypeAttribute):
+class OrderedDictAttribute(DictAttribute):
     TYPES: typing.ClassVar[list] = [typing.OrderedDict, OrderedDict]
 
     def __init__(self, field_type):
@@ -30,15 +30,37 @@ class OrderedDictTypeAttribute(DictTypeAttribute):
     def __hash__(self):
         return super().__hash__()
 
-    def create(self, data: dict):
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.key_att}, {self.value_att})"
+
+    def duck_create(self, data: typing.Any):
+        try:
+            if isinstance(data, dict):
+                # the order of provided data is lost if data is dict
+                return OrderedDict({self.key_att.duck_create(k): self.value_att.duck_create(v) for k, v in data.items()})
+            if isinstance(data, list):
+                # accept list of key-value. E.g: OrderedDict([('b',2), ('a', 1)])
+                # the order of provided data is retained if data is list of tuple
+                return OrderedDict([(self.key_att.duck_create(k_v[0]), self.value_att.duck_create(k_v[1])) for k_v in data])
+        except:
+            return data
+
+    def strict_create(self, data):
         if isinstance(data, dict):
             # the order of provided data is lost if data is dict
-            return OrderedDict({self.key_att.create(k): self.value_att.create(v) for k, v in data.items()})
+            return OrderedDict({self.key_att.strict_create(k): self.value_att.strict_create(v) for k, v in data.items()})
         if isinstance(data, list):
             # accept list of key-value. E.g: OrderedDict([('b',2), ('a', 1)])
             # the order of provided data is retained if data is list of tuple
-            return OrderedDict([(self.key_att.create(k_v[0]), self.value_att.create(k_v[1])) for k_v in data])
+            return OrderedDict([(self.key_att.strict_create(k_v[0]), self.value_att.strict_create(k_v[1])) for k_v in data])
         raise TypeError(f"data is not dict or list of key-value tuple: data: {data}")
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.key_att}, {self.value_att})"
+    def casting_create(self, data):
+        if isinstance(data, dict):
+            # the order of provided data is lost if data is dict
+            return OrderedDict({self.key_att.casting_create(k): self.value_att.casting_create(v) for k, v in data.items()})
+        if isinstance(data, list):
+            # accept list of key-value. E.g: OrderedDict([('b',2), ('a', 1)])
+            # the order of provided data is retained if data is list of tuple
+            return OrderedDict([(self.key_att.casting_create(k_v[0]), self.value_att.casting_create(k_v[1])) for k_v in data])
+        raise TypeError(f"data is not dict or list of key-value tuple: data: {data}")

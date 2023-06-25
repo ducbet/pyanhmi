@@ -1,6 +1,6 @@
 from typing import Any
 
-from pyanhmi.Config import Config
+from pyanhmi.Config import Config, Mode
 from pyanhmi.Cookbook import Cookbook
 from pyanhmi.Recipe import Recipe
 
@@ -37,13 +37,15 @@ class ObjectCreator:
         return obj_type()  # will raise error: TypeError: __init__() missing 1 required positional argument...
 
     @staticmethod
-    def create_obj(obj_params: dict, obj_type: Any, recipe: Recipe = None):
-        # print(f"create_obj: obj_type: {obj_type}, {obj_params}")
+    def create_obj(obj_params: dict, obj_type: Any, recipe: Recipe = None, mode: Mode = None):
+        if not isinstance(obj_params, dict):
+            raise TypeError(f"obj_params must be dict. obj_params: {obj_params}")
         if not Cookbook.is_recipe_completed(obj_type):
             Cookbook.create_recipe(cls=obj_type)
 
         # obj_type is cached
         recipe = recipe if recipe else getattr(obj_type, Config.PYANHMI_RECIPE)
+        mode = mode if mode else Config.MODE
         params = {}
         for param, obj_param in obj_params.items():
             if param not in recipe.ingredients:
@@ -52,5 +54,5 @@ class ObjectCreator:
                 continue
             if recipe.ingredients[param].is_class_var:
                 continue
-            params[param] = recipe.ingredients[param].create(obj_param)
+            params[param] = recipe.ingredients[param].create(obj_param, mode=mode)
         return obj_type(**params)

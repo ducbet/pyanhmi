@@ -2,12 +2,12 @@ import typing
 from dataclasses import dataclass
 
 from pyanhmi.Attributes.Attribute import register_attribute
-from pyanhmi.Attributes.PrimitiveAttribute import PrimitiveTypeAttribute
+from pyanhmi.Attributes.PrimitiveAttribute import PrimitiveAttribute
 
 
 @register_attribute
 @dataclass
-class StrTypeAttribute(PrimitiveTypeAttribute):
+class StrAttribute(PrimitiveAttribute):
     TYPES: typing.ClassVar[list] = [str]
 
     def __init__(self, field_type):
@@ -23,7 +23,13 @@ class StrTypeAttribute(PrimitiveTypeAttribute):
         # print(f"StrAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def create(self, data: str):
-        # if not isinstance(data, str):
-        #     raise TypeError(f"data is not str: data: {data}")
+    def duck_create(self, data):
+        return data
+
+    def strict_create(self, data):
+        if not isinstance(data, str):
+            raise TypeError(f"data is not str: data: {data}")
+        return str(data)
+
+    def casting_create(self, data):
         return str(data)

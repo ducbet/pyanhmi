@@ -7,7 +7,6 @@ from pyanhmi.Config import Config
 class AttributeManager:
     CACHED_ATTRIBUTES = {}
 
-
     @staticmethod
     def is_final_type(value_type):
         origin_type = typing.get_origin(value_type)
