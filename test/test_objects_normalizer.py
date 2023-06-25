@@ -1,6 +1,8 @@
+import json
 import random
 import typing
 from collections import defaultdict
+from collections.abc import Mapping, Collection, Iterable
 from datetime import datetime
 from enum import Enum
 from ipaddress import IPv4Address
@@ -13,7 +15,9 @@ from MostOuterSchemaclass import OuterClass
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from common.schema_class import Product, ProductDescription
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, StrClass, \
-    IntClass, AttributeTypesComposite, AttDict, AttAny, AttFrozenSet, AttDefaultDict, AttOrderedDict, AttClassVar
+    IntClass, CompositeClass, AnyDataclass, FrozenSetDataclass, OrderedDictDataclass, ClassVarDataclass, StrDataclass, \
+    IntDataclass, DictsDataclass, DictDataclass, DictClass, DictsClass, DictCompositeClass, DefaultDictDataclass, \
+    NestedDefaultDictDataclass, DefaultDictsDataclass
 from pyanhmi import AttributeManager, IntAttribute
 from pyanhmi.Attributes.AnyAttribute import AnyAttribute
 from pyanhmi.Attributes.DefaultDictAttribute import DefaultDictAttribute
@@ -74,25 +78,25 @@ def test_hash_Att():
 
 
 def test_defaultdict_value_constructor():
-    assert DefaultDictAttribute(typing.DefaultDict[str, int]).value_constructor == int
-    assert DefaultDictAttribute(typing.DefaultDict[str, float]).value_constructor == float
+    assert DefaultDictAttribute(typing.DefaultDict[str, int]).get_default_factory == int
+    assert DefaultDictAttribute(typing.DefaultDict[str, float]).get_default_factory == float
 
-    assert DefaultDictAttribute(typing.DefaultDict[str, list]).value_constructor == list
-    assert DefaultDictAttribute(typing.DefaultDict[str, list[int]]).value_constructor == list
-    assert DefaultDictAttribute(typing.DefaultDict[str, typing.List[int]]).value_constructor == list
+    assert DefaultDictAttribute(typing.DefaultDict[str, list]).get_default_factory == list
+    assert DefaultDictAttribute(typing.DefaultDict[str, list[int]]).get_default_factory == list
+    assert DefaultDictAttribute(typing.DefaultDict[str, typing.List[int]]).get_default_factory == list
 
-    assert DefaultDictAttribute(typing.DefaultDict[str, set]).value_constructor == set
-    assert DefaultDictAttribute(typing.DefaultDict[str, set[int]]).value_constructor == set
-    assert DefaultDictAttribute(typing.DefaultDict[str, typing.Set[int]]).value_constructor == set
+    assert DefaultDictAttribute(typing.DefaultDict[str, set]).get_default_factory == set
+    assert DefaultDictAttribute(typing.DefaultDict[str, set[int]]).get_default_factory == set
+    assert DefaultDictAttribute(typing.DefaultDict[str, typing.Set[int]]).get_default_factory == set
 
-    assert DefaultDictAttribute(typing.DefaultDict[str, dict]).value_constructor == dict
-    assert DefaultDictAttribute(typing.DefaultDict[str, dict[str, int]]).value_constructor == dict
+    assert DefaultDictAttribute(typing.DefaultDict[str, dict]).get_default_factory == dict
+    assert DefaultDictAttribute(typing.DefaultDict[str, dict[str, int]]).get_default_factory == dict
 
     try:
         ObjectCreator.create_obj({}, AttributeTypesParent)
     except:
         pass
-    assert DefaultDictAttribute(typing.DefaultDict[str, dict[str, AttributeTypesParent]]).value_constructor == dict
+    assert DefaultDictAttribute(typing.DefaultDict[str, dict[str, AttributeTypesParent]]).get_default_factory == dict
 
 
 def test_sort_union_args():
@@ -191,15 +195,379 @@ def test_create_obj():
         "a_ClassVar_2": 1,
 
     }
-    obj = ObjectCreator.create_obj(data, AttributeTypesChild)
-    obj = ObjectCreator.create_obj(data, AttDict)
-    obj = ObjectCreator.create_obj(data, AttAny)
-    obj = ObjectCreator.create_obj(data, AttFrozenSet)
-    obj = ObjectCreator.create_obj(data, AttDefaultDict)
-    obj = ObjectCreator.create_obj(data, AttOrderedDict)
-    obj = ObjectCreator.create_obj(data, AttClassVar)
+    # obj = ObjectCreator.create_obj(data, AttributeTypesChild)
+    # obj = ObjectCreator.create_obj(data, AttDict)
+    # obj = ObjectCreator.create_obj(data, AttAny)
+    # obj = ObjectCreator.create_obj(data, AttFrozenSet)
+    # obj = ObjectCreator.create_obj(data, AttOrderedDict)
+    # obj = ObjectCreator.create_obj(data, AttClassVar)
     # assert isinstance(obj.a_tuple, tuple)
     # assert isinstance(obj.a_Optional, tuple)
+
+
+def test_create_str_casting():
+    Config.MODE = Mode.CASTING
+
+    obj = ObjectCreator.create_obj({"val_1": "123"}, StrDataclass)
+    assert obj.val_1 == "123"
+
+    obj = ObjectCreator.create_obj({"val_1": "123"}, StrClass)
+    assert obj.val_1 == "123"
+
+    obj = ObjectCreator.create_obj({"val_1": 123}, StrDataclass)
+    assert obj.val_1 == "123"
+
+    obj = ObjectCreator.create_obj({"val_1": 123}, StrClass)
+    assert obj.val_1 == "123"
+
+
+def test_create_int_casting():
+    Config.MODE = Mode.CASTING
+    obj = ObjectCreator.create_obj({"val_1": 123}, IntDataclass)
+    assert obj.val_1 == 123
+
+    obj = ObjectCreator.create_obj({"val_1": 123}, IntClass)
+    assert obj.val_1 == 123
+
+    obj = ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
+    assert obj.val_1 == 123
+
+    obj = ObjectCreator.create_obj({"val_1": "123"}, IntClass)
+    assert obj.val_1 == 123
+
+
+def test_create_dict_duck():
+    Config.MODE = Mode.DUCK
+
+    data = {
+        "val_1": {
+            "1": {
+                "val_1": 2
+            }
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DictCompositeClass)
+    assert isinstance(obj.val_1["1"], IntClass)
+    assert obj.val_1["1"].val_1 == 2
+
+    data = {
+        "val_1": {
+            "1": {
+                "val_1": "2"
+            }
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DictCompositeClass)
+    assert isinstance(obj.val_1["1"], IntClass)
+    assert obj.val_1["1"].val_1 == "2"
+
+
+def test_create_dict_strict():
+    Config.MODE = Mode.STRICT
+
+    obj_dataclass = ObjectCreator.create_obj({"val_1": {"1": 2}}, DictDataclass)
+    obj = ObjectCreator.create_obj({"val_1": {"1": 2}}, DictClass)
+    assert obj_dataclass.__dict__ == obj.__dict__
+    assert obj.val_1 == {"1": 2}
+
+    try:
+        ObjectCreator.create_obj({"val_1": {123, 123}}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not dict" in str(e)
+
+    try:
+        ObjectCreator.create_obj({"val_1": {123: 123}}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not str" in str(e)
+
+    try:
+        ObjectCreator.create_obj({"val_1": {"123": "123"}}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not int" in str(e)
+
+    try:
+        ObjectCreator.create_obj({"val_1": "123"}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not dict" in str(e)
+
+    try:
+        ObjectCreator.create_obj({"val_1": ["123"]}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not dict" in str(e)
+
+    try:
+        ObjectCreator.create_obj({"val_1": [[1, "2"], ["3", "4"]]}, DictClass)
+        assert False
+    except TypeError as e:
+        assert "data is not dict" in str(e)
+
+    try:
+        ObjectCreator.create_obj({"val_1": [(1, "2"), ("3", "4")]}, DictClass)
+        assert False
+    except TypeError as e:
+        assert "data is not dict" in str(e)
+
+    data = {
+        "val_1": {
+            "1": {
+                "val_1": 2
+            }
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DictCompositeClass)
+    assert isinstance(obj.val_1["1"], IntClass)
+    assert obj.val_1["1"].val_1 == 2
+
+    data = {
+        "val_1": {
+            "1": {
+                "val_1": "2"
+            }
+        }
+    }
+    try:
+        ObjectCreator.create_obj(data, DictCompositeClass)
+        assert False
+    except TypeError as e:
+        assert "data is not int" in str(e)
+
+
+def test_create_dict_casting():
+    Config.MODE = Mode.CASTING
+
+    data = {
+            "val_1": [(1.1, "2")],
+            "val_2": [["3", 4]],
+            "val_3": {"5": "6"},
+            "val_4": ["78"],
+        }
+
+    obj_dataclass = ObjectCreator.create_obj(data, DictsDataclass)
+    obj = ObjectCreator.create_obj(data, DictsClass)
+    assert obj_dataclass.__dict__ == obj.__dict__
+    assert obj_dataclass.val_1 == {1.1: "2"}  # val_1: dict -> no format
+    assert obj_dataclass.val_2 == {"3": 4}  # val_2: Dict -> no format
+    assert obj_dataclass.val_3 == {"5": 6}  # val_3: Dict[str, int]
+    assert obj_dataclass.val_4 == {7: "8"}  # val_4: dict[int, str]
+
+    obj = ObjectCreator.create_obj({"val_1": ["123"]}, DictDataclass)
+    assert obj.val_1 == {"1": 2}
+
+    obj = ObjectCreator.create_obj({"val_1": [[1, "2"], ["3", "4"]]}, DictClass)
+    assert obj.val_1 == {"1": 2, "3": 4}
+
+    obj = ObjectCreator.create_obj({"val_1": [(1, "2"), ("3", "4")]}, DictClass)
+    assert obj.val_1 == {"1": 2, "3": 4}
+
+    try:
+        # data = [{1, "2"}, {"3", "4"}]. data[0][0] will raise error
+        ObjectCreator.create_obj({"val_1": [{1, "2"}, {"3", "4"}]}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not key-value Iterable" in str(e)
+
+    try:
+        # data = ["1", "2"]. data[0][1] will raise error
+        ObjectCreator.create_obj({"val_1": ["1", "2"]}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not key-value Iterable" in str(e)
+
+    try:
+        # data = [("1")]. data[0][1] will raise error
+        ObjectCreator.create_obj({"val_1": [("1")]}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not key-value Iterable" in str(e)
+
+    try:
+        # data = [("3", "4"), (1)]. data[1][1] will raise error
+        ObjectCreator.create_obj({"val_1": [("3", "4"), (1)]}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not key-value Iterable" in str(e)
+
+    try:
+        # data = 123. 123 is not Iterable
+        ObjectCreator.create_obj({"val_1": 123}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not dict or key-value Iterable" in str(e)
+
+    try:
+        # data = "123". data[0][0] will raise error
+        ObjectCreator.create_obj({"val_1": "123"}, DictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not key-value Iterable" in str(e)
+
+    data = {
+        "val_1": {
+            "1": {
+                "val_1": "2"
+            }
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DictCompositeClass)
+    assert isinstance(obj.val_1["1"], IntClass)
+    assert obj.val_1["1"].val_1 == 2
+
+
+def test_create_defaultdict_duck():
+    Config.MODE = Mode.DUCK
+
+    data = {
+        "val_1": {
+            "1": [2, 3.1]
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
+    obj.val_1["4"].append(5)
+    obj.val_1["4"].append(6)
+    assert isinstance(obj.val_1, defaultdict)
+    assert dict(obj.val_1) == {"1": [2, 3.1], "4": [5, 6]}
+
+    # todo change ListAttribute to avoid convert str to list???
+    data = {
+        "val_1": {
+            "1": "234"
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
+    obj.val_1["5"].append(6)
+    obj.val_1["5"].append(7)
+    assert isinstance(obj.val_1, defaultdict)
+    assert dict(obj.val_1) == {"1": ["2", "3", "4"], "5": [6, 7]}
+
+    data = {
+        "val_1": {
+            "1": {
+                "2": {
+                    "3": [4, 5]
+                }
+            }
+        }
+    }
+    obj = ObjectCreator.create_obj(data, NestedDefaultDictDataclass)
+    obj.val_1["1"]["2"]["6"].append(7)
+    obj.val_1["1"]["2"]["6"].append(8)
+
+    obj.val_1["1"]["9"]["10"].append(11)
+    obj.val_1["1"]["9"]["10"].append(12)
+
+    obj.val_1["13"]["14"]["15"].append(16)
+    obj.val_1["13"]["14"]["15"].append(17)
+    expect_result = {
+        "1": {
+            "2": {
+                "3": [4, 5],
+                "6": [7, 8],
+            },
+            "9": {
+                "10": [11, 12],
+            },
+        },
+        "13": {
+            "14": {
+                "15": [16, 17],
+            }
+        }
+    }
+    assert json.dumps(obj.val_1) == json.dumps(expect_result)
+
+
+def test_create_defaultdict_strict():
+    Config.MODE = Mode.STRICT
+
+    data = {
+        "val_1": {
+            "1": [2, 3]
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
+    obj.val_1["4"].append(5)
+    obj.val_1["4"].append(6)
+    assert isinstance(obj.val_1, defaultdict)
+    assert dict(obj.val_1) == {"1": [2, 3], "4": [5, 6]}
+
+
+    data = {
+        "val_1": {
+            "1": [2, "3"]
+        }
+    }
+    try:
+        ObjectCreator.create_obj(data, DefaultDictDataclass)
+        assert False
+    except TypeError as e:
+        assert "data is not int" in str(e)
+
+
+    data = {
+        "val_1": {
+            "1": [
+                {
+                    "composite": "composite 1"
+                },
+                {
+                    "composite": "composite 2"
+                }
+            ]
+        },
+        "val_2": {
+            "2": [3, 4]
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DefaultDictsDataclass)
+    obj.val_1["5"].append(CompositeClass("composite 3"))
+    obj.val_2["6"].append(7)
+    assert isinstance(obj.val_1, defaultdict)
+    assert isinstance(obj.val_2, defaultdict)
+    assert all(isinstance(com, CompositeClass) for com in obj.val_1["1"])
+    assert {k1: [com.__dict__ for com in v1] for k1, v1 in obj.val_1.items()} == {
+        "1": [
+            {
+                "composite": "composite 1"
+            },
+            {
+                "composite": "composite 2"
+            }
+        ],
+        "5": [
+            {
+                "composite": "composite 3"
+            }
+        ]
+    }
+    assert dict(obj.val_2) == {"2": [3, 4], "6": [7]}
+
+
+def test_create_defaultdict_casting():
+    Config.MODE = Mode.CASTING
+
+    data = {
+        "val_1": {
+            1: [2, 3.1, "4"]
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
+    assert isinstance(obj.val_1, defaultdict)
+    assert dict(obj.val_1) == {"1": [2, 3, 4]}
+
+def test_mapping_instance():
+    assert isinstance(123, Iterable) is False
+    assert isinstance(123.1, Iterable) is False
+
+    assert isinstance([1, 2, 3], Iterable) is True
+    assert isinstance("123", Iterable) is True
+    assert isinstance([("a", 1), ("b", 2)], Iterable) is True
+    assert isinstance([(1, 1), (2, 2)], Iterable) is True
+    assert isinstance({"a": 1, "b": 2}, Iterable) is True
 
 
 def test_create_obj_runtime_recipe():
@@ -408,7 +776,7 @@ def test_get_all_objs():
 
 def test_get_normalizable_fields():
     normalizable_fields = AttributeManager.get_user_defined_types(AttributeTypesChild)
-    assert normalizable_fields == {AttributeTypesChild, AttributeTypesParent, AttributeTypesComposite}
+    assert normalizable_fields == {AttributeTypesChild, AttributeTypesParent, CompositeClass}
 
 
 def test_is_normalizable_fields():

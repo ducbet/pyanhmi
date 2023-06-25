@@ -1,5 +1,6 @@
 import inspect
 import typing
+from collections.abc import Mapping, Iterable
 from dataclasses import dataclass
 
 from pyanhmi.Attributes.Attribute import register_attribute, Attribute
@@ -38,14 +39,23 @@ class DictAttribute(Attribute):
 
     def duck_create(self, data):
         try:
-            return {self.key_att.duck_create(k): self.value_att.duck_create(v) for k, v in data.items()}
+            return dict({self.key_att.duck_create(k): self.value_att.duck_create(v) for k, v in data.items()})
         except:
             return data
 
     def strict_create(self, data: dict):
         if not isinstance(data, dict):
-            raise TypeError(f"data is not dict: data: {data}")
-        return {self.key_att.strict_create(k): self.value_att.strict_create(v) for k, v in data.items()}
+            raise TypeError(f"data is not dict. data: {data}")
+        return dict({self.key_att.strict_create(k): self.value_att.strict_create(v) for k, v in data.items()})
 
     def casting_create(self, data):
-        return {self.key_att.casting_create(k): self.value_att.casting_create(v) for k, v in data.items()}
+        if isinstance(data, dict):
+            return {self.key_att.casting_create(k): self.value_att.casting_create(v) for k, v in data.items()}
+        if isinstance(data, Iterable):
+            if len(data) == 0:
+                return dict()
+            try:
+                return dict({self.key_att.casting_create(v[0]): self.value_att.casting_create(v[1]) for v in data})
+            except (TypeError, IndexError):
+                raise TypeError(f"data is not key-value Iterable. data: {data}")
+        raise TypeError(f"data is not dict or key-value Iterable. data: {data}")

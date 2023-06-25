@@ -47,6 +47,7 @@ class ObjectCreator:
         recipe = recipe if recipe else getattr(obj_type, Config.PYANHMI_RECIPE)
         mode = mode if mode else Config.MODE
         params = {}
+        # print(recipe)
         for param, obj_param in obj_params.items():
             if param not in recipe.ingredients:
                 continue

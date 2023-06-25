@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import ClassVar, List, Final, FrozenSet, Optional, Tuple, Dict, Union, Set, Any, DefaultDict, OrderedDict, \
     Callable
@@ -188,63 +189,148 @@ class AttributeTypesParent:
 
 
 @dataclass
-class AttributeTypesComposite:
-    a_List: List[AttributeTypesParent]
-
-
-@dataclass
 # class AttributeTypesChild(AttributeTypesParent):
 class AttributeTypesChild:
     a_Optional: Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]
 
 
-@dataclass
-class AttDict:
-    a_dict: dict
-
-class AttDictClassic:
-    def __init__(self, a_dict: dict):
-        self.a_dict = a_dict
-
-@dataclass
-class AttAny:
-    a_Any: Any
-    a_Callable: Callable
-
-@dataclass
-class AttFrozenSet:
-    a_FrozenSet: FrozenSet[int]
-    a_FrozenSet_str: FrozenSet[str]
-
-@dataclass
-class AttDefaultDict:
-    a_DefaultDict: DefaultDict[str, list[AttributeTypesComposite]]
-    a_DefaultDict_int: DefaultDict[str, list[int]]
-
-@dataclass
-class AttOrderedDict:
-    a_OrderedDict: OrderedDict[str, int]
-    a_OrderedDict_list_tuple: OrderedDict[str, int]
+class CompositeClass:
+    def __init__(self, composite: str):
+        self.composite = composite
 
 
 @dataclass
-class AttClassVar:
-    a_dict: dict
-    a_ClassVar: ClassVar[AttributeTypesComposite] = None
-    a_ClassVar_2: ClassVar[int] = 13123
-    a_Final: Final[int] = 4
+class StrDataclass:
+    val_1: str
 
 
-
-
-@dataclass
 class StrClass:
-    id: str
+    def __init__(self, val_1: str):
+        self.val_1 = val_1
 
 
 @dataclass
+class IntDataclass:
+    val_1: int
+
+
 class IntClass:
-    id: int
+    def __init__(self, val_1: int):
+        self.val_1 = val_1
 
 
+@dataclass
+class DictDataclass:
+    val_1: Dict[str, int]
+
+
+class DictClass:
+    def __init__(self, val_1: Dict[str, int]):
+        self.val_1 = val_1
+
+
+class DictCompositeClass:
+    def __init__(self, val_1: Dict[str, IntClass]):
+        self.val_1 = val_1
+
+
+@dataclass
+class DictsDataclass:
+    val_1: dict
+    val_2: Dict
+    val_3: Dict[str, int]
+    val_4: dict[int, str]
+
+
+@dataclass
+class DictsClass:
+    def __init__(self, val_1: dict, val_2: Dict, val_3: Dict[str, int], val_4: dict[int, str]):
+        self.val_1 = val_1
+        self.val_2 = val_2
+        self.val_3 = val_3
+        self.val_4 = val_4
+
+
+@dataclass
+class DefaultDictDataclass:
+    val_1: DefaultDict[str, list[int]]
+
+
+@dataclass
+class NestedDefaultDictDataclass:
+    val_1: DefaultDict[str, DefaultDict[str, DefaultDict[str, list[int]]]]
+
+
+@dataclass
+class DefaultDictsDataclass:
+    val_1: defaultdict[str, list[CompositeClass]]
+    val_2: DefaultDict[str, list[int]]
+
+
+class DefaultDictsClass:
+    def __init__(self, val_1: defaultdict[str, list[CompositeClass]], val_2: DefaultDict[str, list[int]]):
+        self.val_1 = val_1
+        self.val_2 = val_2
+
+
+@dataclass
+class OrderedDictDataclass:
+    val_1: OrderedDict[str, int]
+
+
+class OrderedDictClass:
+    def __init__(self, val_1: OrderedDict[str, int]):
+        self.val_1 = val_1
+
+
+@dataclass
+class FrozenSetDataclass:
+    val_1: FrozenSet[int]
+    val_2: FrozenSet[str]
+
+
+class FrozenSetClass:
+    def __init__(self, val_1: FrozenSet[int], val_2: FrozenSet[str]):
+        self.val_1 = val_1
+        self.val_2 = val_2
+
+
+@dataclass
+class AnyDataclass:
+    val_1: Any
+    val_2: any
+
+
+class AnyClass:
+    def __init__(self, val_1: Any, val_2: any):
+        self.val_1 = val_1
+        self.val_2 = val_2
+
+
+@dataclass
+class CallableDataclass:
+    val_1: Callable
+
+
+class CallableClass:
+    def __init__(self, val_1: Callable):
+        self.val_1 = val_1
+
+
+@dataclass
+class ClassVarDataclass:
+    val_1: ClassVar[CompositeClass] = None
+    val_2: ClassVar[int] = 13123
+
+
+class ClassVarClass:
+    val_1: ClassVar[CompositeClass]
+    val_2: ClassVar[int] = 13123
+
+    def __init__(self):
+        pass
+
+@dataclass
+class FinalDataclass:
+    val_1: Final[int] = 4
 

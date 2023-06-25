@@ -29,7 +29,7 @@ class IntAttribute(PrimitiveAttribute):
 
     def strict_create(self, data: int):
         if not isinstance(data, int):
-            raise TypeError(f"data is not int: data: {data}")
+            raise TypeError(f"data is not int. data: {data}")
         return int(data)
 
     def casting_create(self, data):

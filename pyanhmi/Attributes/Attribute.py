@@ -6,11 +6,8 @@ from pyanhmi.Config import Config, Mode
 
 
 def register_attribute(cls):
-    # if not Config.MODE and getattr(cls, "IS_PRIMITIVE_TYPE", False):
-    #     return cls
-
     AttributeManager.CACHED_ATTRIBUTES.update({cls_type: cls for cls_type in cls.TYPES})
-    print(f"cls: {cls}, cls.SUPPORT_TYPES {AttributeManager.CACHED_ATTRIBUTES}")
+    # print(f"cls: {cls}, cls.SUPPORT_TYPES {AttributeManager.CACHED_ATTRIBUTES}")
     return cls
 
 

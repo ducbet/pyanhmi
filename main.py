@@ -1,11 +1,9 @@
-import inspect
+import json
+from collections import defaultdict
 
-from common.schema_class import Product, ProductDescription
-from common.schema_classes_test import StrClass, IntClass, ClassicParent, Level4, AttributeTypesChild, AttDict, AttAny, \
-    AttFrozenSet, AttDefaultDict, AttOrderedDict, AttClassVar, AttDictClassic
-from pyanhmi import ObjectsNormalizer, StrAttribute, AnyAttribute
+from common.schema_classes_test import StrDataclass, DictsDataclass, DictClass, DictDataclass, DictsClass, \
+    DefaultDictDataclass, NestedDefaultDictDataclass, DefaultDictsDataclass, CompositeClass
 from pyanhmi.Config import timer, Mode, Config
-from pyanhmi.Cookbook import Cookbook
 from pyanhmi.ObjectCreator import ObjectCreator
 
 
@@ -24,19 +22,15 @@ def replace_in_place():
 
 
 if __name__ == '__main__':
-    Config.MODE = Mode.CASTING
-    print()
-    print()
-    print()
-    print()
-
+    Config.MODE = Mode.DUCK
     data = {
-        "a_dict": {"a_dict_key": "a_dict_val"},
-
+        "val_1": {
+            "1": "2"
+        }
     }
-    # obj = ObjectCreator.create_obj(data, AttributeTypesChild)
-    obj = ObjectCreator.create_obj(data, AttDict)
-    print(f"obj: {obj.__dict__}")
-    print("---")
-    obj = ObjectCreator.create_obj(data, AttDictClassic)
-    print(f"obj: {obj.__dict__}")
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
+    obj.val_1["4"].append(5)
+    obj.val_1["4"].append(6)
+    print(obj.val_1)
+    assert isinstance(obj.val_1, defaultdict)
+    assert dict(obj.val_1) == {"1": "2", "4": [5, 6]}

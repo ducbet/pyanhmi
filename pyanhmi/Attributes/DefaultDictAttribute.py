@@ -14,11 +14,15 @@ class DefaultDictAttribute(DictAttribute):
     def __init__(self, field_type):
         super().__init__(field_type)
 
-    @property
-    def value_constructor(self):
-        origin_type = typing.get_origin(self.value_type)
-        # print(f"value_constructor: {self.value_type}, origin_type: {origin_type}")
-        return origin_type if origin_type else self.value_type
+    def get_default_factory(self, value_type):
+        origin_type = typing.get_origin(value_type)
+        default_factory = origin_type if origin_type else value_type
+        if origin_type is defaultdict:
+            nested_value_type = typing.get_args(value_type)[1]
+            nested_value_constructor = self.get_default_factory(nested_value_type)
+            default_factory = defaultdict(nested_value_constructor)
+            return lambda: default_factory
+        return default_factory
 
     def get_att_priority(self):
         return super().get_att_priority()
@@ -34,17 +38,12 @@ class DefaultDictAttribute(DictAttribute):
 
     def duck_create(self, data: typing.Any):
         try:
-            data = {self.key_att.duck_create(k): self.value_att.duck_create(v) for k, v in data.items()}
-            return defaultdict(self.value_constructor, data)
+            return defaultdict(self.get_default_factory(self.value_type), super().duck_create(data))
         except:
             return data
 
     def strict_create(self, data: defaultdict):
-        if not isinstance(data, defaultdict):
-            raise TypeError(f"data is not defaultdict: data: {data}")
-        dict_data = {self.key_att.strict_create(k): self.value_att.strict_create(v) for k, v in data.items()}
-        return defaultdict(self.value_constructor, dict_data)
+        return defaultdict(self.get_default_factory(self.value_type), super().strict_create(data))
 
     def casting_create(self, data):
-        data = {self.key_att.casting_create(k): self.value_att.casting_create(v) for k, v in data.items()}
-        return defaultdict(self.value_constructor, data)
+        return defaultdict(self.get_default_factory(self.value_type), super().casting_create(data))
