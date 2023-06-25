@@ -205,35 +205,88 @@ def test_create_obj():
     # assert isinstance(obj.a_Optional, tuple)
 
 
+def test_create_int_duck():
+    Config.MODE = Mode.DUCK
+
+    obj = ObjectCreator.create_obj({"val_1": 123.1}, StrClass)
+    assert obj.val_1 == 123.1
+
+
+def test_create_str_strict():
+    Config.MODE = Mode.STRICT
+
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, StrDataclass)
+    obj = ObjectCreator.create_obj({"val_1": "123"}, StrClass)
+    assert obj_dataclass.__dict__ == obj.__dict__
+    assert obj.val_1 == "123"
+
+    try:
+        ObjectCreator.create_obj({"val_1": 123}, StrDataclass)
+    except TypeError as e:
+        assert "data is not str" in str(e)
+
+    try:
+        ObjectCreator.create_obj({"val_1": 123}, StrClass)
+    except TypeError as e:
+        assert "data is not str" in str(e)
+
+
 def test_create_str_casting():
     Config.MODE = Mode.CASTING
 
-    obj = ObjectCreator.create_obj({"val_1": "123"}, StrDataclass)
-    assert obj.val_1 == "123"
-
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, StrDataclass)
     obj = ObjectCreator.create_obj({"val_1": "123"}, StrClass)
+    assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == "123"
 
-    obj = ObjectCreator.create_obj({"val_1": 123}, StrDataclass)
-    assert obj.val_1 == "123"
-
+    obj_dataclass = ObjectCreator.create_obj({"val_1": 123}, StrDataclass)
     obj = ObjectCreator.create_obj({"val_1": 123}, StrClass)
+    assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == "123"
+
+
+def test_create_int_duck():
+    Config.MODE = Mode.DUCK
+
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
+    assert obj_dataclass.val_1 == "123"
+
+    obj = ObjectCreator.create_obj({"val_1": 123.1}, IntClass)
+    assert obj.val_1 == 123.1
+
+
+def test_create_int_strict():
+    Config.MODE = Mode.STRICT
+
+    obj_dataclass = ObjectCreator.create_obj({"val_1": 123}, IntDataclass)
+    obj = ObjectCreator.create_obj({"val_1": 123}, IntClass)
+    assert obj_dataclass.__dict__ == obj.__dict__
+    assert obj.val_1 == 123
+
+    try:
+        ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
+    except TypeError as e:
+        assert "data is not int" in str(e)
+
+    try:
+        ObjectCreator.create_obj({"val_1": "123"}, IntClass)
+    except TypeError as e:
+        assert "data is not int" in str(e)
 
 
 def test_create_int_casting():
     Config.MODE = Mode.CASTING
-    obj = ObjectCreator.create_obj({"val_1": 123}, IntDataclass)
-    assert obj.val_1 == 123
 
+    obj_dataclass = ObjectCreator.create_obj({"val_1": 123}, IntDataclass)
     obj = ObjectCreator.create_obj({"val_1": 123}, IntClass)
+    assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == 123
 
-    obj = ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
-    assert obj.val_1 == 123
-
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
     obj = ObjectCreator.create_obj({"val_1": "123"}, IntClass)
-    assert obj.val_1 == 123
+    assert obj_dataclass.__dict__ == obj.__dict__
+    assert obj_dataclass.val_1 == 123
+
 
 
 def test_create_dict_duck():
