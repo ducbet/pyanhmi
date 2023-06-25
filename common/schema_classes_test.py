@@ -202,6 +202,9 @@ class AttributeTypesChild:
 class AttDict:
     a_dict: dict
 
+class AttDictClassic:
+    def __init__(self, a_dict: dict):
+        self.a_dict = a_dict
 
 @dataclass
 class AttAny:
@@ -230,6 +233,8 @@ class AttClassVar:
     a_ClassVar: ClassVar[AttributeTypesComposite] = None
     a_ClassVar_2: ClassVar[int] = 13123
     a_Final: Final[int] = 4
+
+
 
 
 @dataclass

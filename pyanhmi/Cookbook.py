@@ -46,7 +46,8 @@ class Cookbook:
         Cookbook.RECIPES.add(cls)
         recipe.is_completed = True
 
-        field_types = typing.get_type_hints(cls)
+        field_types = cls.__init__.__annotations__
+        # todo should have typing.get_type_hints(cls) to get class variable or not?
         for att in Cookbook.get_instance_attributes(obj):
             attribute_type = field_types.get(att, typing.Any)
 
