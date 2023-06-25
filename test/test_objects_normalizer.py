@@ -100,25 +100,25 @@ def test_sort_union_args():
         ObjectCreator.create_obj({}, AttributeTypesParent)
     except:
         pass
-    value_atts = UnionAttribute(Union[int, str, Any]).value_atts
+    value_atts = UnionAttribute(Union[int, str, Any]).smart_union_value_atts
     assert len(value_atts) == 3
 
-    value_atts = UnionAttribute(Union[int, List[str]]).value_atts
+    value_atts = UnionAttribute(Union[int, List[str]]).smart_union_value_atts
     assert len(value_atts) == 2
     assert value_atts[0].__class__ == ListAttribute
     assert value_atts[1].__class__ == IntAttribute
 
-    value_atts = UnionAttribute(Union[int, List[str], List[int]]).value_atts
+    value_atts = UnionAttribute(Union[int, List[str], List[int]]).smart_union_value_atts
     assert len(value_atts) == 3
     assert value_atts[0].__class__ == ListAttribute
     assert value_atts[1].__class__ == ListAttribute
     assert value_atts[2].__class__ == IntAttribute
 
-    value_atts = UnionAttribute(Union[List[str], int, Dict[str, int]]).value_atts
+    value_atts = UnionAttribute(Union[List[str], int, Dict[str, int]]).smart_union_value_atts
     assert len(value_atts) == 3
     assert value_atts[-1].__class__ == IntAttribute
 
-    value_atts = UnionAttribute(Union[List[str], int, Dict[str, AttributeTypesParent]]).value_atts
+    value_atts = UnionAttribute(Union[List[str], int, Dict[str, AttributeTypesParent]]).smart_union_value_atts
     assert len(value_atts) == 3
     assert value_atts[0].__class__ == DictAttribute
     assert value_atts[1].__class__ == ListAttribute
