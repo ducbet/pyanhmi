@@ -2,6 +2,7 @@ from typing import Any
 
 from pyanhmi.Config import Config, Mode
 from pyanhmi.Cookbook import Cookbook
+from pyanhmi.Error import InvalidDatatype
 from pyanhmi.Recipe import Recipe
 
 
@@ -39,7 +40,7 @@ class ObjectCreator:
     @staticmethod
     def create_obj(obj_params: dict, obj_type: Any, recipe: Recipe = None, mode: Mode = None):
         if not isinstance(obj_params, dict):
-            raise TypeError(f"obj_params must be dict. obj_params: {obj_params}")
+            raise InvalidDatatype(msg="obj_params must be dict", expects=dict, data=obj_params)
         if not Cookbook.is_recipe_completed(obj_type):
             Cookbook.create_recipe(cls=obj_type)
 

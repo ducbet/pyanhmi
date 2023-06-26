@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from pyanhmi.Attributes.Attribute import register_attribute, Attribute
 from pyanhmi.Config import Config
+from pyanhmi.Error import InvalidDatatype
 
 
 @register_attribute
@@ -45,7 +46,7 @@ class DictAttribute(Attribute):
 
     def strict_create(self, data: dict):
         if not isinstance(data, dict):
-            raise TypeError(f"data is not dict. data: {data}")
+            raise InvalidDatatype(expects=dict, data=data)
         return dict({self.key_att.strict_create(k): self.value_att.strict_create(v) for k, v in data.items()})
 
     def casting_create(self, data):
@@ -56,6 +57,8 @@ class DictAttribute(Attribute):
                 return dict()
             try:
                 return dict({self.key_att.casting_create(v[0]): self.value_att.casting_create(v[1]) for v in data})
-            except (TypeError, IndexError):
-                raise TypeError(f"data is not key-value Iterable. data: {data}")
-        raise TypeError(f"data is not dict or key-value Iterable. data: {data}")
+            except TypeError as e:
+                raise InvalidDatatype(expects=Iterable, data=data)
+            except IndexError:
+                raise InvalidDatatype(expects=f"key-value {Iterable}", data=data)
+        raise InvalidDatatype(expects=[dict, f"key-value {Iterable}"], data=data)

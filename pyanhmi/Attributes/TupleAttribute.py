@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from pyanhmi.Config import Config
 from pyanhmi.Attributes.Attribute import register_attribute, Attribute
+from pyanhmi.Error import InvalidDatatype
 
 
 @register_attribute
@@ -45,7 +46,7 @@ class TupleAttribute(Attribute):
 
     def strict_create(self, data):
         if not isinstance(data, tuple):
-            raise TypeError(f"data is not tuple: data: {data}")
+            raise InvalidDatatype(expects=tuple, data=data)
         if not self.value_atts:
             return data
         return tuple(self.value_atts[i].strict_create(val) for i, val in enumerate(data))

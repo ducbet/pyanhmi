@@ -59,7 +59,7 @@ class Field:
         return self._auto_init.create(data, mode)
 
     def __eq__(self, other: "Field"):
-        return (self.alias == other.alias and self.getter_func == other.getter_func)
+        return self.alias == other.alias and self.getter_func == other.getter_func
 
     def __repr__(self):
         return f"NormalizeRule(" \

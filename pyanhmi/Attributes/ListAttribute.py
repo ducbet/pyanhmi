@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from pyanhmi.Config import Config
 from pyanhmi.Attributes.Attribute import register_attribute, Attribute
+from pyanhmi.Error import InvalidDatatype
 
 
 @register_attribute
@@ -39,7 +40,7 @@ class ListAttribute(Attribute):
 
     def strict_create(self, data: list):
         if not isinstance(data, list):
-            raise TypeError(f"data is not list: data: {data}")
+            raise InvalidDatatype(expects=list, data=data)
         # print(f"{self.__class__} self.value_att: {self.value_att}, data: {data}")
         return list(self.value_att.strict_create(v) for v in data)
 

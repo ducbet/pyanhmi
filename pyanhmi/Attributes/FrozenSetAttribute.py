@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from pyanhmi.Attributes.Attribute import register_attribute
 from pyanhmi.Attributes.SetAttribute import SetAttribute
+from pyanhmi.Error import InvalidDatatype
 
 
 @register_attribute
@@ -34,7 +35,7 @@ class FrozenSetAttribute(SetAttribute):
 
     def strict_create(self, data):
         if not isinstance(data, Iterable):
-            raise TypeError(f"data is not Iterable: data: {data}")
+            raise InvalidDatatype(expects=Iterable, data=data)
         return frozenset([self.value_att.strict_create(v) for v in data])
 
     def casting_create(self, data):

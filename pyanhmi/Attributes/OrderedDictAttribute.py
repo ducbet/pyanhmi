@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pyanhmi.Config import Config
 from pyanhmi.Attributes.DictAttribute import DictAttribute
 from pyanhmi.Attributes.Attribute import register_attribute
+from pyanhmi.Error import InvalidDatatype
 
 
 @register_attribute
@@ -53,7 +54,7 @@ class OrderedDictAttribute(DictAttribute):
             # accept list of key-value. E.g: OrderedDict([('b',2), ('a', 1)])
             # the order of provided data is retained if data is list of tuple
             return OrderedDict([(self.key_att.strict_create(k_v[0]), self.value_att.strict_create(k_v[1])) for k_v in data])
-        raise TypeError(f"data is not dict or list of key-value tuple: data: {data}")
+        raise InvalidDatatype(expects=[dict, f"list of key-value {tuple}"], data=data)
 
     def casting_create(self, data):
         if isinstance(data, dict):
@@ -63,4 +64,4 @@ class OrderedDictAttribute(DictAttribute):
             # accept list of key-value. E.g: OrderedDict([('b',2), ('a', 1)])
             # the order of provided data is retained if data is list of tuple
             return OrderedDict([(self.key_att.casting_create(k_v[0]), self.value_att.casting_create(k_v[1])) for k_v in data])
-        raise TypeError(f"data is not dict or list of key-value tuple: data: {data}")
+        raise InvalidDatatype(expects=[dict, f"list of key-value {tuple}"], data=data)

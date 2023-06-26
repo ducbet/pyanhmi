@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from pyanhmi.Config import Config
 from pyanhmi.Attributes.Attribute import register_attribute, Attribute
+from pyanhmi.Error import InvalidDatatype
 
 
 @register_attribute
@@ -38,7 +39,7 @@ class SetAttribute(Attribute):
 
     def strict_create(self, data):
         if not isinstance(data, set):
-            raise TypeError(f"data is not set: data: {data}")
+            raise InvalidDatatype(expects=set, data=data)
         # print(f"{self.__class__} self.value_att: {self.value_att}, data: {data}")
         return set(self.value_att.strict_create(v) for v in data)
 

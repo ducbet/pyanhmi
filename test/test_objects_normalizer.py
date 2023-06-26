@@ -26,6 +26,7 @@ from pyanhmi.Attributes.ListAttribute import ListAttribute
 from pyanhmi.Attributes.UnionAttribute import UnionAttribute
 from pyanhmi.Config import Config, Mode
 from pyanhmi.Cookbook import Cookbook
+from pyanhmi.Error import InvalidDatatype
 from pyanhmi.ObjectCreator import ObjectCreator
 from pyanhmi.objects_normalizer import ObjectsNormalizer
 
@@ -151,12 +152,12 @@ def test_create_obj():
     Config.MODE = Mode.CASTING
     try:
         ObjectCreator.create_obj({}, ClassicParent)
-    except TypeError as e:
+    except InvalidDatatype as e:
         assert str(e) == "__init__() missing 1 required positional argument: 'parent_name'"
 
     try:
         ObjectCreator.create_obj({"product_name": "Pro"}, ClassicParent)
-    except TypeError as e:
+    except InvalidDatatype as e:
         assert str(e) == "__init__() missing 1 required positional argument: 'parent_name'"
 
     data = {
@@ -205,7 +206,7 @@ def test_create_obj():
     # assert isinstance(obj.a_Optional, tuple)
 
 
-def test_create_int_duck():
+def test_create_str_duck():
     Config.MODE = Mode.DUCK
 
     obj = ObjectCreator.create_obj({"val_1": 123.1}, StrClass)
@@ -222,13 +223,13 @@ def test_create_str_strict():
 
     try:
         ObjectCreator.create_obj({"val_1": 123}, StrDataclass)
-    except TypeError as e:
-        assert "data is not str" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=str, data=123)
 
     try:
         ObjectCreator.create_obj({"val_1": 123}, StrClass)
-    except TypeError as e:
-        assert "data is not str" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=str, data=123)
 
 
 def test_create_str_casting():
@@ -265,13 +266,13 @@ def test_create_int_strict():
 
     try:
         ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
-    except TypeError as e:
-        assert "data is not int" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=int, data="123")
 
     try:
         ObjectCreator.create_obj({"val_1": "123"}, IntClass)
-    except TypeError as e:
-        assert "data is not int" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=int, data="123")
 
 
 def test_create_int_casting():
@@ -326,44 +327,44 @@ def test_create_dict_strict():
     try:
         ObjectCreator.create_obj({"val_1": {123, 123}}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not dict" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=dict, data={123, 123})
 
     try:
         ObjectCreator.create_obj({"val_1": {123: 123}}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not str" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=str, data=123)
 
     try:
         ObjectCreator.create_obj({"val_1": {"123": "123"}}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not int" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=int, data="123")
 
     try:
         ObjectCreator.create_obj({"val_1": "123"}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not dict" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=dict, data="123")
 
     try:
         ObjectCreator.create_obj({"val_1": ["123"]}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not dict" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=dict, data=["123"])
 
     try:
         ObjectCreator.create_obj({"val_1": [[1, "2"], ["3", "4"]]}, DictClass)
         assert False
-    except TypeError as e:
-        assert "data is not dict" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=dict, data=[[1, "2"], ["3", "4"]])
 
     try:
         ObjectCreator.create_obj({"val_1": [(1, "2"), ("3", "4")]}, DictClass)
         assert False
-    except TypeError as e:
-        assert "data is not dict" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=dict, data=[(1, "2"), ("3", "4")])
 
     data = {
         "val_1": {
@@ -386,8 +387,8 @@ def test_create_dict_strict():
     try:
         ObjectCreator.create_obj(data, DictCompositeClass)
         assert False
-    except TypeError as e:
-        assert "data is not int" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=int, data="2")
 
 
 def test_create_dict_casting():
@@ -421,43 +422,43 @@ def test_create_dict_casting():
         # data = [{1, "2"}, {"3", "4"}]. data[0][0] will raise error
         ObjectCreator.create_obj({"val_1": [{1, "2"}, {"3", "4"}]}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not key-value Iterable" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=Iterable, data=[{1, "2"}, {"3", "4"}])
 
     try:
         # data = ["1", "2"]. data[0][1] will raise error
         ObjectCreator.create_obj({"val_1": ["1", "2"]}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not key-value Iterable" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=f"key-value {Iterable}", data=["1", "2"])
 
     try:
         # data = [("1")]. data[0][1] will raise error
         ObjectCreator.create_obj({"val_1": [("1")]}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not key-value Iterable" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=f"key-value {Iterable}", data=[("1")])
 
     try:
         # data = [("3", "4"), (1)]. data[1][1] will raise error
         ObjectCreator.create_obj({"val_1": [("3", "4"), (1)]}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not key-value Iterable" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=Iterable, data=[("3", "4"), (1)])
 
     try:
         # data = 123. 123 is not Iterable
         ObjectCreator.create_obj({"val_1": 123}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not dict or key-value Iterable" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=[dict, f"key-value {Iterable}"], data=123)
 
     try:
         # data = "123". data[0][0] will raise error
         ObjectCreator.create_obj({"val_1": "123"}, DictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not key-value Iterable" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=f"key-value {Iterable}", data="123")
 
     data = {
         "val_1": {
@@ -557,8 +558,8 @@ def test_create_defaultdict_strict():
     try:
         ObjectCreator.create_obj(data, DefaultDictDataclass)
         assert False
-    except TypeError as e:
-        assert "data is not int" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=int, data="3")
 
 
     data = {
@@ -624,13 +625,14 @@ def test_mapping_instance():
 
 
 def test_create_obj_runtime_recipe():
-    data = {"id": 123}
     Config.MODE = Mode.STRICT
+
+    data = {"id": 123}
 
     try:
         ObjectCreator.create_obj(data, StrClass)
-    except TypeError as e:
-        assert "data is not str" in str(e)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=str, data=123)
 
     obj_str = ObjectCreator.create_obj(data, StrClass, mode=Mode.CASTING)
     assert isinstance(obj_str.id, str)

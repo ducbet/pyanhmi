@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from pyanhmi.Attributes.Attribute import register_attribute
 from pyanhmi.Attributes.PrimitiveAttribute import PrimitiveAttribute
+from pyanhmi.Error import InvalidDatatype
 
 
 @register_attribute
@@ -28,7 +29,7 @@ class StrAttribute(PrimitiveAttribute):
 
     def strict_create(self, data):
         if not isinstance(data, str):
-            raise TypeError(f"data is not str: data: {data}")
+            raise InvalidDatatype(expects=str, data=data)
         return str(data)
 
     def casting_create(self, data):
