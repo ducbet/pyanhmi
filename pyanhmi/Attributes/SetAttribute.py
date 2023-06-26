@@ -1,4 +1,5 @@
 import typing
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from pyanhmi.Config import Config
@@ -36,5 +37,7 @@ class SetAttribute(Attribute):
             raise InvalidDatatype(expects=set, data=data)
         return set(self.value_att.strict_create(v) for v in data)
 
-    def casting_create(self, data):
-        return set(self.value_att.casting_create(v) for v in data)
+    def casting_create(self, data: typing.Union[set, Iterable]):
+        if isinstance(data, set) or isinstance(data, Iterable):
+            return set(self.value_att.casting_create(v) for v in data)
+        raise InvalidDatatype(expects=[set, Iterable], data=data)

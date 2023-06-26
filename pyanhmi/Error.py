@@ -16,3 +16,14 @@ class InvalidDatatype(Exception):
     def __eq__(self, other):
         return self.message == other.message
 
+
+class InvalidData(Exception):
+    def __init__(self, data, msg=""):
+        message = "Invalid Data"
+        message += f". {msg}" if msg else ""
+        message += f". Data: {repr(data)}"
+        super().__init__(message)
+        self.message = message
+
+    def __eq__(self, other):
+        return self.message == other.message

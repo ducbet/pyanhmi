@@ -1,9 +1,10 @@
 import typing
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from pyanhmi.Config import Config
 from pyanhmi.Attributes.Attribute import register_attribute, Attribute
-from pyanhmi.Error import InvalidDatatype
+from pyanhmi.Error import InvalidDatatype, InvalidData
 
 
 @register_attribute
@@ -44,6 +45,13 @@ class TupleAttribute(Attribute):
         return tuple(self.value_atts[i].strict_create(val) for i, val in enumerate(data))
 
     def casting_create(self, data):
-        if not self.value_atts:
-            return data
-        return tuple(self.value_atts[i].casting_create(val) for i, val in enumerate(data))
+        if isinstance(data, tuple) or isinstance(data, Iterable):
+            tuple_data = tuple(data)
+            if not self.value_atts:
+                return tuple_data
+            try:
+                return tuple(self.value_atts[i].casting_create(tuple_data[i]) for i in range(len(self.value_atts)))
+            except IndexError:
+                raise InvalidData(msg=f"tuple expect {len(self.value_atts)} items but data has {len(tuple_data)} items",
+                                  data=data)
+        raise InvalidDatatype(expects=Iterable, data=data)

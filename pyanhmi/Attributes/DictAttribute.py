@@ -1,6 +1,5 @@
-import inspect
 import typing
-from collections.abc import Mapping, Iterable
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from pyanhmi.Attributes.Attribute import register_attribute, Attribute
@@ -50,9 +49,8 @@ class DictAttribute(Attribute):
             if len(data) == 0:
                 return dict()
             try:
+                # From python 3.6 onwards, dict supports insertion ordering
                 return dict({self.key_att.casting_create(v[0]): self.value_att.casting_create(v[1]) for v in data})
-            except TypeError as e:
-                raise InvalidDatatype(expects=Iterable, data=data)
-            except IndexError:
+            except (TypeError, IndexError):
                 raise InvalidDatatype(expects=f"key-value {Iterable}", data=data)
         raise InvalidDatatype(expects=[dict, f"key-value {Iterable}"], data=data)

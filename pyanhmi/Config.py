@@ -37,6 +37,7 @@ class Config:
     TupleAtt_priority = 50
     UnionAtt_priority = 50
     PRIMITIVE_TYPE_PRIORITY = 10
+    NoneAtt_priority = 5
     AnyAtt_priority = 0
 
     ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

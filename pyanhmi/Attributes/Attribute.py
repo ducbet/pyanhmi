@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 from typing import Any
 
 from pyanhmi import AttributeManager
-from pyanhmi.Config import Config, Mode
+from pyanhmi.Config import Mode
 
 
 def register_attribute(cls):
@@ -40,3 +41,7 @@ class Attribute(ABC):
     @abstractmethod
     def casting_create(self, data):
         pass
+
+    @staticmethod
+    def is_iterable_but_not_str(data):
+        return not isinstance(data, str) and isinstance(data, Iterable)

@@ -31,4 +31,7 @@ class IntAttribute(PrimitiveAttribute):
         return int(data)
 
     def casting_create(self, data):
-        return int(data)
+        try:
+            return int(data)
+        except (ValueError, TypeError):
+            raise InvalidDatatype(expects=int, data=data)

@@ -30,4 +30,7 @@ class StrAttribute(PrimitiveAttribute):
         return str(data)
 
     def casting_create(self, data):
-        return str(data)
+        try:
+            return str(data)
+        except Exception:
+            raise InvalidDatatype(expects=str, data=data)

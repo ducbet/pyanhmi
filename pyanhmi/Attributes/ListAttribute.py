@@ -1,4 +1,5 @@
 import typing
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from pyanhmi.Config import Config
@@ -29,14 +30,14 @@ class ListAttribute(Attribute):
         return self.__class__, self.value_att.get_hash_content()
 
     def __hash__(self):
-        # print(f"ListAtt: self.field_type: {self.field_type}, {hash(self.get_hash_content())}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
     def strict_create(self, data: list):
         if not isinstance(data, list):
             raise InvalidDatatype(expects=list, data=data)
-        # print(f"{self.__class__} self.value_att: {self.value_att}, data: {data}")
         return list(self.value_att.strict_create(v) for v in data)
 
-    def casting_create(self, data):
-        return list(self.value_att.casting_create(v) for v in data)
+    def casting_create(self, data: typing.Union[list, Iterable]):
+        if isinstance(data, list) or isinstance(data, Iterable):
+            return list(self.value_att.casting_create(v) for v in data)
+        raise InvalidDatatype(expects=[list, Iterable], data=data)

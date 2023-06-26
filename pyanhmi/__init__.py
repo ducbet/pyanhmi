@@ -7,6 +7,7 @@ from .Attributes.DictAttribute import DictAttribute
 from .Attributes.FrozenSetAttribute import FrozenSetAttribute
 from .Attributes.IntAttribute import IntAttribute
 from .Attributes.ListAttribute import ListAttribute
+from .Attributes.NoneAttribute import NoneAttribute
 from .Attributes.OrderedDictAttribute import OrderedDictAttribute
 from .Attributes.SetAttribute import SetAttribute
 from .Attributes.StrAttribute import StrAttribute

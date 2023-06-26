@@ -194,9 +194,14 @@ class AttributeTypesChild:
     a_Optional: Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]
 
 
+@dataclass
 class CompositeClass:
-    def __init__(self, composite: str):
-        self.composite = composite
+    composite: str
+
+
+# class CompositeClass:
+#     def __init__(self, composite: str):
+#         self.composite = composite
 
 
 @dataclass
@@ -284,6 +289,12 @@ class OrderedDictClass:
 
 
 @dataclass
+class OrderedDictsDataclass:
+    val_1: OrderedDict
+    val_2: OrderedDict[str, int]
+
+
+@dataclass
 class SetDataclass:
     val_1: Set[str]
 
@@ -302,6 +313,29 @@ class SetsDataclass:
 
 
 @dataclass
+class FrozenSetDataclass:
+    val_1: FrozenSet[str]
+
+
+class FrozenSetClass:
+    def __init__(self, val_1: FrozenSet[str]):
+        self.val_1 = val_1
+
+
+@dataclass
+class FrozenSetsDataclass:
+    val_1: FrozenSet
+    val_2: frozenset
+    val_3: FrozenSet[str]
+    val_4: frozenset[int]
+
+
+@dataclass
+class ListDataclass:
+    val_1: List[str]
+
+
+@dataclass
 class DictsClass:
     def __init__(self, val_1: dict, val_2: Dict, val_3: Dict[str, int], val_4: dict[int, str]):
         self.val_1 = val_1
@@ -310,17 +344,27 @@ class DictsClass:
         self.val_4 = val_4
 
 
+@dataclass
+class TupleDataclass:
+    val_1: Tuple[str, Tuple[int, str, str]]
+
 
 @dataclass
-class FrozenSetDataclass:
-    val_1: FrozenSet[int]
-    val_2: FrozenSet[str]
+class TuplesDataclass:
+    val_1: Tuple[str, Tuple[int, str, str]]
+    val_2: tuple[str, int]
+    val_3: tuple
+    val_4: Tuple
 
 
-class FrozenSetClass:
-    def __init__(self, val_1: FrozenSet[int], val_2: FrozenSet[str]):
-        self.val_1 = val_1
-        self.val_2 = val_2
+@dataclass
+class UnionDataclass:
+    val_1: Optional[List[Union[int, CompositeClass, str]]]
+
+
+@dataclass
+class UnionDataclass2:
+    val_1: Union[int, CompositeClass]
 
 
 @dataclass
@@ -358,7 +402,7 @@ class ClassVarClass:
     def __init__(self):
         pass
 
+
 @dataclass
 class FinalDataclass:
     val_1: Final[int] = 4
-
