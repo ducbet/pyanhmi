@@ -284,6 +284,34 @@ class OrderedDictClass:
 
 
 @dataclass
+class SetDataclass:
+    val_1: Set[str]
+
+
+class SetClass:
+    def __init__(self, val_1: Set[str]):
+        self.val_1 = val_1
+
+
+@dataclass
+class SetsDataclass:
+    val_1: set
+    val_2: Set
+    val_3: set[str]
+    val_4: Set[int]
+
+
+@dataclass
+class DictsClass:
+    def __init__(self, val_1: dict, val_2: Dict, val_3: Dict[str, int], val_4: dict[int, str]):
+        self.val_1 = val_1
+        self.val_2 = val_2
+        self.val_3 = val_3
+        self.val_4 = val_4
+
+
+
+@dataclass
 class FrozenSetDataclass:
     val_1: FrozenSet[int]
     val_2: FrozenSet[str]

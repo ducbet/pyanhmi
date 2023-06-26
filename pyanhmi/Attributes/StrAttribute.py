@@ -24,9 +24,6 @@ class StrAttribute(PrimitiveAttribute):
         # print(f"StrAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def duck_create(self, data):
-        return data
-
     def strict_create(self, data):
         if not isinstance(data, str):
             raise InvalidDatatype(expects=str, data=data)

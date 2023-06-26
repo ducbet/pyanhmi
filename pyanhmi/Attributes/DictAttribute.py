@@ -38,12 +38,6 @@ class DictAttribute(Attribute):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.key_att}, {self.value_att})"
 
-    def duck_create(self, data):
-        try:
-            return dict({self.key_att.duck_create(k): self.value_att.duck_create(v) for k, v in data.items()})
-        except:
-            return data
-
     def strict_create(self, data: dict):
         if not isinstance(data, dict):
             raise InvalidDatatype(expects=dict, data=data)

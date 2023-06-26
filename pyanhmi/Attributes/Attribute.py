@@ -26,16 +26,12 @@ class Attribute(ABC):
         return AttributeManager.get_cached_attribute(value_type)
 
     def create(self, data: Any, mode: Mode):
-        if mode is Mode.DUCK:
-            return self.duck_create(data)
-        if mode is Mode.STRICT:
-            return self.strict_create(data)
         if mode is Mode.CASTING:
             return self.casting_create(data)
-
-    @abstractmethod
-    def duck_create(self, data):
-        pass
+        if mode is Mode.STRICT:
+            return self.strict_create(data)
+        if mode is Mode.DUCK:
+            return data
 
     @abstractmethod
     def strict_create(self, data):

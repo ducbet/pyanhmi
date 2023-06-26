@@ -32,12 +32,6 @@ class ListAttribute(Attribute):
         # print(f"ListAtt: self.field_type: {self.field_type}, {hash(self.get_hash_content())}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def duck_create(self, data):
-        try:
-            return list(self.value_att.duck_create(v) for v in data)
-        except:
-            return data
-
     def strict_create(self, data: list):
         if not isinstance(data, list):
             raise InvalidDatatype(expects=list, data=data)

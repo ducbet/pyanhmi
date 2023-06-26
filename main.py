@@ -3,7 +3,8 @@ from collections import defaultdict
 from collections.abc import Iterable
 
 from common.schema_classes_test import StrDataclass, DictsDataclass, DictClass, DictDataclass, DictsClass, \
-    DefaultDictDataclass, NestedDefaultDictDataclass, DefaultDictsDataclass, CompositeClass, IntDataclass
+    DefaultDictDataclass, NestedDefaultDictDataclass, DefaultDictsDataclass, CompositeClass, IntDataclass, \
+    DictCompositeClass
 from pyanhmi.Config import timer, Mode, Config
 from pyanhmi.Error import InvalidDatatype
 from pyanhmi.ObjectCreator import ObjectCreator
@@ -26,9 +27,13 @@ def replace_in_place():
 if __name__ == '__main__':
     Config.MODE = Mode.CASTING
 
-    try:
-        # data = "123". data[0][0] will raise error
-        ObjectCreator.create_obj({"val_1": "123"}, DictDataclass)
-        assert False
-    except InvalidDatatype as e:
-        assert e == InvalidDatatype(expects=f"key-value {Iterable}", data="123")
+    data = {
+        "val_1": {
+            "1": "234"
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
+    obj.val_1["5"].append(6)
+    obj.val_1["5"].append(7)
+    assert isinstance(obj.val_1, defaultdict)
+    assert dict(obj.val_1) == {"1": [2, 3, 4], "5": [6, 7]}

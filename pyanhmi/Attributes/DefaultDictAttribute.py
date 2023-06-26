@@ -36,12 +36,6 @@ class DefaultDictAttribute(DictAttribute):
     def __repr__(self):
         return super().__repr__()
 
-    def duck_create(self, data: typing.Any):
-        try:
-            return defaultdict(self.get_default_factory(self.value_type), super().duck_create(data))
-        except:
-            return data
-
     def strict_create(self, data: defaultdict):
         return defaultdict(self.get_default_factory(self.value_type), super().strict_create(data))
 

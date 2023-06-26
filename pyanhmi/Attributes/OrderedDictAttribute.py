@@ -34,18 +34,6 @@ class OrderedDictAttribute(DictAttribute):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.key_att}, {self.value_att})"
 
-    def duck_create(self, data: typing.Any):
-        try:
-            if isinstance(data, dict):
-                # the order of provided data is lost if data is dict
-                return OrderedDict({self.key_att.duck_create(k): self.value_att.duck_create(v) for k, v in data.items()})
-            if isinstance(data, list):
-                # accept list of key-value. E.g: OrderedDict([('b',2), ('a', 1)])
-                # the order of provided data is retained if data is list of tuple
-                return OrderedDict([(self.key_att.duck_create(k_v[0]), self.value_att.duck_create(k_v[1])) for k_v in data])
-        except:
-            return data
-
     def strict_create(self, data):
         if isinstance(data, dict):
             # the order of provided data is lost if data is dict

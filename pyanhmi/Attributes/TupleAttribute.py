@@ -36,14 +36,6 @@ class TupleAttribute(Attribute):
         # print(f"TupleAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def duck_create(self, data):
-        try:
-            if not self.value_atts:
-                return data
-            return tuple(self.value_atts[i].duck_create(val) for i, val in enumerate(data))
-        except:
-            return data
-
     def strict_create(self, data):
         if not isinstance(data, tuple):
             raise InvalidDatatype(expects=tuple, data=data)

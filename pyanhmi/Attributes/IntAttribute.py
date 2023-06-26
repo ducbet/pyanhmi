@@ -25,9 +25,6 @@ class IntAttribute(PrimitiveAttribute):
         # print(f"IntAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def duck_create(self, data: typing.Any):
-        return data
-
     def strict_create(self, data: int):
         if not isinstance(data, int):
             raise InvalidDatatype(expects=int, data=data)

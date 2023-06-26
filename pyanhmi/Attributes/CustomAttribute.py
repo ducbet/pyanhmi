@@ -28,9 +28,6 @@ class CustomAttribute(Attribute):
         # print(f"ObjAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def duck_create(self, data):
-        return ObjectCreator.create_obj(data, self.field_type)
-
     def strict_create(self, data):
         return ObjectCreator.create_obj(data, self.field_type)
 

@@ -31,16 +31,9 @@ class SetAttribute(Attribute):
     def __hash__(self):
         return hash(self.get_hash_content())
 
-    def duck_create(self, data):
-        try:
-            return set(self.value_att.duck_create(v) for v in data)
-        except:
-            return data
-
     def strict_create(self, data):
         if not isinstance(data, set):
             raise InvalidDatatype(expects=set, data=data)
-        # print(f"{self.__class__} self.value_att: {self.value_att}, data: {data}")
         return set(self.value_att.strict_create(v) for v in data)
 
     def casting_create(self, data):

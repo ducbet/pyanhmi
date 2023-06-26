@@ -50,17 +50,6 @@ class UnionAttribute(Attribute):
         # print(f"UnionAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def duck_create(self, data):
-        try:
-            for t in self.value_atts:
-                try:
-                    return t.duck_create(data)
-                except TypeError:
-                    pass
-            return data
-        except:
-            return data
-
     def strict_create(self, data):
         for t in self.value_atts:
             try:

@@ -27,12 +27,6 @@ class FrozenSetAttribute(SetAttribute):
     def __repr__(self):
         return super().__repr__()
 
-    def duck_create(self, data):
-        try:
-            return frozenset([self.value_att.duck_create(v) for v in data])
-        except:
-            return data
-
     def strict_create(self, data):
         if not isinstance(data, Iterable):
             raise InvalidDatatype(expects=Iterable, data=data)

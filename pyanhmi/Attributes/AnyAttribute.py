@@ -35,5 +35,3 @@ class AnyAttribute(Attribute):
     def casting_create(self, data):
         return data
 
-    def duck_create(self, data):
-        return data

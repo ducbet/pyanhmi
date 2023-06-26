@@ -17,7 +17,7 @@ from common.schema_class import Product, ProductDescription
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, StrClass, \
     IntClass, CompositeClass, AnyDataclass, FrozenSetDataclass, OrderedDictDataclass, ClassVarDataclass, StrDataclass, \
     IntDataclass, DictsDataclass, DictDataclass, DictClass, DictsClass, DictCompositeClass, DefaultDictDataclass, \
-    NestedDefaultDictDataclass, DefaultDictsDataclass
+    NestedDefaultDictDataclass, DefaultDictsDataclass, SetDataclass, SetClass
 from pyanhmi import AttributeManager, IntAttribute
 from pyanhmi.Attributes.AnyAttribute import AnyAttribute
 from pyanhmi.Attributes.DefaultDictAttribute import DefaultDictAttribute
@@ -206,13 +206,6 @@ def test_create_obj():
     # assert isinstance(obj.a_Optional, tuple)
 
 
-def test_create_str_duck():
-    Config.MODE = Mode.DUCK
-
-    obj = ObjectCreator.create_obj({"val_1": 123.1}, StrClass)
-    assert obj.val_1 == 123.1
-
-
 def test_create_str_strict():
     Config.MODE = Mode.STRICT
 
@@ -244,16 +237,6 @@ def test_create_str_casting():
     obj = ObjectCreator.create_obj({"val_1": 123}, StrClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == "123"
-
-
-def test_create_int_duck():
-    Config.MODE = Mode.DUCK
-
-    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
-    assert obj_dataclass.val_1 == "123"
-
-    obj = ObjectCreator.create_obj({"val_1": 123.1}, IntClass)
-    assert obj.val_1 == 123.1
 
 
 def test_create_int_strict():
@@ -289,9 +272,14 @@ def test_create_int_casting():
     assert obj_dataclass.val_1 == 123
 
 
-
-def test_create_dict_duck():
+def test_create_obj_duck():
     Config.MODE = Mode.DUCK
+
+    obj = ObjectCreator.create_obj({"val_1": 123.1}, StrClass)
+    assert obj.val_1 == 123.1
+
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
+    assert obj_dataclass.val_1 == "123"
 
     data = {
         "val_1": {
@@ -301,19 +289,27 @@ def test_create_dict_duck():
         }
     }
     obj = ObjectCreator.create_obj(data, DictCompositeClass)
-    assert isinstance(obj.val_1["1"], IntClass)
-    assert obj.val_1["1"].val_1 == 2
+    assert obj.val_1 == {
+        "1": {
+            "val_1": 2
+        }
+    }
 
     data = {
         "val_1": {
-            "1": {
-                "val_1": "2"
-            }
+            "1": [2, 3.1]
         }
     }
-    obj = ObjectCreator.create_obj(data, DictCompositeClass)
-    assert isinstance(obj.val_1["1"], IntClass)
-    assert obj.val_1["1"].val_1 == "2"
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
+    assert isinstance(obj.val_1, dict)
+    assert dict(obj.val_1) == {
+        "1": [2, 3.1]
+    }
+    try:
+        obj.val_1["4"].append(5)
+        assert False
+    except KeyError as e:
+        assert True
 
 
 def test_create_dict_strict():
@@ -472,69 +468,6 @@ def test_create_dict_casting():
     assert obj.val_1["1"].val_1 == 2
 
 
-def test_create_defaultdict_duck():
-    Config.MODE = Mode.DUCK
-
-    data = {
-        "val_1": {
-            "1": [2, 3.1]
-        }
-    }
-    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
-    obj.val_1["4"].append(5)
-    obj.val_1["4"].append(6)
-    assert isinstance(obj.val_1, defaultdict)
-    assert dict(obj.val_1) == {"1": [2, 3.1], "4": [5, 6]}
-
-    # todo change ListAttribute to avoid convert str to list???
-    data = {
-        "val_1": {
-            "1": "234"
-        }
-    }
-    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
-    obj.val_1["5"].append(6)
-    obj.val_1["5"].append(7)
-    assert isinstance(obj.val_1, defaultdict)
-    assert dict(obj.val_1) == {"1": ["2", "3", "4"], "5": [6, 7]}
-
-    data = {
-        "val_1": {
-            "1": {
-                "2": {
-                    "3": [4, 5]
-                }
-            }
-        }
-    }
-    obj = ObjectCreator.create_obj(data, NestedDefaultDictDataclass)
-    obj.val_1["1"]["2"]["6"].append(7)
-    obj.val_1["1"]["2"]["6"].append(8)
-
-    obj.val_1["1"]["9"]["10"].append(11)
-    obj.val_1["1"]["9"]["10"].append(12)
-
-    obj.val_1["13"]["14"]["15"].append(16)
-    obj.val_1["13"]["14"]["15"].append(17)
-    expect_result = {
-        "1": {
-            "2": {
-                "3": [4, 5],
-                "6": [7, 8],
-            },
-            "9": {
-                "10": [11, 12],
-            },
-        },
-        "13": {
-            "14": {
-                "15": [16, 17],
-            }
-        }
-    }
-    assert json.dumps(obj.val_1) == json.dumps(expect_result)
-
-
 def test_create_defaultdict_strict():
     Config.MODE = Mode.STRICT
 
@@ -612,6 +545,76 @@ def test_create_defaultdict_casting():
     obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
     assert isinstance(obj.val_1, defaultdict)
     assert dict(obj.val_1) == {"1": [2, 3, 4]}
+
+    data = {
+        "val_1": {
+            "1": "234"
+        }
+    }
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
+    obj.val_1["5"].append(6)
+    obj.val_1["5"].append(7)
+    assert isinstance(obj.val_1, defaultdict)
+    assert dict(obj.val_1) == {"1": [2, 3, 4], "5": [6, 7]}
+
+    data = {
+        "val_1": {
+            "1": {
+                "2": {
+                    "3": [4, 5]
+                }
+            }
+        }
+    }
+    obj = ObjectCreator.create_obj(data, NestedDefaultDictDataclass)
+    obj.val_1["1"]["2"]["6"].append(7)
+    obj.val_1["1"]["2"]["6"].append(8)
+
+    obj.val_1["1"]["9"]["10"].append(11)
+    obj.val_1["1"]["9"]["10"].append(12)
+
+    obj.val_1["13"]["14"]["15"].append(16)
+    obj.val_1["13"]["14"]["15"].append(17)
+    expect_result = {
+        "1": {
+            "2": {
+                "3": [4, 5],
+                "6": [7, 8],
+            },
+            "9": {
+                "10": [11, 12],
+            },
+        },
+        "13": {
+            "14": {
+                "15": [16, 17],
+            }
+        }
+    }
+    assert json.dumps(obj.val_1) == json.dumps(expect_result)
+
+
+def test_create_set_strict():
+    Config.MODE = Mode.STRICT
+
+    obj_dataclass = ObjectCreator.create_obj({"val_1": {"1", "2"}}, SetDataclass)
+    obj = ObjectCreator.create_obj({"val_1": {"1", "2"}}, SetClass)
+    assert obj_dataclass.__dict__ == obj.__dict__
+    assert isinstance(obj.val_1, set)
+    assert obj.val_1 == {"1", "2"}
+
+    try:
+        ObjectCreator.create_obj({"val_1": [1, 2]}, SetDataclass)
+        assert False
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=set, data=[1, 2])
+
+    try:
+        ObjectCreator.create_obj({"val_1": {"1", 2}}, SetDataclass)
+        assert False
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=str, data=2)
+
 
 def test_mapping_instance():
     assert isinstance(123, Iterable) is False
