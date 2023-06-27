@@ -27,7 +27,7 @@ class StrAttribute(PrimitiveAttribute):
     def strict_create(self, data):
         if not isinstance(data, str):
             raise InvalidDatatype(expects=str, data=data)
-        return str(data)
+        return data
 
     def casting_create(self, data):
         try:

@@ -225,6 +225,16 @@ class IntClass:
 
 
 @dataclass
+class FloatDataclass:
+    val_1: float
+
+
+@dataclass
+class BoolDataclass:
+    val_1: bool
+
+
+@dataclass
 class DictDataclass:
     val_1: Dict[str, int]
 

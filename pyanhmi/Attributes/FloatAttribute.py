@@ -9,8 +9,8 @@ from pyanhmi.Error import InvalidDatatype
 
 @register_attribute
 @dataclass
-class IntAttribute(PrimitiveAttribute):
-    TYPES: typing.ClassVar[list] = [int]
+class FloatAttribute(PrimitiveAttribute):
+    TYPES: typing.ClassVar[list] = [float]
 
     def __init__(self, field_type):
         super().__init__(field_type)
@@ -22,18 +22,15 @@ class IntAttribute(PrimitiveAttribute):
         return self.__class__
 
     def __hash__(self):
-        # print(f"IntAtt: self.field_type: {self.field_type}, self.get_hash_content(): {self.get_hash_content()}")
         return hash(self.get_hash_content())
 
-    def strict_create(self, data: int):
-        if not isinstance(data, int):
-            raise InvalidDatatype(expects=int, data=data)
+    def strict_create(self, data: float):
+        if not isinstance(data, float):
+            raise InvalidDatatype(expects=float, data=data)
         return data
 
     def casting_create(self, data):
         try:
-            return int(data)
+            return float(data)
         except (ValueError, TypeError):
-            # ValueError: int("asd")
-            # TypeError: int(None)
-            raise InvalidDatatype(expects=int, data=data)
+            raise InvalidDatatype(expects=float, data=data)

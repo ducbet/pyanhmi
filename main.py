@@ -5,7 +5,8 @@ from collections.abc import Iterable
 from common.schema_classes_test import StrDataclass, DictsDataclass, DictClass, DictDataclass, DictsClass, \
     DefaultDictDataclass, NestedDefaultDictDataclass, DefaultDictsDataclass, CompositeClass, IntDataclass, \
     DictCompositeClass, SetClass, SetDataclass, ListDataclass, OrderedDictDataclass, TupleDataclass, TuplesDataclass, \
-    FrozenSetDataclass, FrozenSetClass, FrozenSetsDataclass, UnionDataclass, UnionDataclass2
+    FrozenSetDataclass, FrozenSetClass, FrozenSetsDataclass, UnionDataclass, UnionDataclass2, StrClass, IntClass
+from pyanhmi import BoolAttribute
 from pyanhmi.Config import timer, Mode, Config
 from pyanhmi.Error import InvalidDatatype
 from pyanhmi.ObjectCreator import ObjectCreator
@@ -27,8 +28,7 @@ def replace_in_place():
 if __name__ == '__main__':
     Config.MODE = Mode.STRICT
 
-    ObjectCreator.create_obj({"val_1": 1}, UnionDataclass)
-
+    print(BoolAttribute.cast_to_bool(12))
 
 
 

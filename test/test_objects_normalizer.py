@@ -18,8 +18,9 @@ from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level
     IntClass, CompositeClass, AnyDataclass, FrozenSetDataclass, OrderedDictDataclass, ClassVarDataclass, StrDataclass, \
     IntDataclass, DictsDataclass, DictDataclass, DictClass, DictsClass, DictCompositeClass, DefaultDictDataclass, \
     NestedDefaultDictDataclass, DefaultDictsDataclass, SetDataclass, SetClass, SetsDataclass, ListDataclass, \
-    TupleDataclass, TuplesDataclass, FrozenSetClass, FrozenSetsDataclass, UnionDataclass, UnionDataclass2
-from pyanhmi import AttributeManager, IntAttribute
+    TupleDataclass, TuplesDataclass, FrozenSetClass, FrozenSetsDataclass, UnionDataclass, UnionDataclass2, \
+    FloatDataclass, BoolDataclass
+from pyanhmi import AttributeManager, IntAttribute, BoolAttribute
 from pyanhmi.Attributes.AnyAttribute import AnyAttribute
 from pyanhmi.Attributes.DefaultDictAttribute import DefaultDictAttribute
 from pyanhmi.Attributes.DictAttribute import DictAttribute
@@ -283,6 +284,106 @@ def test_create_int_casting():
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data="asd")
+
+
+def test_create_float_strict():
+    Config.MODE = Mode.STRICT
+
+    obj = ObjectCreator.create_obj({"val_1": 123.124}, FloatDataclass)
+    assert obj.val_1 == 123.124
+
+    try:
+        ObjectCreator.create_obj({"val_1": "123"}, FloatDataclass)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=float, data="123")
+
+
+def test_create_float_casting():
+    Config.MODE = Mode.CASTING
+
+    obj = ObjectCreator.create_obj({"val_1": 123}, FloatDataclass)
+    assert obj.val_1 == 123.0
+
+    obj = ObjectCreator.create_obj({"val_1": "123"}, FloatDataclass)
+    assert obj.val_1 == 123.0
+
+    try:
+        ObjectCreator.create_obj({"val_1": None}, FloatDataclass)
+        assert False
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=float, data=None)
+
+    try:
+        ObjectCreator.create_obj({"val_1": "asd"}, FloatDataclass)
+        assert False
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=float, data="asd")
+
+
+def test_create_bool_strict():
+    Config.MODE = Mode.STRICT
+
+    obj = ObjectCreator.create_obj({"val_1": True}, BoolDataclass)
+    assert obj.val_1
+
+    try:
+        ObjectCreator.create_obj({"val_1": None}, BoolDataclass)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=bool, data=None)
+
+    try:
+        ObjectCreator.create_obj({"val_1": 0}, BoolDataclass)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=bool, data=0)
+
+    try:
+        ObjectCreator.create_obj({"val_1": "1"}, BoolDataclass)
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=bool, data="1")
+
+
+def test_create_bool_casting():
+    Config.MODE = Mode.CASTING
+
+    obj = ObjectCreator.create_obj({"val_1": None}, BoolDataclass)
+    assert obj.val_1 is False
+
+    obj = ObjectCreator.create_obj({"val_1": 0}, BoolDataclass)
+    assert obj.val_1 is False
+
+    obj = ObjectCreator.create_obj({"val_1": "1"}, BoolDataclass)
+    assert obj.val_1
+
+    try:
+        ObjectCreator.create_obj({"val_1": 12}, BoolDataclass)
+        assert False
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=bool, data=12)
+
+
+def test_cast_to_bool():
+    assert BoolAttribute.cast_to_bool(True)
+    assert BoolAttribute.cast_to_bool("True")
+    assert BoolAttribute.cast_to_bool("1")
+    assert BoolAttribute.cast_to_bool(1)
+    assert BoolAttribute.cast_to_bool("y")
+
+    assert BoolAttribute.cast_to_bool(0) is False
+    assert BoolAttribute.cast_to_bool("0") is False
+    assert BoolAttribute.cast_to_bool(None) is False
+    assert BoolAttribute.cast_to_bool("N") is False
+
+    try:
+        BoolAttribute.cast_to_bool(12)
+        assert False
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=bool, data=12)
+
+    try:
+        BoolAttribute.cast_to_bool("12")
+        assert False
+    except InvalidDatatype as e:
+        assert e == InvalidDatatype(expects=bool, data="12")
 
 
 def test_create_obj_duck():
@@ -991,7 +1092,7 @@ def test_mapping_instance():
 def test_create_obj_runtime_recipe():
     Config.MODE = Mode.STRICT
 
-    data = {"id": 123}
+    data = {"val_1": 123}
 
     try:
         ObjectCreator.create_obj(data, StrClass)
@@ -999,14 +1100,14 @@ def test_create_obj_runtime_recipe():
         assert e == InvalidDatatype(expects=str, data=123)
 
     obj_str = ObjectCreator.create_obj(data, StrClass, mode=Mode.CASTING)
-    assert isinstance(obj_str.id, str)
+    assert isinstance(obj_str.val_1, str)
 
     obj_int = ObjectCreator.create_obj(data, IntClass)
     int_recipe = getattr(IntClass, Config.PYANHMI_RECIPE)
-    assert isinstance(obj_int.id, int)
+    assert isinstance(obj_int.val_1, int)
 
     obj_str_int = ObjectCreator.create_obj(data, StrClass, int_recipe)
-    assert isinstance(obj_str_int.id, int)
+    assert isinstance(obj_str_int.val_1, int)
 
 
 def test_create_sources():
