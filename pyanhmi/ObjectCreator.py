@@ -1,5 +1,6 @@
 from typing import Any
 
+from pyanhmi.AuthenticRecipe import AuthenticRecipe
 from pyanhmi.Config import Config, Mode
 from pyanhmi.Cookbook import Cookbook
 from pyanhmi.Error import InvalidDatatype
@@ -7,48 +8,19 @@ from pyanhmi.Recipe import Recipe
 
 
 class ObjectCreator:
-    @staticmethod
-    def _try_create_obj(obj_type, obj_params: dict = None):
-        """
-        There are two solutions:
-        1. Call obj_type() and retrieving all required arguments
-            - Can initialize mock instance (no params required)
-            - Optional arguments can be ignored
-        2. Call obj_type with all possible arguments and removing redundant arguments until can init instance successful
-        :param obj_type:
-        :param obj_params: Use solution 1 if None else solution 2
-        :return:
-        """
-        if not obj_params:
-            obj = Cookbook.try_mock_obj(obj_type)
-            return obj
-        for num_try in range(len(obj_params)):
-            try:
-                return obj_type(**obj_params)
-            except TypeError as e:
-                # redundant_key will raise error: __init__() got an unexpected keyword argument 'redundant_key'
-                # -> remove redundant_key from obj_params until success
-                err_msg = str(e)
-                if "__init__() got an unexpected keyword argument " not in err_msg:
-                    raise e
-                redundant_key = err_msg \
-                    .replace("__init__() got an unexpected keyword argument ", "") \
-                    .replace("'", "")
-                obj_params = {k: v for k, v in obj_params.items() if k != redundant_key}
-        return obj_type()  # will raise error: TypeError: __init__() missing 1 required positional argument...
 
     @staticmethod
     def create_obj(obj_params: dict, obj_type: Any, recipe: Recipe = None, mode: Mode = None):
         if not isinstance(obj_params, dict):
             raise InvalidDatatype(msg="obj_params must be dict", expects=dict, data=obj_params)
-        if not Cookbook.is_recipe_completed(obj_type):
-            Cookbook.create_recipe(cls=obj_type)
+        if not Cookbook.has_recipe(obj_type):
+            Cookbook.add_recipe(AuthenticRecipe(cls=obj_type))
 
         # obj_type is cached
-        recipe = recipe if recipe else getattr(obj_type, Config.PYANHMI_RECIPE)
-        mode = mode if mode else Config.MODE
+        recipe = recipe if recipe else Cookbook.get_recipe(obj_type)
         params = {}
         # print(recipe)
+        # print(recipe.get_ingredient("val_1"))
         for param, obj_param in obj_params.items():
             if param not in recipe.ingredients:
                 continue

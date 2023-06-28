@@ -3,6 +3,10 @@ from dataclasses import dataclass
 from typing import ClassVar, List, Final, FrozenSet, Optional, Tuple, Dict, Union, Set, Any, DefaultDict, OrderedDict, \
     Callable
 
+from pyanhmi.Config import Mode
+from pyanhmi.Field import Field
+from pyanhmi.Recipe import Recipe
+
 
 @dataclass
 class Parent:
@@ -416,3 +420,14 @@ class ClassVarClass:
 @dataclass
 class FinalDataclass:
     val_1: Final[int] = 4
+
+
+@dataclass
+class StrictModeClass:
+    val_1: int
+
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        ingredients={
+            "val_1": Field(mode=Mode.DUCK, alias="val 1's alias")
+        }
+    )

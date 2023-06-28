@@ -2,6 +2,7 @@ import os
 import typing
 
 from pyanhmi.Config import Config
+from pyanhmi.Cookbook import Cookbook
 
 
 class AttributeManager:
@@ -18,7 +19,8 @@ class AttributeManager:
     def get_cached_attribute(value_type):
         if not value_type:
             return AttributeManager.CACHED_ATTRIBUTES.get(typing.Any)
-        if hasattr(value_type, Config.PYANHMI_RECIPE):
+        # todo fix circle import
+        if Cookbook.has_recipe(value_type):
             return AttributeManager.CACHED_ATTRIBUTES.get("CustomTypeAttribute")
 
         if value_type in AttributeManager.CACHED_ATTRIBUTES:

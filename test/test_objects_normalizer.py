@@ -19,7 +19,7 @@ from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level
     IntDataclass, DictsDataclass, DictDataclass, DictClass, DictsClass, DictCompositeClass, DefaultDictDataclass, \
     NestedDefaultDictDataclass, DefaultDictsDataclass, SetDataclass, SetClass, SetsDataclass, ListDataclass, \
     TupleDataclass, TuplesDataclass, FrozenSetClass, FrozenSetsDataclass, UnionDataclass, UnionDataclass2, \
-    FloatDataclass, BoolDataclass
+    FloatDataclass, BoolDataclass, StrictModeClass
 from pyanhmi import AttributeManager, IntAttribute, BoolAttribute
 from pyanhmi.Attributes.AnyAttribute import AnyAttribute
 from pyanhmi.Attributes.DefaultDictAttribute import DefaultDictAttribute
@@ -30,6 +30,7 @@ from pyanhmi.Config import Config, Mode
 from pyanhmi.Cookbook import Cookbook
 from pyanhmi.Error import InvalidDatatype, InvalidData
 from pyanhmi.ObjectCreator import ObjectCreator
+from pyanhmi.AuthenticRecipe import AuthenticRecipe
 from pyanhmi.objects_normalizer import ObjectsNormalizer
 
 
@@ -1156,7 +1157,8 @@ def test_set_normalize_rule():
     assert product_description_rules["image"].name == "image"
     assert product_description_rules["image"].alias == "image"
 
-    assert Cookbook.RECIPES == {type(product), type(product_description)}
+    assert Cookbook.get_recipe(type(product)) is not None
+    assert Cookbook.get_recipe(type(product_description)) is not None
 
 
 def test_add_source():
@@ -1321,3 +1323,46 @@ def test_is_normalizable_fields():
     for cls, is_normalizable_field in checks.items():
         # print(f"normalizable: {TypeCheckManager.is_normalizable_fields(cls)}, {cls}, __module__: {cls.__module__}")
         assert AttributeManager.is_user_defined_type(cls) == is_normalizable_field
+
+
+def test_add_recipe():
+    Config.MODE = Mode.STRICT
+
+    recipe = AuthenticRecipe(cls=StrictModeClass)
+    Cookbook.add_recipe(recipe)
+
+    assert Cookbook.has_recipe(StrictModeClass)
+    assert Cookbook.get_recipe(StrictModeClass) is not None
+
+    val_1_ingredient = Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1")
+    # user defined recipe is override authentic recipe
+    assert val_1_ingredient.mode == Mode.DUCK
+    assert val_1_ingredient.alias == "val 1's alias"
+
+    recipe = AuthenticRecipe(cls=UnionDataclass2)
+    Cookbook.add_recipe(recipe)
+
+    assert Cookbook.get_recipe(UnionDataclass2) is not None
+    assert not hasattr(UnionDataclass2, Config.PYANHMI_RECIPE)
+
+    assert Cookbook.get_recipe(FrozenSetDataclass) is None
+
+
+def test_decide_mode():
+    Config.MODE = Mode.STRICT
+
+    recipe = AuthenticRecipe(cls=StrictModeClass)
+    Cookbook.add_recipe(recipe)
+    assert Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").mode is Mode.DUCK
+
+    # mode is passed at runtime (create function) has the highest priority
+    assert Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").decide_mode(Mode.CASTING) is Mode.CASTING
+
+    # If a mode is not passed at runtime, then the mode is defined in the field is used
+    assert Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").decide_mode(None) is Mode.DUCK
+
+    # If a mode is not passed at runtime and user do not set field mode, the Config.MODE is used
+    Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").mode = None
+
+    assert Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").decide_mode(None) is Mode.STRICT
+
