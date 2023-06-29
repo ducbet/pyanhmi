@@ -1,10 +1,9 @@
 import os
 import typing
 
-from pyanhmi.Attributes.Attribute import Attribute
 from common.Config import Config
+from pyanhmi.Attributes.Attribute import Attribute
 from pyanhmi.Cookbook.Cookbook import Cookbook
-from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 
 
 class CookbookAttributes(Cookbook):
@@ -16,36 +15,43 @@ class CookbookAttributes(Cookbook):
         return attribute  # return for Attribute's decorator
 
     @staticmethod
+    def add_custom_attribute(cls):
+        from pyanhmi import CustomAttribute  # avoid circular import error
+        CookbookAttributes.ATTRIBUTES[cls] = CustomAttribute
+
+    @staticmethod
     def has(att_type):
         return att_type in CookbookAttributes.ATTRIBUTES
 
     @staticmethod
     def get(value_type):
-        # todo should return instance???
-        return CookbookAttributes.get_attribute_instance(value_type)(value_type)
+        """
+        Return instance of Attribute child. E.g: DictAttribute(value_type),...
+        :param value_type:
+        :return:
+        """
+        return CookbookAttributes._get_attribute_instance(value_type)(value_type)
 
     @staticmethod
-    def get_attribute_instance(value_type):
+    def _get_attribute_instance(value_type) -> Attribute:
         """
         :param value_type: can be hash(string) value
         :return:
         """
         if not value_type:
             return CookbookAttributes.ATTRIBUTES.get(typing.Any)
-        if CookbookRecipe.has(value_type):
-            return CookbookAttributes.get_attribute_instance(Config.CustomAttribute)
 
-        if value_type in CookbookAttributes.ATTRIBUTES:
-            return CookbookAttributes.ATTRIBUTES[value_type]
+        result = CookbookAttributes.ATTRIBUTES.get(value_type)
+        if result:
+            return result
+
         origin_type = typing.get_origin(value_type)
-
         result = CookbookAttributes.ATTRIBUTES.get(origin_type)
         return result if result else CookbookAttributes.ATTRIBUTES.get(typing.Any)
 
     @staticmethod
     def get_all():
         return CookbookAttributes.ATTRIBUTES
-
 
     @staticmethod
     def is_user_defined_type(value_type):

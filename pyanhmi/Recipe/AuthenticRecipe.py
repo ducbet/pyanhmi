@@ -17,9 +17,9 @@ class AuthenticRecipe(Recipe):
         if not cls:
             cls = type(obj)
         obj = Helper.try_mock_obj(cls)
-        super().__init__(self._extract_ingredients(obj))
         self.based_on_cls = cls
-        # print("__init__", self.ingredients)
+        CookbookAttributes.add_custom_attribute(cls)  # have to add CustomAttribute before creating ingredients
+        super().__init__(self._extract_ingredients(obj))
         self.update_user_defined_recipe()
 
     def update_user_defined_recipe(self):
@@ -28,7 +28,6 @@ class AuthenticRecipe(Recipe):
         if not user_defined_recipe:
             return
         self.update(user_defined_recipe)
-        # print("update_user_defined_recipe", self.ingredients)
 
     @staticmethod
     def _extract_ingredients(obj):
