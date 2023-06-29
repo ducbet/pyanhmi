@@ -10,7 +10,7 @@ from pyanhmi.ObjectCreator import ObjectCreator
 @CookbookAttributes.add
 @dataclass
 class CustomAttribute(Attribute):
-    TYPES: typing.ClassVar[list] = ["CustomAttribute"]  # special case
+    TYPES: typing.ClassVar[list] = [Config.CustomAttribute]  # special case
 
     def __init__(self, field_type):
         super().__init__(field_type)

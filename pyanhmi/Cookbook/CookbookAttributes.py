@@ -22,13 +22,13 @@ class CookbookAttributes(Cookbook):
     @staticmethod
     def get(value_type):
         """
-        :param value_type: can be string
+        :param value_type: can be hash(string) value
         :return:
         """
         if not value_type:
             return CookbookAttributes.ATTRIBUTES.get(typing.Any)
         if CookbookRecipe.has(value_type):
-            return CookbookAttributes.get("CustomAttribute")
+            return CookbookAttributes.get(Config.CustomAttribute)
 
         if value_type in CookbookAttributes.ATTRIBUTES:
             return CookbookAttributes.ATTRIBUTES[value_type]

@@ -28,6 +28,7 @@ class Mode(Enum):
 
 class Config:
     PYANHMI_RECIPE = "PYANHMI_RECIPE"
+    CustomAttribute = hash("CustomAttribute")
 
     ObjAtt_priority = 100
     OrderedDict_priority = 60
