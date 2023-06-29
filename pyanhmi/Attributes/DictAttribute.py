@@ -17,13 +17,13 @@ class DictAttribute(Attribute):
         super().__init__(field_type)
         args_type = typing.get_args(field_type)
         if not args_type:
-            self.key_att = CookbookAttributes.get(None)(None)
-            self.value_att = CookbookAttributes.get(None)(None)
+            self.key_att = CookbookAttributes.get(None)
+            self.value_att = CookbookAttributes.get(None)
             return
         self.key_type = args_type[0]
-        self.key_att = CookbookAttributes.get(self.key_type)(self.key_type)
+        self.key_att = CookbookAttributes.get(self.key_type)
         self.value_type = args_type[1]
-        self.value_att = CookbookAttributes.get(self.value_type)(self.value_type)
+        self.value_att = CookbookAttributes.get(self.value_type)
 
     def get_att_priority(self):
         return max(Config.DictAtt_priority, self.key_att.get_att_priority(), self.value_att.get_att_priority())

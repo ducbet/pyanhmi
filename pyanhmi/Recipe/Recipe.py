@@ -32,7 +32,7 @@ class Recipe:
 
     def update(self, other: "Recipe"):
         if not isinstance(other, Recipe):
-            raise InvalidDatatype(expects=type(self), data=other)
+            raise InvalidDatatype(expects=Recipe, data=other)
 
         for other_name, other_ingredient in other.ingredients.items():
             if other_name not in self.ingredients:

@@ -21,6 +21,11 @@ class CookbookAttributes(Cookbook):
 
     @staticmethod
     def get(value_type):
+        # todo should return instance???
+        return CookbookAttributes.get_attribute_instance(value_type)(value_type)
+
+    @staticmethod
+    def get_attribute_instance(value_type):
         """
         :param value_type: can be hash(string) value
         :return:
@@ -28,7 +33,7 @@ class CookbookAttributes(Cookbook):
         if not value_type:
             return CookbookAttributes.ATTRIBUTES.get(typing.Any)
         if CookbookRecipe.has(value_type):
-            return CookbookAttributes.get(Config.CustomAttribute)
+            return CookbookAttributes.get_attribute_instance(Config.CustomAttribute)
 
         if value_type in CookbookAttributes.ATTRIBUTES:
             return CookbookAttributes.ATTRIBUTES[value_type]
@@ -39,14 +44,8 @@ class CookbookAttributes(Cookbook):
 
     @staticmethod
     def get_all():
-        return list(CookbookAttributes.ATTRIBUTES.values())
+        return CookbookAttributes.ATTRIBUTES
 
-    @staticmethod
-    def is_final_type(value_type):
-        origin_type = typing.get_origin(value_type)
-        if origin_type == typing.Final:
-            return True
-        return False
 
     @staticmethod
     def is_user_defined_type(value_type):

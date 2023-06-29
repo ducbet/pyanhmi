@@ -17,9 +17,9 @@ class ListAttribute(Attribute):
         super().__init__(field_type)
         args_type = typing.get_args(field_type)
         if not args_type:
-            self.value_att = CookbookAttributes.get(None)(None)
+            self.value_att = CookbookAttributes.get(None)
             return
-        self.value_att = CookbookAttributes.get(args_type[0])(args_type[0])
+        self.value_att = CookbookAttributes.get(args_type[0])
 
     def get_att_priority(self):
         return max(Config.ListAtt_priority, self.value_att.get_att_priority())

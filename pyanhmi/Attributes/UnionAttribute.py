@@ -15,7 +15,7 @@ class UnionAttribute(Attribute):
     def __init__(self, field_type):
         super().__init__(field_type)
         self.args = typing.get_args(field_type)
-        self.value_atts = [CookbookAttributes.get(arg)(arg) for arg in self.args]
+        self.value_atts = [CookbookAttributes.get(arg) for arg in self.args]
 
         # todo: smart onion
         # self.smart_union_value_atts = set()

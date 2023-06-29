@@ -18,7 +18,7 @@ class TupleAttribute(Attribute):
         super().__init__(field_type)
         self.value_atts = []
         for arg_type in typing.get_args(field_type):
-            self.value_atts.append(CookbookAttributes.get(arg_type)(arg_type))
+            self.value_atts.append(CookbookAttributes.get(arg_type))
 
     def get_att_priority(self):
         if not self.value_atts:

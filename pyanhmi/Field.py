@@ -1,3 +1,4 @@
+import typing
 from typing import Any
 
 from common.Config import Config, Mode
@@ -18,7 +19,7 @@ class Field:
         self.getter_func = getter_func
         self.is_ignored = is_ignored
         self.attribute_type = attribute_type
-        self.is_final = CookbookAttributes.is_final_type(attribute_type)
+        self.is_final = self.is_final_type(attribute_type)
         self.is_class_var = is_class_var
         self.mode = mode
 
@@ -54,7 +55,7 @@ class Field:
         self._auto_init = self.get_attribute()
 
     def get_attribute(self):
-        return CookbookAttributes.get(self.attribute_type)(self.attribute_type)
+        return CookbookAttributes.get(self.attribute_type)
 
     def decide_mode(self, mode: Mode) -> Mode:
         if mode:
@@ -82,7 +83,7 @@ class Field:
 
     def update(self, other: "Field"):
         if not isinstance(other, Field):
-            raise InvalidDatatype(expects=type(self), data=other)
+            raise InvalidDatatype(expects=Field, data=other)
 
         self.name = other.name if other.name else self.name
         self.alias = other.alias if other.alias else self.alias
@@ -92,3 +93,10 @@ class Field:
         self.is_final = other.is_final if other.is_final else self.is_final
         self.is_class_var = other.is_class_var if other.is_class_var else self.is_class_var
         self.mode = other.mode if other.mode else self.mode
+
+    @staticmethod
+    def is_final_type(value_type):
+        origin_type = typing.get_origin(value_type)
+        if origin_type == typing.Final:
+            return True
+        return False
