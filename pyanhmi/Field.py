@@ -1,10 +1,8 @@
-import inspect
-from enum import Enum
 from typing import Any
 
-from pyanhmi.AttributeManager import AttributeManager
-from pyanhmi.Config import Config, Mode
-from pyanhmi.Error import InvalidDatatype
+from common.Config import Config, Mode
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from common.Error import InvalidDatatype
 
 
 class Field:
@@ -20,7 +18,7 @@ class Field:
         self.getter_func = getter_func
         self.is_ignored = is_ignored
         self.attribute_type = attribute_type
-        self.is_final = AttributeManager.is_final_type(attribute_type)
+        self.is_final = CookbookAttributes.is_final_type(attribute_type)
         self.is_class_var = is_class_var
         self.mode = mode
 
@@ -56,15 +54,17 @@ class Field:
         self._auto_init = self.get_attribute()
 
     def get_attribute(self):
-        return AttributeManager.get_cached_attribute(self.attribute_type)(self.attribute_type)
+        return CookbookAttributes.get(self.attribute_type)(self.attribute_type)
 
     def decide_mode(self, mode: Mode) -> Mode:
-        print(f"mode: {mode}, self.mode: {self.mode}, Config.MODE: {Config.MODE} -> "
-              f"{mode if mode is not None else (self.mode if self.mode is not None else Config.MODE)}")
-        return mode if mode is not None else (self.mode if self.mode is not None else Config.MODE)
+        if mode:
+            return mode
+        if self.mode:
+            return self.mode
+        return Config.MODE
 
     def create(self, data, mode: Mode = None):
-        print(f"mode: {self.decide_mode(mode)}, Field self._auto_init: {self._auto_init}, {inspect.isclass(self._auto_init)}")
+        # print(f"mode: {self.decide_mode(mode)}, Field self._auto_init: {self._auto_init}, {inspect.isclass(self._auto_init)}")
         return self._auto_init.create(data, self.decide_mode(mode))
 
     def __eq__(self, other: "Field"):

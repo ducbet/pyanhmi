@@ -2,12 +2,13 @@ import typing
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from pyanhmi.Attributes.Attribute import register_attribute, Attribute
-from pyanhmi.Config import Config
-from pyanhmi.Error import InvalidDatatype
+from pyanhmi.Attributes.Attribute import Attribute
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from common.Error import InvalidDatatype
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class DictAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [dict]
@@ -16,13 +17,13 @@ class DictAttribute(Attribute):
         super().__init__(field_type)
         args_type = typing.get_args(field_type)
         if not args_type:
-            self.key_att = self.get_TypeManager(None)(None)
-            self.value_att = self.get_TypeManager(None)(None)
+            self.key_att = CookbookAttributes.get(None)(None)
+            self.value_att = CookbookAttributes.get(None)(None)
             return
         self.key_type = args_type[0]
-        self.key_att = self.get_TypeManager(self.key_type)(self.key_type)
+        self.key_att = CookbookAttributes.get(self.key_type)(self.key_type)
         self.value_type = args_type[1]
-        self.value_att = self.get_TypeManager(self.value_type)(self.value_type)
+        self.value_att = CookbookAttributes.get(self.value_type)(self.value_type)
 
     def get_att_priority(self):
         return max(Config.DictAtt_priority, self.key_att.get_att_priority(), self.value_att.get_att_priority())

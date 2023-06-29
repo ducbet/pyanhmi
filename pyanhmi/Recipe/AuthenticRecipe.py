@@ -1,12 +1,12 @@
 import typing
 from typing import Dict
 
-from pyanhmi import AttributeManager
-from pyanhmi.Config import Config
-from pyanhmi.Cookbook import Cookbook
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Field import Field
 from pyanhmi.Helper import Helper
-from pyanhmi.Recipe import Recipe
+from pyanhmi.Recipe.Recipe import Recipe
 
 
 class AuthenticRecipe(Recipe):
@@ -19,7 +19,7 @@ class AuthenticRecipe(Recipe):
         obj = Helper.try_mock_obj(cls)
         super().__init__(self._extract_ingredients(obj))
         self.based_on_cls = cls
-        print("__init__", self.ingredients)
+        # print("__init__", self.ingredients)
         self.update_user_defined_recipe()
 
     def update_user_defined_recipe(self):
@@ -28,7 +28,7 @@ class AuthenticRecipe(Recipe):
         if not user_defined_recipe:
             return
         self.update(user_defined_recipe)
-        print("update_user_defined_recipe", self.ingredients)
+        # print("update_user_defined_recipe", self.ingredients)
 
     @staticmethod
     def _extract_ingredients(obj):
@@ -40,8 +40,8 @@ class AuthenticRecipe(Recipe):
         for att in Recipe.get_instance_attributes(obj):
             attribute_type = field_types.get(att, typing.Any)
 
-            for user_defined_type in AttributeManager.get_user_defined_types(attribute_type):
-                Cookbook.add_recipe(AuthenticRecipe(cls=user_defined_type))
+            for user_defined_type in CookbookAttributes.get_user_defined_types(attribute_type):
+                CookbookRecipe.add(AuthenticRecipe(cls=user_defined_type))
 
             ingredients[att] = Field(
                 name=att,

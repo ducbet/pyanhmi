@@ -2,7 +2,7 @@ import json
 import random
 import typing
 from collections import defaultdict, OrderedDict
-from collections.abc import Mapping, Collection, Iterable
+from collections.abc import Iterable
 from datetime import datetime
 from enum import Enum
 from ipaddress import IPv4Address
@@ -15,22 +15,23 @@ from MostOuterSchemaclass import OuterClass
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from common.schema_class import Product, ProductDescription
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, StrClass, \
-    IntClass, CompositeClass, AnyDataclass, FrozenSetDataclass, OrderedDictDataclass, ClassVarDataclass, StrDataclass, \
+    IntClass, CompositeClass, FrozenSetDataclass, OrderedDictDataclass, StrDataclass, \
     IntDataclass, DictsDataclass, DictDataclass, DictClass, DictsClass, DictCompositeClass, DefaultDictDataclass, \
     NestedDefaultDictDataclass, DefaultDictsDataclass, SetDataclass, SetClass, SetsDataclass, ListDataclass, \
     TupleDataclass, TuplesDataclass, FrozenSetClass, FrozenSetsDataclass, UnionDataclass, UnionDataclass2, \
     FloatDataclass, BoolDataclass, StrictModeClass
-from pyanhmi import AttributeManager, IntAttribute, BoolAttribute
+from pyanhmi import IntAttribute, BoolAttribute
 from pyanhmi.Attributes.AnyAttribute import AnyAttribute
 from pyanhmi.Attributes.DefaultDictAttribute import DefaultDictAttribute
 from pyanhmi.Attributes.DictAttribute import DictAttribute
 from pyanhmi.Attributes.ListAttribute import ListAttribute
 from pyanhmi.Attributes.UnionAttribute import UnionAttribute
-from pyanhmi.Config import Config, Mode
-from pyanhmi.Cookbook import Cookbook
-from pyanhmi.Error import InvalidDatatype, InvalidData
+from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
+from common.Config import Config, Mode
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
+from common.Error import InvalidDatatype, InvalidData
 from pyanhmi.ObjectCreator import ObjectCreator
-from pyanhmi.AuthenticRecipe import AuthenticRecipe
 from pyanhmi.objects_normalizer import ObjectsNormalizer
 
 
@@ -1157,8 +1158,8 @@ def test_set_normalize_rule():
     assert product_description_rules["image"].name == "image"
     assert product_description_rules["image"].alias == "image"
 
-    assert Cookbook.get_recipe(type(product)) is not None
-    assert Cookbook.get_recipe(type(product_description)) is not None
+    assert CookbookRecipe.get(type(product)) is not None
+    assert CookbookRecipe.get(type(product_description)) is not None
 
 
 def test_add_source():
@@ -1297,7 +1298,7 @@ def test_get_all_objs():
 
 
 def test_get_normalizable_fields():
-    normalizable_fields = AttributeManager.get_user_defined_types(AttributeTypesChild)
+    normalizable_fields = CookbookAttributes.get_user_defined_types(AttributeTypesChild)
     assert normalizable_fields == {AttributeTypesChild, AttributeTypesParent, CompositeClass}
 
 
@@ -1322,47 +1323,51 @@ def test_is_normalizable_fields():
     }
     for cls, is_normalizable_field in checks.items():
         # print(f"normalizable: {TypeCheckManager.is_normalizable_fields(cls)}, {cls}, __module__: {cls.__module__}")
-        assert AttributeManager.is_user_defined_type(cls) == is_normalizable_field
+        assert CookbookAttributes.is_user_defined_type(cls) == is_normalizable_field
 
 
 def test_add_recipe():
     Config.MODE = Mode.STRICT
 
     recipe = AuthenticRecipe(cls=StrictModeClass)
-    Cookbook.add_recipe(recipe)
+    CookbookRecipe.add(recipe)
 
-    assert Cookbook.has_recipe(StrictModeClass)
-    assert Cookbook.get_recipe(StrictModeClass) is not None
+    assert CookbookRecipe.has(recipe)
+    assert CookbookRecipe.has(StrictModeClass)
+    assert CookbookRecipe.get(StrictModeClass) is not None
 
-    val_1_ingredient = Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1")
+    val_1_ingredient = CookbookRecipe.get(StrictModeClass).get_ingredient("val_1")
     # user defined recipe is override authentic recipe
     assert val_1_ingredient.mode == Mode.DUCK
     assert val_1_ingredient.alias == "val 1's alias"
 
     recipe = AuthenticRecipe(cls=UnionDataclass2)
-    Cookbook.add_recipe(recipe)
+    CookbookRecipe.add(recipe)
 
-    assert Cookbook.get_recipe(UnionDataclass2) is not None
+    assert CookbookRecipe.has(recipe)
+    assert CookbookRecipe.has(UnionDataclass2)
+
+    assert CookbookRecipe.get(UnionDataclass2) is not None
     assert not hasattr(UnionDataclass2, Config.PYANHMI_RECIPE)
 
-    assert Cookbook.get_recipe(FrozenSetDataclass) is None
+    assert CookbookRecipe.get(FrozenSetDataclass) is None
 
 
 def test_decide_mode():
     Config.MODE = Mode.STRICT
 
     recipe = AuthenticRecipe(cls=StrictModeClass)
-    Cookbook.add_recipe(recipe)
-    assert Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").mode is Mode.DUCK
+    CookbookRecipe.add(recipe)
+    assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").mode is Mode.DUCK
 
     # mode is passed at runtime (create function) has the highest priority
-    assert Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").decide_mode(Mode.CASTING) is Mode.CASTING
+    assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").decide_mode(Mode.CASTING) is Mode.CASTING
 
     # If a mode is not passed at runtime, then the mode is defined in the field is used
-    assert Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").decide_mode(None) is Mode.DUCK
+    assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").decide_mode(None) is Mode.DUCK
 
     # If a mode is not passed at runtime and user do not set field mode, the Config.MODE is used
-    Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").mode = None
+    CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").mode = None
 
-    assert Cookbook.get_recipe(StrictModeClass).get_ingredient("val_1").decide_mode(None) is Mode.STRICT
+    assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").decide_mode(None) is Mode.STRICT
 

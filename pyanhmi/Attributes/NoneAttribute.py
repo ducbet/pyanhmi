@@ -1,12 +1,13 @@
 import typing
 from dataclasses import dataclass
 
-from pyanhmi.Config import Config
-from pyanhmi.Attributes.Attribute import Attribute, register_attribute
-from pyanhmi.Error import InvalidDatatype
+from pyanhmi.Attributes.Attribute import Attribute
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from common.Error import InvalidDatatype
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class NoneAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [None]

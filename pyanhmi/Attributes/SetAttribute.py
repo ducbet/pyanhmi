@@ -2,12 +2,13 @@ import typing
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from pyanhmi.Config import Config
-from pyanhmi.Attributes.Attribute import register_attribute, Attribute
-from pyanhmi.Error import InvalidDatatype
+from pyanhmi.Attributes.Attribute import Attribute
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from common.Error import InvalidDatatype
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class SetAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [set]
@@ -16,9 +17,9 @@ class SetAttribute(Attribute):
         super().__init__(field_type)
         args_type = typing.get_args(field_type)
         if not args_type:
-            self.value_att = self.get_TypeManager(None)(None)
+            self.value_att = CookbookAttributes.get(None)(None)
             return
-        self.value_att = self.get_TypeManager(args_type[0])(args_type[0])
+        self.value_att = CookbookAttributes.get(args_type[0])(args_type[0])
 
     def get_att_priority(self):
         return max(Config.SetAtt_priority, self.value_att.get_att_priority())

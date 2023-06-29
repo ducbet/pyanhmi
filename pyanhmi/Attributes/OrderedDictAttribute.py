@@ -2,12 +2,12 @@ import typing
 from collections import OrderedDict
 from dataclasses import dataclass
 
-from pyanhmi.Attributes.Attribute import register_attribute
 from pyanhmi.Attributes.DictAttribute import DictAttribute
-from pyanhmi.Config import Config
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class OrderedDictAttribute(DictAttribute):
     TYPES: typing.ClassVar[list] = [typing.OrderedDict, OrderedDict]

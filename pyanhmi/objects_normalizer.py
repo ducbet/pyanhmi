@@ -1,10 +1,9 @@
 from collections import defaultdict
-from collections import defaultdict
 from typing import Tuple, Any
 
-from pyanhmi.AuthenticRecipe import AuthenticRecipe
-from pyanhmi.Cookbook import Cookbook
-from pyanhmi.Config import Config
+from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.ObjectCreator import ObjectCreator
 
 
@@ -30,8 +29,8 @@ class ObjectsNormalizer:
         return obj[1]
 
     def add(self, obj):
-        if not Cookbook.has_recipe(type(obj)):
-            Cookbook.add_recipe(AuthenticRecipe(obj=obj))
+        if not CookbookRecipe.has(type(obj)):
+            CookbookRecipe.add(AuthenticRecipe(obj=obj))
         self.sources[type(obj)].append((self.obj_count, obj))
         self.obj_count += 1
         self.max_idx += 1
@@ -138,8 +137,8 @@ class ObjectsNormalizer:
         return result
 
     def convert(self, cls):
-        if not Cookbook.has_recipe(cls):
-            Cookbook.add_recipe(AuthenticRecipe(cls=cls))
+        if not CookbookRecipe.has(cls):
+            CookbookRecipe.add(AuthenticRecipe(cls=cls))
 
         values = self.export()
         obj_params = {cls.LOCALIZE_RULES[k]: v for k, v in values.items() if k in cls.LOCALIZE_RULES}

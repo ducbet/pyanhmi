@@ -1,10 +1,10 @@
 from typing import Any
 
-from pyanhmi.AuthenticRecipe import AuthenticRecipe
-from pyanhmi.Config import Config, Mode
-from pyanhmi.Cookbook import Cookbook
-from pyanhmi.Error import InvalidDatatype
-from pyanhmi.Recipe import Recipe
+from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
+from common.Config import Mode
+from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
+from common.Error import InvalidDatatype
+from pyanhmi.Recipe.Recipe import Recipe
 
 
 class ObjectCreator:
@@ -13,14 +13,12 @@ class ObjectCreator:
     def create_obj(obj_params: dict, obj_type: Any, recipe: Recipe = None, mode: Mode = None):
         if not isinstance(obj_params, dict):
             raise InvalidDatatype(msg="obj_params must be dict", expects=dict, data=obj_params)
-        if not Cookbook.has_recipe(obj_type):
-            Cookbook.add_recipe(AuthenticRecipe(cls=obj_type))
+        if not CookbookRecipe.has(obj_type):
+            CookbookRecipe.add(AuthenticRecipe(cls=obj_type))
 
         # obj_type is cached
-        recipe = recipe if recipe else Cookbook.get_recipe(obj_type)
+        recipe = recipe if recipe else CookbookRecipe.get(obj_type)
         params = {}
-        # print(recipe)
-        # print(recipe.get_ingredient("val_1"))
         for param, obj_param in obj_params.items():
             if param not in recipe.ingredients:
                 continue

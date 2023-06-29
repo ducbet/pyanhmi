@@ -3,10 +3,10 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 from pyanhmi.Attributes.DictAttribute import DictAttribute
-from pyanhmi.Attributes.Attribute import register_attribute
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class DefaultDictAttribute(DictAttribute):
     TYPES: typing.ClassVar[list] = [typing.DefaultDict, defaultdict]

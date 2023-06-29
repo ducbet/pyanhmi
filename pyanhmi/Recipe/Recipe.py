@@ -1,13 +1,13 @@
 import typing
-from typing import Dict
 
-from pyanhmi.Config import Config
-from pyanhmi.Error import InvalidDatatype
-from pyanhmi.Field import Field
+from common.Config import Config
+from common.Error import InvalidDatatype
 
 
 class Recipe:
-    def __init__(self, ingredients: Dict[str, Field] = None):
+    # def __init__(self, ingredients: Dict[str, Field] = None):
+    def __init__(self, ingredients=None):
+        # todo how to add Dict[str, Field]?
         self.ingredients = ingredients if ingredients else {}
 
     @staticmethod

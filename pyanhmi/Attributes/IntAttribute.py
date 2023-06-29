@@ -1,13 +1,12 @@
 import typing
 from dataclasses import dataclass
 
-from pyanhmi.Attributes.Attribute import register_attribute
 from pyanhmi.Attributes.PrimitiveAttribute import PrimitiveAttribute
-from pyanhmi.Config import Mode
-from pyanhmi.Error import InvalidDatatype
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from common.Error import InvalidDatatype
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class IntAttribute(PrimitiveAttribute):
     TYPES: typing.ClassVar[list] = [int]

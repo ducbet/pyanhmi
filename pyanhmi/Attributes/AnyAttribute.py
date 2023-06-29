@@ -1,11 +1,12 @@
 import typing
 from dataclasses import dataclass
 
-from pyanhmi.Config import Config
-from pyanhmi.Attributes.Attribute import Attribute, register_attribute
+from pyanhmi.Attributes.Attribute import Attribute
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class AnyAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [typing.Any]

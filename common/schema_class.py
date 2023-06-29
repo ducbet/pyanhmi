@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import ClassVar, Dict
 
 from pyanhmi.Field import Field
-from pyanhmi.Recipe import Recipe
+from pyanhmi.Recipe.Recipe import Recipe
 
 
 @dataclass

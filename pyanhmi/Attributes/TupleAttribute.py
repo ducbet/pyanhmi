@@ -2,12 +2,13 @@ import typing
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from pyanhmi.Config import Config
-from pyanhmi.Attributes.Attribute import register_attribute, Attribute
-from pyanhmi.Error import InvalidDatatype, InvalidData
+from pyanhmi.Attributes.Attribute import Attribute
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from common.Error import InvalidDatatype, InvalidData
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class TupleAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [tuple]
@@ -17,7 +18,7 @@ class TupleAttribute(Attribute):
         super().__init__(field_type)
         self.value_atts = []
         for arg_type in typing.get_args(field_type):
-            self.value_atts.append(self.get_TypeManager(arg_type)(arg_type))
+            self.value_atts.append(CookbookAttributes.get(arg_type)(arg_type))
 
     def get_att_priority(self):
         if not self.value_atts:

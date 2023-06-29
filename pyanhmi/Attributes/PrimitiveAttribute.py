@@ -2,7 +2,7 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import ClassVar
 
-from pyanhmi.Config import Config
+from common.Config import Config
 from pyanhmi.Attributes.Attribute import Attribute
 
 

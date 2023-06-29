@@ -2,14 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from typing import Any
 
-from pyanhmi import AttributeManager
-from pyanhmi.Config import Mode
-
-
-def register_attribute(cls):
-    AttributeManager.CACHED_ATTRIBUTES.update({cls_type: cls for cls_type in cls.TYPES})
-    # print(f"cls: {cls}, cls.SUPPORT_TYPES {AttributeManager.CACHED_ATTRIBUTES}")
-    return cls
+from common.Config import Mode
 
 
 class Attribute(ABC):
@@ -22,9 +15,6 @@ class Attribute(ABC):
     def __repr__(self):
         # print(f"ObjectAttribute: __repr__ ",  f"{self.__class__.__name__}({self.field_type})")
         return f"{self.__class__.__name__}({self.field_type})"
-
-    def get_TypeManager(self, value_type):
-        return AttributeManager.get_cached_attribute(value_type)
 
     def create(self, data: Any, mode: Mode):
         if mode is Mode.CASTING:

@@ -1,15 +1,16 @@
 import typing
 from dataclasses import dataclass
 
-from pyanhmi.Config import Config
-from pyanhmi.Attributes.Attribute import Attribute, register_attribute
+from pyanhmi.Attributes.Attribute import Attribute
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
 from pyanhmi.ObjectCreator import ObjectCreator
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class CustomAttribute(Attribute):
-    TYPES: typing.ClassVar[list] = ["CustomTypeAttribute"]  # special case
+    TYPES: typing.ClassVar[list] = ["CustomAttribute"]  # special case
 
     def __init__(self, field_type):
         super().__init__(field_type)

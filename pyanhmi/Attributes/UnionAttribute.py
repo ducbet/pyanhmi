@@ -1,14 +1,13 @@
 import typing
 from dataclasses import dataclass
-from enum import Enum
 
-from pyanhmi.Config import Config, Mode
-from pyanhmi.Attributes.AnyAttribute import AnyAttribute
-from pyanhmi.Attributes.Attribute import Attribute, register_attribute
-from pyanhmi.Error import InvalidDatatype
+from pyanhmi.Attributes.Attribute import Attribute
+from common.Config import Config
+from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
+from common.Error import InvalidDatatype
 
 
-@register_attribute
+@CookbookAttributes.add
 @dataclass
 class UnionAttribute(Attribute):
     TYPES: typing.ClassVar[list] = [typing.Union]
@@ -16,7 +15,7 @@ class UnionAttribute(Attribute):
     def __init__(self, field_type):
         super().__init__(field_type)
         self.args = typing.get_args(field_type)
-        self.value_atts = [self.get_TypeManager(arg)(arg) for arg in self.args]
+        self.value_atts = [CookbookAttributes.get(arg)(arg) for arg in self.args]
 
         # todo: smart onion
         # self.smart_union_value_atts = set()

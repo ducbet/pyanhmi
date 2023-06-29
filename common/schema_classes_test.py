@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from typing import ClassVar, List, Final, FrozenSet, Optional, Tuple, Dict, Union, Set, Any, DefaultDict, OrderedDict, \
     Callable
 
-from pyanhmi.Config import Mode
+from common.Config import Mode
 from pyanhmi.Field import Field
-from pyanhmi.Recipe import Recipe
+from pyanhmi.Recipe.Recipe import Recipe
 
 
 @dataclass
