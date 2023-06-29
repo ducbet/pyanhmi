@@ -5,9 +5,12 @@ class Helper:
     @staticmethod
     def try_mock_obj(obj_type):
         try:
-            return obj_type()
+            tmp = obj_type()
+            # print(f"try_mock_obj can create {obj_type} without params")
+            return tmp
         except TypeError as e:
             err_msg = str(e)
+            # print(f"try_mock_obj err_msg: {err_msg}")
             # __init__() missing 3 required positional arguments: 'param1', 'param2', and 'param3'
             if "__init__() missing" not in err_msg:
                 raise e

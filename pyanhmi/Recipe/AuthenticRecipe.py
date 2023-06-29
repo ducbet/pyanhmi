@@ -20,14 +20,24 @@ class AuthenticRecipe(Recipe):
         self.based_on_cls = cls
         CookbookAttributes.add_custom_attribute(cls)  # have to add CustomAttribute before creating ingredients
         super().__init__(self._extract_ingredients(obj))
+        # print(f"AuthenticRecipe __init__ ", self.get_ingredient("val_1"))
         self.update_user_defined_recipe()
+        self.update_user_defined_ingredients(obj)
+        # print(f"AuthenticRecipe update_user_defined_ingredients ", self.get_ingredient("val_1"))
 
     def update_user_defined_recipe(self):
         # prioritize user_defined_recipe inside class instead of automatically generated from type hint
         user_defined_recipe = getattr(self.based_on_cls, Config.PYANHMI_RECIPE, None)
         if not user_defined_recipe:
             return
+        # print(f"AuthenticRecipe user_defined_recipe ", user_defined_recipe.get_ingredient("val_1"))
         self.update(user_defined_recipe)
+
+    def update_user_defined_ingredients(self, obj):
+        for att in Recipe.get_instance_attributes(obj):
+            assigned_field = getattr(obj, att, None)
+            if isinstance(assigned_field, Field):
+                self.update_ingredient(att, assigned_field)
 
     @staticmethod
     def _extract_ingredients(obj):

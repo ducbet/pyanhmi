@@ -30,13 +30,16 @@ class Recipe:
     def __repr__(self):
         return f"Recipe(ingredients={[self.ingredients.keys()]})"
 
+    def update_ingredient(self, other_name, other_ingredient):
+        if other_name not in self.ingredients:
+            self.ingredients[other_name] = other_ingredient
+            return
+        self.ingredients[other_name].update(other_ingredient)
+
     def update(self, other: "Recipe"):
         if not isinstance(other, Recipe):
             raise InvalidDatatype(expects=Recipe, data=other)
 
         for other_name, other_ingredient in other.ingredients.items():
-            if other_name not in self.ingredients:
-                self.ingredients[other_name] = other_ingredient
-                continue
-            self.ingredients[other_name].update(other_ingredient)
+            self.update_ingredient(other_name, other_ingredient)
         return self

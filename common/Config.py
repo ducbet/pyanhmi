@@ -2,7 +2,7 @@ import functools
 import os
 import time
 from abc import ABC, abstractmethod
-from enum import Enum, unique
+from enum import Enum, unique, auto
 
 
 def timer(func):
@@ -24,6 +24,11 @@ class Mode(Enum):
     DUCK = 0
     STRICT = 1
     CASTING = 2
+
+
+@unique
+class EmptyValue(Enum):
+    FIELD = auto()
 
 
 class Config:

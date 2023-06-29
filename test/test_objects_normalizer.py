@@ -19,7 +19,7 @@ from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level
     IntDataclass, DictsDataclass, DictDataclass, DictClass, DictsClass, DictCompositeClass, DefaultDictDataclass, \
     NestedDefaultDictDataclass, DefaultDictsDataclass, SetDataclass, SetClass, SetsDataclass, ListDataclass, \
     TupleDataclass, TuplesDataclass, FrozenSetClass, FrozenSetsDataclass, UnionDataclass, UnionDataclass2, \
-    FloatDataclass, BoolDataclass, StrictModeClass
+    FloatDataclass, BoolDataclass, StrictModeClass, SetFieldDirectly
 from pyanhmi import IntAttribute, BoolAttribute
 from pyanhmi.Attributes.AnyAttribute import AnyAttribute
 from pyanhmi.Attributes.DefaultDictAttribute import DefaultDictAttribute
@@ -1351,6 +1351,13 @@ def test_add_recipe():
     assert not hasattr(UnionDataclass2, Config.PYANHMI_RECIPE)
 
     assert CookbookRecipe.get(FrozenSetDataclass) is None
+
+    recipe = AuthenticRecipe(SetFieldDirectly)
+    CookbookRecipe.add(recipe)
+    val_1_ingredient = CookbookRecipe.get(SetFieldDirectly).get_ingredient("val_1")
+    # user defined recipe is override authentic recipe
+    assert val_1_ingredient.mode == Mode.DUCK
+    assert val_1_ingredient.default == 0
 
 
 def test_decide_mode():

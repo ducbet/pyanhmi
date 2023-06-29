@@ -435,4 +435,10 @@ class StrictModeClass:
 
 @dataclass
 class SetFieldDirectly:
-    val_1: int = Field(default=5, mode=Mode.DUCK, alias="val 1's alias")
+    val_1: int = Field(default=0, mode=Mode.DUCK)
+
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        ingredients={
+            "val_1": Field(default=5, mode=Mode.CASTING)
+        }
+    )
