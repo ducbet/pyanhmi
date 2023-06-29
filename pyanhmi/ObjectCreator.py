@@ -19,7 +19,7 @@ class ObjectCreator:
         # obj_type is cached
         recipe = recipe if recipe else CookbookRecipe.get(obj_type)
         params = {}
-        for param, obj_param in obj_params.items():
+        for param, obj_param in recipe.ingredients.items():
             if param not in recipe.ingredients:
                 continue
             if recipe.ingredients[param].is_final:

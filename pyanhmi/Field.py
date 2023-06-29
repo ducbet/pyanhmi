@@ -13,7 +13,8 @@ class Field:
                  alias: str = None,
                  is_ignored: bool = False,
                  getter_func: str = None,
-                 mode: Mode = None):
+                 mode: Mode = None,
+                 default: Any = None):
         self.name = name
         self.alias = alias
         self.getter_func = getter_func
@@ -22,22 +23,21 @@ class Field:
         self.is_final = self.is_final_type(attribute_type)
         self.is_class_var = is_class_var
         self.mode = mode
+        self.default = default
 
     @property
     def alias(self) -> str:
-        if not self._normalized_field_name:
+        if not self._alias:
             return self.name
-        return self._normalized_field_name
+        return self._alias
 
     @alias.setter
-    def alias(self, normalized_field_name):
-        self._normalized_field_name = normalized_field_name
+    def alias(self, alias):
+        self._alias = alias
 
     @property
     def getter_func(self) -> str:
-        # print(f"@property getter_func_name, self._getter_func_name: {self._getter_func_name}")
         if not self._getter_func:
-            # print(f"@property if not self._getter_func_name")
             return self.name
         return self._getter_func
 
@@ -65,7 +65,6 @@ class Field:
         return Config.MODE
 
     def create(self, data, mode: Mode = None):
-        # print(f"mode: {self.decide_mode(mode)}, Field self._auto_init: {self._auto_init}, {inspect.isclass(self._auto_init)}")
         return self._auto_init.create(data, self.decide_mode(mode))
 
     def __eq__(self, other: "Field"):
@@ -74,10 +73,11 @@ class Field:
     def __repr__(self):
         return f"Field(" \
                f"name: {self.name}, " \
+               f"alias: {self.alias}, " \
                f"attribute_type: {self.attribute_type}, " \
+               f"default: {self.default}, " \
                f"is_class_var: {self.is_class_var}, " \
                f"auto_init: {self._auto_init}, " \
-               f"alias: {self.alias}, " \
                f"mode: {self.mode}, " \
                f"getter_func_name: {self.getter_func})"
 

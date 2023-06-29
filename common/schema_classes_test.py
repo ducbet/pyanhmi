@@ -431,3 +431,8 @@ class StrictModeClass:
             "val_1": Field(mode=Mode.DUCK, alias="val 1's alias")
         }
     )
+
+
+@dataclass
+class SetFieldDirectly:
+    val_1: int = Field(default=5, mode=Mode.DUCK, alias="val 1's alias")
