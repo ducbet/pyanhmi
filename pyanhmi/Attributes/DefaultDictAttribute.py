@@ -14,12 +14,13 @@ class DefaultDictAttribute(DictAttribute):
     def __init__(self, field_type):
         super().__init__(field_type)
 
-    def get_default_factory(self, value_type):
+    @staticmethod
+    def get_default_factory(value_type):
         origin_type = typing.get_origin(value_type)
         default_factory = origin_type if origin_type else value_type
         if origin_type is defaultdict:
             nested_value_type = typing.get_args(value_type)[1]
-            nested_value_constructor = self.get_default_factory(nested_value_type)
+            nested_value_constructor = DefaultDictAttribute.get_default_factory(nested_value_type)
             default_factory = defaultdict(nested_value_constructor)
             return lambda: default_factory
         return default_factory

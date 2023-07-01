@@ -1,5 +1,7 @@
 from dataclasses import dataclass
-from typing import ClassVar, Dict
+from typing import ClassVar, Dict, List
+
+from pydantic import BaseModel
 
 from pyanhmi.Field import Field
 from pyanhmi.Recipe.Recipe import Recipe
@@ -86,3 +88,35 @@ class ProductOuter:
 
     def sample_Product_method(self):
         return
+
+
+@dataclass
+class PublicApiEntry:
+    API: str
+    Description: str
+    Auth: str
+    HTTPS: bool
+    Cors: str
+    Link: str
+    Category: str
+
+
+@dataclass
+class PublicApi:
+    count: int
+    entries: List[PublicApiEntry]
+
+
+class PydanticPublicApiEntry(BaseModel):
+    API: str
+    Description: str
+    Auth: str
+    HTTPS: bool
+    Cors: str
+    Link: str
+    Category: str
+
+
+class PydanticPublicApi(BaseModel):
+    count: int
+    entries: List[PydanticPublicApiEntry]

@@ -1,4 +1,10 @@
+import functools
+import json
+import os
 import re
+import time
+
+directory = os.getcwd()
 
 
 class Helper:
@@ -46,3 +52,23 @@ class Helper:
                     .replace("'", "")
                 obj_params = {k: v for k, v in obj_params.items() if k != redundant_key}
         return obj_type()  # will raise error: TypeError: __init__() missing 1 required positional argument...
+
+    @staticmethod
+    def load_json(file_path: str):
+        with open(os.path.join(directory, file_path), encoding='utf-8') as f:
+            return json.load(f)
+
+    def timer(func):
+        """Print the runtime of the decorated function"""
+
+        @functools.wraps(func)
+        def wrapper_timer(*args, **kwargs):
+            start_time = time.perf_counter()  # 1
+            value = func(*args, **kwargs)
+            end_time = time.perf_counter()  # 2
+            run_time = end_time - start_time  # 3
+            ms = run_time * 1000
+            print(f"Finished {func.__name__!r} in {run_time:.4f} secs, {ms:.1f}: ms")
+            return value
+
+        return wrapper_timer

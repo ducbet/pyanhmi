@@ -61,13 +61,19 @@ class Field:
         return CookbookAttributes.get(self.attribute_type)
 
     def decide_mode(self, mode: Mode) -> Mode:
+        # print(f"mode: mode: {Field.is_a_value(mode)}")
         if Field.is_a_value(mode):
             return mode
+        # print(f"self.mode: self.mode: {Field.is_a_value(self.mode)}")
         if Field.is_a_value(self.mode):
             return self.mode
+        # print(f"return Config.MODE: {Config.MODE}")
         return Config.MODE
 
     def create(self, data, mode: Mode = EmptyValue.FIELD):
+        # print(f"self._auto_init: {self._auto_init}")
+        # print(f"mode: {self.decide_mode(mode)}")
+        # print(f"data: {data}")
         return self._auto_init.create(data, self.decide_mode(mode))
 
     def __eq__(self, other: "Field"):
