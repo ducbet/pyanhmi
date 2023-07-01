@@ -42,3 +42,6 @@ class ListAttribute(Attribute):
         if isinstance(data, list) or isinstance(data, Iterable):
             return list(self.value_att.casting_create(v) for v in data)
         raise InvalidDatatype(expects=[list, Iterable], data=data)
+
+    def duck_test_create(self, data):
+        return list(self.value_att.duck_test_create(v) for v in data)

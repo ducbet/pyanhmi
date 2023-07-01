@@ -43,3 +43,5 @@ class FrozenSetAttribute(Attribute):
             raise InvalidDatatype(expects=Iterable, data=data)
         return frozenset([self.value_att.casting_create(v) for v in data])
 
+    def duck_test_create(self, data):
+        return frozenset([self.value_att.duck_test_create(v) for v in data])

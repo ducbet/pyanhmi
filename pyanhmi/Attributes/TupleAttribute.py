@@ -56,3 +56,6 @@ class TupleAttribute(Attribute):
                 raise InvalidData(msg=f"tuple expect {len(self.value_atts)} items but data has {len(tuple_data)} items",
                                   data=data)
         raise InvalidDatatype(expects=Iterable, data=data)
+
+    def duck_test_create(self, data):
+        return tuple(self.value_atts[i].duck_test_create(val) for i, val in enumerate(data))

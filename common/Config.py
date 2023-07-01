@@ -11,6 +11,7 @@ class Mode(Enum):
     DUCK = 0
     STRICT = 1
     CASTING = 2
+    DUCK_TEST = 3
 
 
 @unique

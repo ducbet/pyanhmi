@@ -1,3 +1,4 @@
+import cProfile
 import typing
 from collections import defaultdict
 
@@ -70,20 +71,28 @@ if __name__ == '__main__':
     Config.MODE = Mode.CASTING
 
     public_apis = Helper.load_json("files_storage/public_apis.json")
-    ObjectCreator.create_obj(public_apis, PublicApi)
+    # ObjectCreator.create_obj(public_apis, PublicApi)
 
 
-    create(public_apis)
-    create_dummy(public_apis)
-
+    # create(public_apis)
+    # create_dummy(public_apis)
+    #
     Config.MODE = Mode.DUCK
+    pyanhmi_create(public_apis)
+    #
+
+    Config.MODE = Mode.DUCK_TEST
     pyanhmi_create(public_apis)
 
     Config.MODE = Mode.CASTING
     pyanhmi_create(public_apis)
+    # cProfile.run('pyanhmi_create(public_apis)')
 
     # Config.MODE = Mode.STRICT
     # pyanhmi_create(public_apis)
     #
     # pydantic_create(public_apis)
-    print(ObjectCreator.time_debug)
+
+
+
+    # print(ObjectCreator.time_debug)

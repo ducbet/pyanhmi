@@ -73,7 +73,6 @@ class Field:
     def create(self, data, mode: Mode = EmptyValue.FIELD):
         # print(f"self._auto_init: {self._auto_init}")
         # print(f"mode: {self.decide_mode(mode)}")
-        # print(f"data: {data}")
         return self._auto_init.create(data, self.decide_mode(mode))
 
     def __eq__(self, other: "Field"):

@@ -42,3 +42,6 @@ class SetAttribute(Attribute):
         if isinstance(data, set) or isinstance(data, Iterable):
             return set(self.value_att.casting_create(v) for v in data)
         raise InvalidDatatype(expects=[set, Iterable], data=data)
+
+    def duck_test_create(self, data):
+        return set(self.value_att.duck_test_create(v) for v in data)

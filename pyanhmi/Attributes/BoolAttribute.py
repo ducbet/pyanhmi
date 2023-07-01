@@ -52,3 +52,6 @@ class BoolAttribute(PrimitiveAttribute):
 
     def casting_create(self, data):
         return self.cast_to_bool(data)
+
+    def duck_test_create(self, data):
+        return data

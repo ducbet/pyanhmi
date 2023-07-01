@@ -38,3 +38,6 @@ class OrderedDictAttribute(DictAttribute):
 
     def casting_create(self, data):
         return OrderedDict(super().casting_create(data))
+
+    def duck_test_create(self, data):
+        return OrderedDict(super().duck_test_create(data))

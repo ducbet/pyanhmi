@@ -34,3 +34,5 @@ class StrAttribute(PrimitiveAttribute):
             return str(data)
         except Exception:
             raise InvalidDatatype(expects=str, data=data)
+    def duck_test_create(self, data):
+        return data

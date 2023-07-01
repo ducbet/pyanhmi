@@ -42,3 +42,6 @@ class DefaultDictAttribute(DictAttribute):
 
     def casting_create(self, data):
         return defaultdict(self.get_default_factory(self.value_type), super().casting_create(data))
+
+    def duck_test_create(self, data):
+        return defaultdict(self.get_default_factory(self.value_type), super().duck_test_create(data))

@@ -23,6 +23,13 @@ class Attribute(ABC):
             return self.strict_create(data)
         if mode is Mode.DUCK:
             return data
+        if mode is Mode.DUCK_TEST:
+            return self.duck_test_create(data)
+
+    @abstractmethod
+    def duck_test_create(self, data):
+        # only for testing performance
+        pass
 
     @abstractmethod
     def strict_create(self, data):

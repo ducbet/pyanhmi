@@ -70,3 +70,10 @@ class UnionAttribute(Attribute):
             except InvalidDatatype:
                 pass
         raise InvalidDatatype(expects=self._get_expect_types(), data=data)
+
+    def duck_test_create(self, data):
+        for value_att in self.value_atts:
+            try:
+                return value_att.duck_test_create(data)
+            except InvalidDatatype:
+                pass

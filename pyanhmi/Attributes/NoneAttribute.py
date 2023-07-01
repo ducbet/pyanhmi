@@ -38,3 +38,6 @@ class NoneAttribute(Attribute):
     def casting_create(self, data):
         return None
 
+
+    def duck_test_create(self, data):
+        return None

@@ -36,3 +36,6 @@ class IntAttribute(PrimitiveAttribute):
             # ValueError: int("asd")
             # TypeError: int(None)
             raise InvalidDatatype(expects=int, data=data)
+
+    def duck_test_create(self, data):
+        return data

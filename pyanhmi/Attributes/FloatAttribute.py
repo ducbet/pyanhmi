@@ -33,3 +33,6 @@ class FloatAttribute(PrimitiveAttribute):
             return float(data)
         except (ValueError, TypeError):
             raise InvalidDatatype(expects=float, data=data)
+
+    def duck_test_create(self, data):
+        return data

@@ -36,3 +36,6 @@ class AnyAttribute(Attribute):
     def casting_create(self, data):
         return data
 
+
+    def duck_test_create(self, data):
+        return data

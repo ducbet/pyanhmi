@@ -55,3 +55,6 @@ class DictAttribute(Attribute):
             except (TypeError, IndexError):
                 raise InvalidDatatype(expects=f"key-value {Iterable}", data=data)
         raise InvalidDatatype(expects=[dict, f"key-value {Iterable}"], data=data)
+
+    def duck_test_create(self, data):
+        return dict({self.key_att.duck_test_create(k): self.value_att.duck_test_create(v) for k, v in data.items()})
