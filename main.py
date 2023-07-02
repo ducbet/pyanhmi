@@ -1,18 +1,34 @@
-import cProfile
-import typing
-from collections import defaultdict
-
-from common.Config import Mode, Config
 from common.schema_class import PublicApi, PydanticPublicApi, PublicApiEntry
-from common.schema_classes_test import DictDataclass, DictClass, SetFieldDirectly, StrictModeClass, StrDataclass, \
-    StrClass
-from pyanhmi import DefaultDictAttribute
-from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
+from cpthon_code.cy_test import c_called_func
 from pyanhmi.Helper import Helper
 from pyanhmi.ObjectCreator import ObjectCreator
-from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
 
-loop_total = 200
+loop_total = 10000
+
+
+def called_func3():
+    return 2
+
+
+def called_func2():
+    for i in range(loop_total):
+        called_func3()
+
+
+def called_func():
+    for i in range(loop_total):
+        called_func2()
+    return 1997
+
+
+@Helper.timer
+def p_call_func():
+    print(called_func())
+
+
+@Helper.timer
+def c_call_func():
+    print(c_called_func())
 
 
 @Helper.timer
@@ -68,24 +84,27 @@ def pydantic_create(public_apis):
 
 
 if __name__ == '__main__':
-    Config.MODE = Mode.CASTING
+    p_call_func()
+    c_call_func()
 
-    public_apis = Helper.load_json("files_storage/public_apis.json")
-    # ObjectCreator.create_obj(public_apis, PublicApi)
-
-
+    # Config.MODE = Mode.CASTING
+    #
+    # public_apis = Helper.load_json("files_storage/public_apis.json")
+    # # ObjectCreator.create_obj(public_apis, PublicApi)
+    #
+    #
     # create(public_apis)
     # create_dummy(public_apis)
     #
-    Config.MODE = Mode.DUCK
-    pyanhmi_create(public_apis)
+    # Config.MODE = Mode.DUCK
+    # pyanhmi_create(public_apis)
+    # #
     #
-
-    Config.MODE = Mode.DUCK_TEST
-    pyanhmi_create(public_apis)
-
-    Config.MODE = Mode.CASTING
-    pyanhmi_create(public_apis)
+    # Config.MODE = Mode.DUCK_TEST
+    # pyanhmi_create(public_apis)
+    #
+    # Config.MODE = Mode.CASTING
+    # pyanhmi_create(public_apis)
     # cProfile.run('pyanhmi_create(public_apis)')
 
     # Config.MODE = Mode.STRICT
