@@ -14,7 +14,8 @@ class Field:
                  is_ignored: bool = EmptyValue.FIELD,
                  getter_func: str = EmptyValue.FIELD,
                  mode: Mode = EmptyValue.FIELD,
-                 default: Any = EmptyValue.FIELD):
+                 default: Any = EmptyValue.FIELD,
+                 validators: typing.List = EmptyValue.FIELD):
         self.name = name
         self.alias = alias
         self.getter_func = getter_func
@@ -24,6 +25,7 @@ class Field:
         self.is_class_var = is_class_var
         self.mode = mode
         self.default = default
+        self.validators = validators
 
     @property
     def alias(self) -> str:
@@ -56,6 +58,14 @@ class Field:
     def attribute_type(self, attribute_type):
         self._attribute_type = attribute_type
         self._auto_init = self.get_attribute()
+
+    @property
+    def is_class_var(self) -> str:
+        return self._is_class_var is True
+
+    @is_class_var.setter
+    def is_class_var(self, is_class_var) -> str:
+        self._is_class_var = is_class_var
 
     def get_attribute(self):
         return CookbookAttributes.get(self.attribute_type)

@@ -432,6 +432,9 @@ class StrictModeClass:
         }
     )
 
+def user_validator(val):
+    return "asdwqe " + val
+
 
 @dataclass
 class SetFieldDirectly:
@@ -439,6 +442,12 @@ class SetFieldDirectly:
 
     PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
         ingredients={
-            "val_1": Field(default=5, mode=Mode.CASTING)
+            "val_1": Field(default=5, mode=Mode.CASTING, validators=[
+                "val_1_validator",
+                user_validator
+            ])
         }
     )
+
+    def val_1_validator(self):
+        return "modifed val_1"
