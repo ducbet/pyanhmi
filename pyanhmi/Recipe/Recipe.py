@@ -2,11 +2,11 @@ import typing
 
 from common.Config import Config
 from common.Error import InvalidDatatype
+from pyanhmi.Field import Field
 
 
 class Recipe:
-    # def __init__(self, ingredients: Dict[str, Field] = None):
-    def __init__(self, ingredients=None):
+    def __init__(self, ingredients: typing.Dict[str, Field] = None):
         # todo how to add Dict[str, Field]?
         self.ingredients = ingredients if ingredients else {}
 
@@ -43,3 +43,7 @@ class Recipe:
         for other_name, other_ingredient in other.ingredients.items():
             self.update_ingredient(other_name, other_ingredient)
         return self
+
+    def get_validators(self) -> dict:
+        return {att_name: ingredient.validators.values()
+                for att_name, ingredient in self.ingredients.items()}

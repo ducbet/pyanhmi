@@ -1,9 +1,11 @@
 import typing
+from collections import OrderedDict
 from typing import Any
 
-from common.Config import Config, Mode, EmptyValue
+from common.Config import Config, Mode, EmptyValue, is_field_exist
 from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
-from common.Error import InvalidDatatype
+from common.Error import InvalidDatatype, ValidatorMissing
+from pyanhmi.Validator import Validator
 
 
 class Field:
@@ -15,7 +17,9 @@ class Field:
                  getter_func: str = EmptyValue.FIELD,
                  mode: Mode = EmptyValue.FIELD,
                  default: Any = EmptyValue.FIELD,
-                 validators: typing.List = EmptyValue.FIELD):
+                 validators: typing.List = EmptyValue.FIELD,
+                 based_on_cls: typing.List = EmptyValue.FIELD
+                 ):
         self.name = name
         self.alias = alias
         self.getter_func = getter_func
@@ -25,7 +29,9 @@ class Field:
         self.is_class_var = is_class_var
         self.mode = mode
         self.default = default
-        self.validators = validators
+        self.based_on_cls = based_on_cls
+        self.validator_funcs: list = validators
+        self.validators: dict = {}
 
     @property
     def alias(self) -> str:
@@ -60,12 +66,21 @@ class Field:
         self._auto_init = self.get_attribute()
 
     @property
-    def is_class_var(self) -> str:
+    def is_class_var(self):
         return self._is_class_var is True
 
     @is_class_var.setter
-    def is_class_var(self, is_class_var) -> str:
+    def is_class_var(self, is_class_var):
         self._is_class_var = is_class_var
+
+    def convert_validators(self, list_validators: list):
+        dict_validators = OrderedDict()
+        if not Field.is_a_value(list_validators):
+            return dict_validators
+        for validator_func in list_validators:
+            validator = Validator(validator_func, self.based_on_cls)
+            dict_validators[validator.__hash__] = validator
+        return dict_validators
 
     def get_attribute(self):
         return CookbookAttributes.get(self.attribute_type)
@@ -81,7 +96,11 @@ class Field:
         return Config.MODE
 
     def create(self, data, mode: Mode = EmptyValue.FIELD):
-        # print(f"self._auto_init: {self._auto_init}")
+        # print(f"validators: {self.validators}")
+        # for validator in self.validators.values():
+        #     print(f"create. validator: {validator}, data: {data}")
+        #     data = validator(data)
+
         # print(f"mode: {self.decide_mode(mode)}")
         return self._auto_init.create(data, self.decide_mode(mode))
 
@@ -97,11 +116,14 @@ class Field:
                f"is_class_var: {self.is_class_var}, " \
                f"auto_init: {self._auto_init}, " \
                f"mode: {self.mode}, " \
+               f"_validators: {self.validator_funcs}, " \
+               f"validators: {self.validators}, " \
                f"getter_func_name: {self.getter_func})"
 
     def update(self, other: "Field"):
         if not isinstance(other, Field):
             raise InvalidDatatype(expects=Field, data=other)
+
         self.name = other.name if Field.is_a_value(other.name) else self.name
         self.alias = other.alias if Field.is_a_value(other.alias) else self.alias
         self.getter_func = other.getter_func if Field.is_a_value(other.getter_func) else self.getter_func
@@ -111,6 +133,9 @@ class Field:
         self.is_class_var = other.is_class_var if Field.is_a_value(other.is_class_var) else self.is_class_var
         self.mode = other.mode if Field.is_a_value(other.mode) else self.mode
         self.default = other.default if Field.is_a_value(other.default) else self.default
+
+        self.validators.update(self.convert_validators(self.validator_funcs))
+        self.validators.update(self.convert_validators(other.validator_funcs))
 
     @staticmethod
     def is_final_type(value_type):
@@ -122,4 +147,4 @@ class Field:
     @staticmethod
     def is_a_value(val):
         # print(f"is_a_value val: {val}, EmptyValue.FIELD: {EmptyValue.FIELD}")
-        return val is not EmptyValue.FIELD
+        return is_field_exist(val)

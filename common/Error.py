@@ -27,3 +27,15 @@ class InvalidData(Exception):
 
     def __eq__(self, other):
         return self.message == other.message
+
+
+class ValidatorMissing(Exception):
+    def __init__(self, cls, validator, msg=""):
+        message = "Validator Missing"
+        message += f". {msg}" if msg else ""
+        message += f"{validator} is not exist in {cls}"
+        super().__init__(message)
+        self.message = message
+
+    def __eq__(self, other):
+        return self.message == other.message

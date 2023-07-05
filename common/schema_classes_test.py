@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from typing import ClassVar, List, Final, FrozenSet, Optional, Tuple, Dict, Union, Set, Any, DefaultDict, OrderedDict, \
     Callable
 
+from pydantic import BaseModel, field_validator
+
 from common.Config import Mode
 from pyanhmi.Field import Field
 from pyanhmi.Recipe.Recipe import Recipe
@@ -432,22 +434,76 @@ class StrictModeClass:
         }
     )
 
+
 def user_validator(val):
-    return "asdwqe " + val
+    return f"asdwqe -{val}-"
+
+
+def val_1_validator(val):
+    return f"unbounded val_1_validator -{val}-"
+
+
+def parent_validator(val):
+    return f"unbounded parent_validator -{val}-"
 
 
 @dataclass
-class SetFieldDirectly:
-    val_1: int = Field(default=0, mode=Mode.DUCK)
+class SetFieldParent:
+    parent_val: str = "origin"
+
+    def parent_validator(self):
+        print(f"parent_validator. self: {self}")
+        return f"parent_validator -{self.parent_val}-"
+
+
+@dataclass
+class SetFieldDirectly(SetFieldParent):
+    val_1: int = Field(default=0, mode=Mode.DUCK, validators=[
+        # "val_1_validator_2"
+    ])
 
     PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
         ingredients={
-            "val_1": Field(default=5, mode=Mode.CASTING, validators=[
-                "val_1_validator",
-                user_validator
-            ])
+            "val_1": Field(default=5,
+                           mode=Mode.CASTING,
+                           validators=[
+                               # "val_1_validator",
+                               user_validator,
+                               val_1_validator,
+                           ]),
+            "parent_val": Field(
+                           validators=[
+                               parent_validator,
+                               SetFieldParent.parent_validator,
+                           ]),
         }
     )
 
     def val_1_validator(self):
-        return "modifed val_1"
+        return f"val_1_validator {self.val_1}"
+
+    def val_1_validator_2(self):
+        return f"val_1_validator_2 {self.val_1}"
+
+    def val_1_validator_3(self):
+        return f"val_1_validator_3 {self.val_1}"
+
+
+class PydanticParentClass(BaseModel):
+    val_1: int
+
+
+class PydanticCompositeClass(BaseModel):
+    val_2_2: str
+
+    @field_validator('val_2_2', mode="before")
+    def modify_val_2_2(cls, v):
+        return f"modify_val_2_2 {v}"
+
+
+class PydanticClass(PydanticParentClass):
+    val_2: PydanticCompositeClass
+
+    @field_validator('val_1')
+    def modify2_val_1(cls, v):
+        return f"modified2_val_1 {v}"

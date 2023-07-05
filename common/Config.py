@@ -19,6 +19,10 @@ class EmptyValue(Enum):
     FIELD = auto()
 
 
+def is_field_exist(val):
+    return val is not EmptyValue.FIELD
+
+
 class Config:
     PYANHMI_RECIPE = "PYANHMI_RECIPE"
     CustomAttribute = hash("CustomAttribute")

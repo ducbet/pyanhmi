@@ -30,7 +30,6 @@ class AuthenticRecipe(Recipe):
         user_defined_recipe = getattr(self.based_on_cls, Config.PYANHMI_RECIPE, None)
         if not user_defined_recipe:
             return
-        # print(f"AuthenticRecipe user_defined_recipe ", user_defined_recipe.get_ingredient("val_1"))
         self.update(user_defined_recipe)
 
     def update_user_defined_ingredients(self, obj):
@@ -38,6 +37,13 @@ class AuthenticRecipe(Recipe):
             assigned_field = getattr(obj, att, None)
             if isinstance(assigned_field, Field):
                 self.update_ingredient(att, assigned_field)
+                continue
+            ingredient = self.get_ingredient(att)
+            if ingredient:
+                # print(f"ingredient.default = assigned_field. ingredient.default: {ingredient.default}, "
+                #       f"assigned_field: {assigned_field}")
+                ingredient.default = assigned_field
+
 
     @staticmethod
     def _extract_ingredients(obj):
@@ -55,7 +61,8 @@ class AuthenticRecipe(Recipe):
             ingredients[att] = Field(
                 name=att,
                 attribute_type=attribute_type,
-                is_class_var=hasattr(cls, att)
+                is_class_var=hasattr(cls, att),
+                based_on_cls=type(obj)
             )
         return ingredients
 
