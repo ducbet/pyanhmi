@@ -437,11 +437,13 @@ class StrictModeClass:
 
 
 def action_1(obj, attr_name, val):
+    # print(f"action_1 attr_name: {attr_name}, obj.val_2: {obj.val_2}")
     obj.val_2 += 1
     return f"action_1({val})"
 
 
 def action_2(obj, attr_name, val):
+    # print(f"action_2 attr_name: {attr_name}, obj.val_2: {obj.val_2}")
     obj.val_2 += 1
     return f"action_2({val})"
 
@@ -451,6 +453,7 @@ class SetFieldParent:
     parent_val: str = "origin"
 
     def parent_action(self, attr_name, value):
+        # print(f"parent_action attr_name: {attr_name}, self.val_2: {self.val_2}")
         self.val_2 += 1
         return f"parent_action({value})"
 
@@ -461,6 +464,12 @@ class SetFieldDirectly(SetFieldParent):
     val_2: int = 0
 
     PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        model_pre_actions=[
+            "model_action"
+        ],
+        fields_pre_actions=[
+            "fields_action"
+        ],
         ingredients={
             "val_1": Field(default=5,
                            mode=Mode.DUCK,
@@ -481,18 +490,26 @@ class SetFieldDirectly(SetFieldParent):
     )
 
     def bounded_action_1(self, attr_name, value):
-        print(f"bounded_action_1 self: {self}")
+        # print(f"bounded_action_1 attr_name: {attr_name}, self.val_2: {self.val_2}")
         self.val_2 += 1
         return f"bounded_action_1({value})"
 
     def action_2(self, attr_name, value):
+        # print(f"action_2 attr_name: {attr_name}, self.val_2: {self.val_2}")
         self.val_2 += 1
         return f"bounded_action_2({value})"
 
-    def cls_action(self, attr_name, value):
-        if attr_name == "val_1":
-            return f"cls_action dedicated for val_1({value})"
-        return f"cls_action({value})"
+    def model_action(self):
+        # print(f"model_action self.val_2: {self.val_2}")
+        self.val_2 += 1
+        self.val_1 = f"model_action({self.val_1})"
+        self.parent_val = f"model_action({self.parent_val})"
+
+    def fields_action(self, attr_name, value):
+        # print(f"fields_action attr_name: {attr_name}, self.val_2: {self.val_2}")
+        self.val_2 += 1
+        return f"fields_action({value})"
+
 
 class PydanticParentClass(BaseModel):
     val_1: int

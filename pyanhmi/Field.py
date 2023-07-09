@@ -31,9 +31,9 @@ class Field:
         self.mode = mode
         self.default = default
         self.based_on_cls = based_on_cls
-        self._pre_actions: list = pre_actions
+        self.pre_action_funcs: list = pre_actions if is_field_exist(pre_actions) else []
         self.pre_actions: dict = {}
-        self._post_actions: list = post_actions
+        self.post_action_funcs: list = post_actions if is_field_exist(post_actions) else []
         self.post_actions: dict = {}
 
     @property
@@ -78,8 +78,6 @@ class Field:
 
     def create_actions(self, action_funcs: list):
         actions = OrderedDict()
-        if not Field.is_a_value(action_funcs):
-            return actions
         for action_func in action_funcs:
             action = Action(action_func, self.based_on_cls, self.name)
             actions[action.__hash__] = action
@@ -131,11 +129,11 @@ class Field:
         self.mode = other.mode if Field.is_a_value(other.mode) else self.mode
         self.default = other.default if Field.is_a_value(other.default) else self.default
 
-        self.pre_actions.update(self.create_actions(self._pre_actions))
-        self.pre_actions.update(self.create_actions(other._pre_actions))
+        self.pre_actions.update(self.create_actions(self.pre_action_funcs))
+        self.pre_actions.update(self.create_actions(other.pre_action_funcs))
 
-        self.post_actions.update(self.create_actions(self._post_actions))
-        self.post_actions.update(self.create_actions(other._post_actions))
+        self.post_actions.update(self.create_actions(self.post_action_funcs))
+        self.post_actions.update(self.create_actions(other.post_action_funcs))
 
     @staticmethod
     def is_final_type(value_type):

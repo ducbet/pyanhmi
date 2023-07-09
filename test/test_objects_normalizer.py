@@ -1422,7 +1422,6 @@ def test_actions():
         },
     }
     obj = ObjectCreator.create_obj(data, SetFieldDirectly)
-
-    assert obj.val_1 == "bounded_action_2(action_2(action_1(bounded_action_1(2))))"
-    assert obj.val_2 == 6
-    assert obj.parent_val == "parent_action(action_2(origin))"
+    assert obj.val_1 == "bounded_action_2(action_2(fields_action(action_1(bounded_action_1(model_action(2))))))"
+    assert obj.val_2 == 9
+    assert obj.parent_val == "fields_action(parent_action(action_2(model_action(origin))))"

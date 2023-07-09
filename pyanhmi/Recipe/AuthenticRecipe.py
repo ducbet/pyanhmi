@@ -17,13 +17,9 @@ class AuthenticRecipe(Recipe):
         if not cls:
             cls = type(obj)
         obj = Helper.try_mock_obj(cls)
-        self.based_on_cls = cls
         CookbookAttributes.add_custom_attribute(cls)  # have to add CustomAttribute before creating ingredients
-        super().__init__(self._extract_ingredients(obj))
-        # print(f"AuthenticRecipe __init__ ", self.get_ingredient("val_1"))
+        super().__init__(self._extract_ingredients(obj), based_on_cls=cls)
         self.update_user_defined_recipe()
-        # self.update_user_defined_ingredients(obj)
-        # print(f"AuthenticRecipe update_user_defined_ingredients ", self.get_ingredient("val_1"))
 
     def update_user_defined_recipe(self):
         # prioritize user_defined_recipe inside class instead of automatically generated from type hint
@@ -32,27 +28,12 @@ class AuthenticRecipe(Recipe):
             return
         self.update(user_defined_recipe)
 
-    # def update_user_defined_ingredients(self, obj):
-    #     for att in Recipe.get_instance_attributes(obj):
-    #         # assigned_field = getattr(obj, att, None)
-    #         assigned_field = getattr(obj, att, EmptyValue.FIELD)
-    #         if isinstance(assigned_field, Field):
-    #             self.update_ingredient(att, assigned_field)
-    #             continue
-    #         ingredient = self.get_ingredient(att)
-    #         if ingredient:
-    #             # print(f"ingredient.default = assigned_field. ingredient.default: {ingredient.default}, "
-    #             #       f"assigned_field: {assigned_field}")
-    #             ingredient.default = assigned_field
-
-
     @staticmethod
     def _extract_ingredients(obj):
         cls = type(obj)
         ingredients: Dict[str, Field] = {}
 
         field_types = cls.__init__.__annotations__
-        # todo should have typing.get_type_hints(cls) to get class variable or not?
         for att in Recipe.get_instance_attributes(obj):
             attribute_type = field_types.get(att, typing.Any)
 

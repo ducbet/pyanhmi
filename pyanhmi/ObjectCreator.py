@@ -32,6 +32,9 @@ class ObjectCreator:
             params[att_name] = obj_params[att_name]
         obj = obj_type(**params)
 
+        for model_pre_action in recipe.model_pre_actions.values():
+            model_pre_action.execute(obj)
+
         for att_name in params.keys():
             ingredient = recipe.get_ingredient(att_name)
             # execute pre actions
@@ -44,4 +47,6 @@ class ObjectCreator:
             # execute post actions
             for post_action in ingredient.post_actions.values():
                 post_action.execute(obj)
+        for model_post_action in recipe.model_post_actions.values():
+            model_post_action.execute(obj)
         return obj
