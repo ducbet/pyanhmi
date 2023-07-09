@@ -1,4 +1,4 @@
-from pyanhmi.objects_normalizer import ObjectsNormalizer
+from pyanhmi.ObjectNormalizer import ObjectNormalizer
 from .Attributes.AnyAttribute import AnyAttribute
 from .Attributes.BoolAttribute import BoolAttribute
 from .Attributes.CustomAttribute import CustomAttribute
@@ -14,4 +14,5 @@ from .Attributes.SetAttribute import SetAttribute
 from .Attributes.StrAttribute import StrAttribute
 from .Attributes.TupleAttribute import TupleAttribute
 from .Attributes.UnionAttribute import UnionAttribute
+
 

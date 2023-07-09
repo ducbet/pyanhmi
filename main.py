@@ -1,8 +1,11 @@
-import json
-
-from common.schema_classes_test import SetFieldDirectly, PydanticClass
-from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
-from pyanhmi.ObjectCreator import ObjectCreator
+from common.Config import Mode, Config
+from common.Error import InvalidDatatype
+from common.schema_classes_test import ClassicParent
+from pyanhmi.ObjectCreator import create
 
 if __name__ == '__main__':
-    pass
+    Config.MODE = Mode.CASTING
+    try:
+        create({}, ClassicParent)
+    except InvalidDatatype as e:
+        assert str(e) == "__init__() missing 1 required positional argument: 'parent_name'"
