@@ -11,15 +11,15 @@ from actions.Action import Action
 class Field:
     def __init__(self, name: str = EmptyValue.FIELD,
                  attribute_type: Any = EmptyValue.FIELD,
-                 is_class_var: bool = EmptyValue.FIELD,
-                 alias: str = EmptyValue.FIELD,
-                 is_ignored: bool = EmptyValue.FIELD,
-                 getter_func: str = EmptyValue.FIELD,
+                 is_class_var: bool = False,
+                 alias: str = None,
+                 is_ignored: bool = False,
+                 getter_func: str = None,
                  mode: Mode = EmptyValue.FIELD,
                  default: Any = EmptyValue.FIELD,
-                 pre_actions: typing.List = EmptyValue.FIELD,
-                 post_actions: typing.List = EmptyValue.FIELD,
-                 based_on_cls: typing.List = EmptyValue.FIELD
+                 pre_actions: typing.List = None,
+                 post_actions: typing.List = None,
+                 based_on_cls: type[Any] = None
                  ):
         self.name = name
         self.alias = alias
@@ -28,30 +28,27 @@ class Field:
         self.attribute_type = attribute_type
         self.is_final = self.is_final_type(attribute_type)
         self.is_class_var = is_class_var
-        self.mode = mode
+        self.mode = mode if is_field_exist(mode) else Config.MODE
         self.default = default
-        self.based_on_cls = based_on_cls
-        self.pre_action_funcs: list = pre_actions if is_field_exist(pre_actions) else []
+        self.based_on_cls = based_on_cls  # can be None when defined by user
+        self.pre_action_funcs: list = pre_actions if pre_actions else []
         self.pre_actions: dict = {}
-        self.post_action_funcs: list = post_actions if is_field_exist(post_actions) else []
+        self.post_action_funcs: list = post_actions if post_actions else []
         self.post_actions: dict = {}
 
     @property
     def alias(self) -> str:
-        # print()
-        # print(f"property._alias: {self._alias}, {Field.is_a_value(self._alias)}")
-        if not Field.is_a_value(self._alias):
+        if not self._alias:
             return self.name
         return self._alias
 
     @alias.setter
     def alias(self, alias):
         self._alias = alias
-        # print(f"@alias.setter self._alias: {self._alias}")
 
     @property
     def getter_func(self) -> str:
-        if not Field.is_a_value(self._getter_func):
+        if self._getter_func:
             return self.name
         return self._getter_func
 
@@ -68,16 +65,8 @@ class Field:
         self._attribute_type = attribute_type
         self._auto_init = self.get_attribute()
 
-    @property
-    def is_class_var(self):
-        return self._is_class_var is True
-
-    @is_class_var.setter
-    def is_class_var(self, is_class_var):
-        self._is_class_var = is_class_var
-
-    def create_actions(self, action_funcs: list):
-        actions = OrderedDict()
+    def create_actions(self, action_funcs: typing.List[typing.Union[str, typing.Callable]]) -> typing.Dict[int, Action]:
+        actions = {}
         for action_func in action_funcs:
             action = Action(action_func, self.based_on_cls, self.name)
             actions[action.__hash__] = action
@@ -87,19 +76,15 @@ class Field:
         return CookbookAttributes.get(self.attribute_type)
 
     def decide_mode(self, mode: Mode) -> Mode:
-        # print(f"mode: mode: {Field.is_a_value(mode)}")
         if Field.is_a_value(mode):
             return mode
-        # print(f"self.mode: self.mode: {Field.is_a_value(self.mode)}")
-        if Field.is_a_value(self.mode):
-            return self.mode
-        # print(f"return Config.MODE: {Config.MODE}")
-        return Config.MODE
+        return self.mode
 
     def create(self, data, mode: Mode = EmptyValue.FIELD):
-        return self._auto_init.create(data, self.decide_mode(mode))
+        return self._auto_init._create(data, self.decide_mode(mode))
 
     def __eq__(self, other: "Field"):
+        # todo check again???
         return self.alias == other.alias and self.getter_func == other.getter_func
 
     def __repr__(self):
@@ -120,13 +105,13 @@ class Field:
             raise InvalidDatatype(expects=Field, data=other)
 
         self.name = other.name if Field.is_a_value(other.name) else self.name
-        self.alias = other.alias if Field.is_a_value(other.alias) else self.alias
-        self.getter_func = other.getter_func if Field.is_a_value(other.getter_func) else self.getter_func
-        self.is_ignored = other.is_ignored if Field.is_a_value(other.is_ignored) else self.is_ignored
+        self.alias = other.alias if other.alias else self.alias
+        self.getter_func = other.getter_func if other.getter_func else self.getter_func
+        self.is_ignored = other.is_ignored if other.is_ignored else self.is_ignored
         self.attribute_type = other.attribute_type if Field.is_a_value(other.attribute_type) else self.attribute_type
         self.is_final = other.is_final if Field.is_a_value(other.is_final) else self.is_final
         self.is_class_var = other.is_class_var if Field.is_a_value(other.is_class_var) else self.is_class_var
-        self.mode = other.mode if Field.is_a_value(other.mode) else self.mode
+        self.mode = other.mode  # todo check is it ok? check config mode???
         self.default = other.default if Field.is_a_value(other.default) else self.default
 
         self.pre_actions.update(self.create_actions(self.pre_action_funcs))

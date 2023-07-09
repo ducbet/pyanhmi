@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from common.Config import Config
-from pyanhmi.Creator import create
+from pyanhmi.Creator import _create
 from pyanhmi.Attributes.Attribute import Attribute
 
 
@@ -27,10 +27,10 @@ class CustomAttribute(Attribute):
         return hash(self.get_hash_content())
 
     def strict_create(self, data):
-        return create(data, self.field_type)
+        return _create(data, self.field_type)
 
     def casting_create(self, data):
-        return create(data, self.field_type)
+        return _create(data, self.field_type)
 
     def duck_test_create(self, data):
-        return create(data, self.field_type)
+        return _create(data, self.field_type)

@@ -1,19 +1,23 @@
 from collections import defaultdict
-from typing import Tuple, Any
+from typing import Tuple, Any, Optional, List, Iterable, Union
 
-from pyanhmi.Creator import create
+from pyanhmi.Creator import _create, bulk_create
 from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
-from common.Config import Config
+from common.Config import Config, Mode, EmptyValue
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
+from pyanhmi.Recipe.Recipe import Recipe
 
 
 class LunchBox:
 
-    def __init__(self, data=None, *args):
+    def __init__(self, data: dict = None,
+                 classes: Optional[Union[type[Any], List[type[Any]]]] = None,
+                 recipes: Optional[Union[Recipe, List[Recipe]]] = None,
+                 mode: Mode = EmptyValue.FIELD):
         self.sources = defaultdict(list)
         self.obj_count = 0
         self.max_idx = 0
-        for obj in self.create_sources(data, *args):
+        for obj in bulk_create(data=data, classes=classes, recipes=recipes, mode=mode):
             self.add(obj)
 
     @property
@@ -34,11 +38,6 @@ class LunchBox:
         self.sources[type(obj)].append((self.obj_count, obj))
         self.obj_count += 1
         self.max_idx += 1
-
-    def create_sources(self, data, *args):
-        if not data or not args:
-            return {}
-        return tuple([create(data, obj_type) for obj_type in args])
 
     def get_latest_objs_of_each_source(self):
         """

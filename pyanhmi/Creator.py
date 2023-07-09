@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional, List, Union, Tuple
 
 from common.Config import Mode, EmptyValue, is_field_exist
 from common.Error import InvalidDatatype, InvalidData
@@ -7,35 +7,41 @@ from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
 from pyanhmi.Recipe.Recipe import Recipe
 
 
-def create(obj_params: dict, obj_type: Any, recipe: Recipe = None, mode: Mode = EmptyValue.FIELD):
-    if not isinstance(obj_params, dict):
-        raise InvalidDatatype(msg="obj_params must be dict", expects=dict, data=obj_params)
-    if not CookbookRecipe.has(obj_type):
-        CookbookRecipe.add(AuthenticRecipe(cls=obj_type))
+def _create(data: dict, cls: type[Any], recipe: Recipe = None, mode: Mode = EmptyValue.FIELD):
+    """
 
-    recipe = recipe if recipe else CookbookRecipe.get(obj_type)
-    params = {}
+    :param data:
+    :param cls:
+    :param recipe:
+    :param mode:
+    :return:
+    """
+    if not isinstance(data, dict):
+        raise InvalidDatatype(msg="data must be dict", expects=dict, data=data)
+
+    recipe = recipe if recipe else CookbookRecipe.get(cls)
+    init_params = {}
     for att_name, ingredient in recipe.get_ingredient_to_create_obj().items():
-        if att_name not in obj_params:
+        if att_name not in data:
             if is_field_exist(ingredient.default):
-                params[att_name] = ingredient.default
+                init_params[att_name] = ingredient.default
                 continue
-            raise InvalidData(f"Require {att_name} param to create {obj_type} instance")
+            raise InvalidData(f"Require {att_name} param to create {cls} instance")
 
-        params[att_name] = obj_params[att_name]
-    obj = obj_type(**params)
+        init_params[att_name] = data[att_name]
+    obj = cls(**init_params)
 
     for model_pre_action in recipe.model_pre_actions.values():
         model_pre_action.execute(obj)
 
-    for att_name in params.keys():
+    for att_name in init_params.keys():
         ingredient = recipe.get_ingredient(att_name)
         # execute pre actions
         for pre_action in ingredient.pre_actions.values():
             pre_action.execute(obj)
 
         # assign evaluated value
-        setattr(obj, att_name, ingredient.create(getattr(obj, att_name), mode=mode))
+        setattr(obj, att_name, ingredient._create(getattr(obj, att_name), mode=mode))
 
         # execute post actions
         for post_action in ingredient.post_actions.values():
@@ -43,3 +49,48 @@ def create(obj_params: dict, obj_type: Any, recipe: Recipe = None, mode: Mode = 
     for model_post_action in recipe.model_post_actions.values():
         model_post_action.execute(obj)
     return obj
+
+
+def create(data: dict, cls: type[Any], recipe: Recipe = None, mode: Mode = EmptyValue.FIELD):
+    """
+
+    :param data:
+    :param cls:
+    :param recipe:
+    :param mode:
+    :return:
+    """
+    if not CookbookRecipe.has(cls):
+        # if cls is not cached in CookbookRecipe, then cache before creating
+        # nested classes are also cached
+        CookbookRecipe.add(AuthenticRecipe(cls=cls))
+    return _create(data=data, cls=cls, recipe=recipe, mode=mode)
+
+
+def bulk_create(data: dict,
+                classes: Union[type[Any], List[type[Any]]],
+                recipes: Optional[Union[Recipe, List[Recipe]]] = None,
+                mode: Mode = EmptyValue.FIELD) -> Optional[Union[Tuple[Any], Any]]:
+    """
+
+    :param data:
+    :param classes:
+    :param recipes:
+    :param mode:
+    :return:
+    """
+    if not data or not classes:
+        # must have both data and classes
+        return tuple()
+    if not isinstance(classes, list):
+        # if classes is not a list (is a class)
+        return create(data=data, cls=classes, recipe=recipes, mode=mode)
+    if not recipes:
+        # if there is no recipe, then create bulk of objects without recipe
+        return tuple([create(data, cls, None, mode) for cls in classes])
+    if len(classes) != len(recipes):
+        # if there are recipes, then the length of recipes must be matched with classes
+        raise ValueError(f"bulk_create. len(classes) != len(recipes). "
+                         f"len(classes) == {len(classes)}, "
+                         f"len(recipes) == {len(recipes)}")
+    return tuple([create(data, cls, recipes[idx], mode) for idx, cls in enumerate(classes)])
