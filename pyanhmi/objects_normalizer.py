@@ -38,7 +38,7 @@ class ObjectsNormalizer:
     def create_sources(self, data, *args):
         if not data or not args:
             return {}
-        return tuple([ObjectCreator.create_obj(data, obj_type) for obj_type in args])
+        return tuple([ObjectCreator.create(data, obj_type) for obj_type in args])
 
     def get_latest_objs_of_each_source(self):
         """

@@ -14,7 +14,7 @@ class ObjectCreator:
     time_debug = defaultdict(float)
 
     @staticmethod
-    def create_obj(obj_params: dict, obj_type: Any, recipe: Recipe = None, mode: Mode = EmptyValue.FIELD):
+    def create(obj_params: dict, obj_type: Any, recipe: Recipe = None, mode: Mode = EmptyValue.FIELD):
         if not isinstance(obj_params, dict):
             raise InvalidDatatype(msg="obj_params must be dict", expects=dict, data=obj_params)
         if not CookbookRecipe.has(obj_type):
