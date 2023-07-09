@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from common.Config import Config
-from pyanhmi.ObjectCreator import create
+from pyanhmi.Creator import create
 from pyanhmi.Attributes.Attribute import Attribute
 
 

@@ -1,13 +1,13 @@
 from collections import defaultdict
 from typing import Tuple, Any
 
-from pyanhmi.ObjectCreator import create
+from pyanhmi.Creator import create
 from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
 from common.Config import Config
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 
 
-class ObjectNormalizer:
+class LunchBox:
 
     def __init__(self, data=None, *args):
         self.sources = defaultdict(list)
@@ -56,16 +56,16 @@ class ObjectNormalizer:
         :return:
         """
         if len(args) == 0:
-            return tuple([ObjectNormalizer.get_real_obj(self.sources[obj_type][-1]) for obj_type in self.sources.keys()])
+            return tuple([LunchBox.get_real_obj(self.sources[obj_type][-1]) for obj_type in self.sources.keys()])
         elif len(args) == 1:
-            return ObjectNormalizer.get_real_obj(self.sources[args[0]][-1])
+            return LunchBox.get_real_obj(self.sources[args[0]][-1])
         else:
-            return tuple([ObjectNormalizer.get_real_obj(self.sources[obj_type][-1]) for obj_type in args])
+            return tuple([LunchBox.get_real_obj(self.sources[obj_type][-1]) for obj_type in args])
 
     @staticmethod
     def _get_obj_by_idx_in_slice(sources_slice: list, obj_idx: int) -> Tuple[int, Any]:
         for cls_idx in range(0, len(sources_slice)):
-            if ObjectNormalizer.get_obj_idx(sources_slice[cls_idx]) == obj_idx:
+            if LunchBox.get_obj_idx(sources_slice[cls_idx]) == obj_idx:
                 return cls_idx, sources_slice[cls_idx]
         return -1, None
 
@@ -74,7 +74,7 @@ class ObjectNormalizer:
         latest_obj = sources_slice[0]
         latest_idx = 0
         for idx in range(1, len(sources_slice)):
-            if ObjectNormalizer.get_obj_idx(sources_slice[idx]) > ObjectNormalizer.get_obj_idx(latest_obj):
+            if LunchBox.get_obj_idx(sources_slice[idx]) > LunchBox.get_obj_idx(latest_obj):
                 latest_obj = sources_slice[idx]
                 latest_idx = idx
         return latest_idx, latest_obj
@@ -89,7 +89,7 @@ class ObjectNormalizer:
         oldest_obj = sources_slice[0]
         oldest_idx = 0
         for cls_idx in range(1, len(sources_slice)):
-            if ObjectNormalizer.get_obj_idx(sources_slice[cls_idx]) < ObjectNormalizer.get_obj_idx(oldest_obj):
+            if LunchBox.get_obj_idx(sources_slice[cls_idx]) < LunchBox.get_obj_idx(oldest_obj):
                 oldest_obj = sources_slice[cls_idx]
                 oldest_idx = cls_idx
         return oldest_idx, oldest_obj
@@ -108,7 +108,7 @@ class ObjectNormalizer:
                              for source_idx, source_obj_idx in enumerate(objs_idx)]
             oldest_idx, oldest_obj = self._get_obj_by_idx_in_slice(sources_slice, obj_idx) if self.is_obj_idx_continuous \
                 else self._get_oldest_obj_in_slice(sources_slice)
-            result.append(ObjectNormalizer.get_real_obj(oldest_obj))
+            result.append(LunchBox.get_real_obj(oldest_obj))
             objs_idx[oldest_idx] += 1
             if objs_idx[oldest_idx] == len(sources_values[oldest_idx]):
                 objs_idx[oldest_idx] = -1  # finish this source
@@ -117,13 +117,13 @@ class ObjectNormalizer:
     def export(self, target_normalize_fields=None):
         latest_sources = list(self.get_latest_objs_of_each_source().values())
         # sort by ascending order
-        latest_sources.sort(key=lambda s: ObjectNormalizer.get_obj_idx(s))
+        latest_sources.sort(key=lambda s: LunchBox.get_obj_idx(s))
         result = {}
         for i in range(len(latest_sources) - 1, -1, -1):
             if target_normalize_fields and set(target_normalize_fields) == set(result.keys()):
                 # stop checking if all desired fields are collected
                  break
-            source = ObjectNormalizer.get_real_obj(latest_sources[i])
+            source = LunchBox.get_real_obj(latest_sources[i])
             for field, rule in getattr(source, Config.PYANHMI_RECIPE).ingredients.items():
                 if target_normalize_fields and rule.alias not in target_normalize_fields:
                     continue

@@ -1,4 +1,4 @@
-from pyanhmi.ObjectNormalizer import ObjectNormalizer
+from pyanhmi.LunchBox import LunchBox
 from .Attributes.AnyAttribute import AnyAttribute
 from .Attributes.BoolAttribute import BoolAttribute
 from .Attributes.CustomAttribute import CustomAttribute

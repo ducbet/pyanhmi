@@ -1,7 +1,7 @@
 from common.Config import Mode, Config
 from common.Error import InvalidDatatype
 from common.schema_classes_test import ClassicParent
-from pyanhmi.ObjectCreator import create
+from pyanhmi.Creator import create
 
 if __name__ == '__main__':
     Config.MODE = Mode.CASTING

@@ -21,7 +21,7 @@ from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level
     TupleDataclass, TuplesDataclass, FrozenSetClass, FrozenSetsDataclass, UnionDataclass, UnionDataclass2, \
     FloatDataclass, BoolDataclass, StrictModeClass, SetFieldDirectly
 from pyanhmi import IntAttribute, BoolAttribute
-from pyanhmi.ObjectCreator import create
+from pyanhmi.Creator import create
 from pyanhmi.Attributes.AnyAttribute import AnyAttribute
 from pyanhmi.Attributes.DefaultDictAttribute import DefaultDictAttribute
 from pyanhmi.Attributes.DictAttribute import DictAttribute
@@ -33,7 +33,7 @@ from common.Config import Config, Mode, EmptyValue
 from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from common.Error import InvalidDatatype, InvalidData
-from pyanhmi.ObjectNormalizer import ObjectNormalizer
+from pyanhmi.LunchBox import LunchBox
 
 
 def test_hash_Att():
@@ -1147,7 +1147,7 @@ def test_create_sources():
         "image": "",
         "name": "Pro",
     }
-    objects_normalizer = ObjectNormalizer()
+    objects_normalizer = LunchBox()
     product, product_description = objects_normalizer.create_sources(data, Product, ProductDescription)
 
     assert product.id == 5
@@ -1196,7 +1196,7 @@ def test_add_source():
     product_2 = Product(id=2, name="Pro 2")
     product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
 
-    objects_normalizer = ObjectNormalizer()
+    objects_normalizer = LunchBox()
     objects_normalizer.add(product)
 
     assert (0, product) == objects_normalizer.sources[type(product)][0]
@@ -1221,7 +1221,7 @@ def test_export():
     product = Product(id=1, name="Pro")
     product_2 = Product(id=2, name="Pro 2")
     product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
-    objects_normalizer = ObjectNormalizer()
+    objects_normalizer = LunchBox()
 
     objects_normalizer.add(product)
     assert objects_normalizer.export() == {
@@ -1271,14 +1271,14 @@ def test_get_latest_objs():
         "image": "",
         "name": "Pro",
     }
-    objects_normalizer = ObjectNormalizer(data, Product, ProductDescription)
+    objects_normalizer = LunchBox(data, Product, ProductDescription)
     product = objects_normalizer.get_latest_objs(Product)
-    assert product is ObjectNormalizer.get_real_obj(objects_normalizer.sources[Product][-1])
+    assert product is LunchBox.get_real_obj(objects_normalizer.sources[Product][-1])
 
     product, product_description = objects_normalizer.get_latest_objs(Product, ProductDescription)
 
-    assert product is ObjectNormalizer.get_real_obj(objects_normalizer.sources[Product][-1])
-    assert product_description is ObjectNormalizer.get_real_obj(objects_normalizer.sources[ProductDescription][-1])
+    assert product is LunchBox.get_real_obj(objects_normalizer.sources[Product][-1])
+    assert product_description is LunchBox.get_real_obj(objects_normalizer.sources[ProductDescription][-1])
 
     try:
         objects_normalizer.get_latest_objs(ClassicParent)
@@ -1302,7 +1302,7 @@ def test_get_all_objs():
     product = Product(id=1, name="Pro")
     product_2 = Product(id=2, name="Pro 2")
     product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
-    objects_normalizer = ObjectNormalizer()
+    objects_normalizer = LunchBox()
 
     objects_normalizer.add(product)
     assert objects_normalizer.get_all_objs() == [product]
