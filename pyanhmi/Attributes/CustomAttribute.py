@@ -27,10 +27,10 @@ class CustomAttribute(Attribute):
         return hash(self.get_hash_content())
 
     def strict_create(self, data):
-        return ObjectCreator.create(data, self.field_type)
+        return ObjectCreator.create_obj(data, self.field_type)
 
     def casting_create(self, data):
-        return ObjectCreator.create(data, self.field_type)
+        return ObjectCreator.create_obj(data, self.field_type)
 
     def duck_test_create(self, data):
-        return ObjectCreator.create(data, self.field_type)
+        return ObjectCreator.create_obj(data, self.field_type)

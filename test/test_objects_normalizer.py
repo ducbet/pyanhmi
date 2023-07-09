@@ -38,11 +38,11 @@ from pyanhmi.objects_normalizer import ObjectsNormalizer
 
 def test_hash_Att():
     try:
-        ObjectCreator.create({}, AttributeTypesParent)
+        ObjectCreator.create_obj({}, AttributeTypesParent)
     except:
         pass
     try:
-        ObjectCreator.create({}, AttributeTypesChild)
+        ObjectCreator.create_obj({}, AttributeTypesChild)
     except:
         pass
 
@@ -115,7 +115,7 @@ def test_defaultdict_value_constructor():
     assert d_dict.default_factory is dict
 
     try:
-        ObjectCreator.create({}, AttributeTypesParent)
+        ObjectCreator.create_obj({}, AttributeTypesParent)
     except:
         pass
     d_dict = DefaultDictAttribute.get_default_factory(typing.DefaultDict[str, dict[str, AttributeTypesParent]])()
@@ -162,11 +162,11 @@ def test_sort_union_args():
 
 def test_get_att_priority():
     try:
-        ObjectCreator.create({}, AttributeTypesParent)
+        ObjectCreator.create_obj({}, AttributeTypesParent)
     except:
         pass
     try:
-        ObjectCreator.create({}, AttributeTypesChild)
+        ObjectCreator.create_obj({}, AttributeTypesChild)
     except:
         pass
     assert AnyAttribute(str).get_att_priority() == Config.AnyAtt_priority
@@ -182,12 +182,12 @@ def test_get_att_priority():
 def test_create_obj():
     Config.MODE = Mode.CASTING
     try:
-        ObjectCreator.create({}, ClassicParent)
+        ObjectCreator.create_obj({}, ClassicParent)
     except InvalidDatatype as e:
         assert str(e) == "__init__() missing 1 required positional argument: 'parent_name'"
 
     try:
-        ObjectCreator.create({"product_name": "Pro"}, ClassicParent)
+        ObjectCreator.create_obj({"product_name": "Pro"}, ClassicParent)
     except InvalidDatatype as e:
         assert str(e) == "__init__() missing 1 required positional argument: 'parent_name'"
 
@@ -240,18 +240,18 @@ def test_create_obj():
 def test_create_str_strict():
     Config.MODE = Mode.STRICT
 
-    obj_dataclass = ObjectCreator.create({"val_1": "123"}, StrDataclass)
-    obj = ObjectCreator.create({"val_1": "123"}, StrClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, StrDataclass)
+    obj = ObjectCreator.create_obj({"val_1": "123"}, StrClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == "123"
 
     try:
-        ObjectCreator.create({"val_1": 123}, StrDataclass)
+        ObjectCreator.create_obj({"val_1": 123}, StrDataclass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=str, data=123)
 
     try:
-        ObjectCreator.create({"val_1": 123}, StrClass)
+        ObjectCreator.create_obj({"val_1": 123}, StrClass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=str, data=123)
 
@@ -259,13 +259,13 @@ def test_create_str_strict():
 def test_create_str_casting():
     Config.MODE = Mode.CASTING
 
-    obj_dataclass = ObjectCreator.create({"val_1": "123"}, StrDataclass)
-    obj = ObjectCreator.create({"val_1": "123"}, StrClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, StrDataclass)
+    obj = ObjectCreator.create_obj({"val_1": "123"}, StrClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == "123"
 
-    obj_dataclass = ObjectCreator.create({"val_1": 123}, StrDataclass)
-    obj = ObjectCreator.create({"val_1": 123}, StrClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": 123}, StrDataclass)
+    obj = ObjectCreator.create_obj({"val_1": 123}, StrClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == "123"
 
@@ -273,18 +273,18 @@ def test_create_str_casting():
 def test_create_int_strict():
     Config.MODE = Mode.STRICT
 
-    obj_dataclass = ObjectCreator.create({"val_1": 123}, IntDataclass)
-    obj = ObjectCreator.create({"val_1": 123}, IntClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": 123}, IntDataclass)
+    obj = ObjectCreator.create_obj({"val_1": 123}, IntClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == 123
 
     try:
-        ObjectCreator.create({"val_1": "123"}, IntDataclass)
+        ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data="123")
 
     try:
-        ObjectCreator.create({"val_1": "123"}, IntClass)
+        ObjectCreator.create_obj({"val_1": "123"}, IntClass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data="123")
 
@@ -292,24 +292,24 @@ def test_create_int_strict():
 def test_create_int_casting():
     Config.MODE = Mode.CASTING
 
-    obj_dataclass = ObjectCreator.create({"val_1": 123}, IntDataclass)
-    obj = ObjectCreator.create({"val_1": 123}, IntClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": 123}, IntDataclass)
+    obj = ObjectCreator.create_obj({"val_1": 123}, IntClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == 123
 
-    obj_dataclass = ObjectCreator.create({"val_1": "123"}, IntDataclass)
-    obj = ObjectCreator.create({"val_1": "123"}, IntClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
+    obj = ObjectCreator.create_obj({"val_1": "123"}, IntClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj_dataclass.val_1 == 123
 
     try:
-        ObjectCreator.create({"val_1": None}, IntDataclass)
+        ObjectCreator.create_obj({"val_1": None}, IntDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data=None)
 
     try:
-        ObjectCreator.create({"val_1": "asd"}, IntDataclass)
+        ObjectCreator.create_obj({"val_1": "asd"}, IntDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data="asd")
@@ -318,11 +318,11 @@ def test_create_int_casting():
 def test_create_float_strict():
     Config.MODE = Mode.STRICT
 
-    obj = ObjectCreator.create({"val_1": 123.124}, FloatDataclass)
+    obj = ObjectCreator.create_obj({"val_1": 123.124}, FloatDataclass)
     assert obj.val_1 == 123.124
 
     try:
-        ObjectCreator.create({"val_1": "123"}, FloatDataclass)
+        ObjectCreator.create_obj({"val_1": "123"}, FloatDataclass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=float, data="123")
 
@@ -330,20 +330,20 @@ def test_create_float_strict():
 def test_create_float_casting():
     Config.MODE = Mode.CASTING
 
-    obj = ObjectCreator.create({"val_1": 123}, FloatDataclass)
+    obj = ObjectCreator.create_obj({"val_1": 123}, FloatDataclass)
     assert obj.val_1 == 123.0
 
-    obj = ObjectCreator.create({"val_1": "123"}, FloatDataclass)
+    obj = ObjectCreator.create_obj({"val_1": "123"}, FloatDataclass)
     assert obj.val_1 == 123.0
 
     try:
-        ObjectCreator.create({"val_1": None}, FloatDataclass)
+        ObjectCreator.create_obj({"val_1": None}, FloatDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=float, data=None)
 
     try:
-        ObjectCreator.create({"val_1": "asd"}, FloatDataclass)
+        ObjectCreator.create_obj({"val_1": "asd"}, FloatDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=float, data="asd")
@@ -352,21 +352,21 @@ def test_create_float_casting():
 def test_create_bool_strict():
     Config.MODE = Mode.STRICT
 
-    obj = ObjectCreator.create({"val_1": True}, BoolDataclass)
+    obj = ObjectCreator.create_obj({"val_1": True}, BoolDataclass)
     assert obj.val_1
 
     try:
-        ObjectCreator.create({"val_1": None}, BoolDataclass)
+        ObjectCreator.create_obj({"val_1": None}, BoolDataclass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=bool, data=None)
 
     try:
-        ObjectCreator.create({"val_1": 0}, BoolDataclass)
+        ObjectCreator.create_obj({"val_1": 0}, BoolDataclass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=bool, data=0)
 
     try:
-        ObjectCreator.create({"val_1": "1"}, BoolDataclass)
+        ObjectCreator.create_obj({"val_1": "1"}, BoolDataclass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=bool, data="1")
 
@@ -374,17 +374,17 @@ def test_create_bool_strict():
 def test_create_bool_casting():
     Config.MODE = Mode.CASTING
 
-    obj = ObjectCreator.create({"val_1": None}, BoolDataclass)
+    obj = ObjectCreator.create_obj({"val_1": None}, BoolDataclass)
     assert obj.val_1 is False
 
-    obj = ObjectCreator.create({"val_1": 0}, BoolDataclass)
+    obj = ObjectCreator.create_obj({"val_1": 0}, BoolDataclass)
     assert obj.val_1 is False
 
-    obj = ObjectCreator.create({"val_1": "1"}, BoolDataclass)
+    obj = ObjectCreator.create_obj({"val_1": "1"}, BoolDataclass)
     assert obj.val_1
 
     try:
-        ObjectCreator.create({"val_1": 12}, BoolDataclass)
+        ObjectCreator.create_obj({"val_1": 12}, BoolDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=bool, data=12)
@@ -418,10 +418,10 @@ def test_cast_to_bool():
 def test_create_obj_duck():
     Config.MODE = Mode.DUCK
 
-    obj = ObjectCreator.create({"val_1": 123.1}, StrClass)
+    obj = ObjectCreator.create_obj({"val_1": 123.1}, StrClass)
     assert obj.val_1 == 123.1
 
-    obj_dataclass = ObjectCreator.create({"val_1": "123"}, IntDataclass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": "123"}, IntDataclass)
     assert obj_dataclass.val_1 == "123"
 
     data = {
@@ -431,7 +431,7 @@ def test_create_obj_duck():
             }
         }
     }
-    obj = ObjectCreator.create(data, DictCompositeClass)
+    obj = ObjectCreator.create_obj(data, DictCompositeClass)
     assert obj.val_1 == {
         "1": {
             "val_1": 2
@@ -443,7 +443,7 @@ def test_create_obj_duck():
             "1": [2, 3.1]
         }
     }
-    obj = ObjectCreator.create(data, DefaultDictDataclass)
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
     assert isinstance(obj.val_1, dict)
     assert dict(obj.val_1) == {
         "1": [2, 3.1]
@@ -458,49 +458,49 @@ def test_create_obj_duck():
 def test_create_dict_strict():
     Config.MODE = Mode.STRICT
 
-    obj_dataclass = ObjectCreator.create({"val_1": {"1": 2}}, DictDataclass)
-    obj = ObjectCreator.create({"val_1": {"1": 2}}, DictClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": {"1": 2}}, DictDataclass)
+    obj = ObjectCreator.create_obj({"val_1": {"1": 2}}, DictClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj.val_1 == {"1": 2}
 
     try:
-        ObjectCreator.create({"val_1": {123, 123}}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": {123, 123}}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=dict, data={123, 123})
 
     try:
-        ObjectCreator.create({"val_1": {123: 123}}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": {123: 123}}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=str, data=123)
 
     try:
-        ObjectCreator.create({"val_1": {"123": "123"}}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": {"123": "123"}}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data="123")
 
     try:
-        ObjectCreator.create({"val_1": "123"}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": "123"}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=dict, data="123")
 
     try:
-        ObjectCreator.create({"val_1": ["123"]}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": ["123"]}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=dict, data=["123"])
 
     try:
-        ObjectCreator.create({"val_1": [[1, "2"], ["3", "4"]]}, DictClass)
+        ObjectCreator.create_obj({"val_1": [[1, "2"], ["3", "4"]]}, DictClass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=dict, data=[[1, "2"], ["3", "4"]])
 
     try:
-        ObjectCreator.create({"val_1": [(1, "2"), ("3", "4")]}, DictClass)
+        ObjectCreator.create_obj({"val_1": [(1, "2"), ("3", "4")]}, DictClass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=dict, data=[(1, "2"), ("3", "4")])
@@ -512,7 +512,7 @@ def test_create_dict_strict():
             }
         }
     }
-    obj = ObjectCreator.create(data, DictCompositeClass)
+    obj = ObjectCreator.create_obj(data, DictCompositeClass)
     assert isinstance(obj.val_1["1"], IntClass)
     assert obj.val_1["1"].val_1 == 2
 
@@ -524,7 +524,7 @@ def test_create_dict_strict():
         }
     }
     try:
-        ObjectCreator.create(data, DictCompositeClass)
+        ObjectCreator.create_obj(data, DictCompositeClass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data="2")
@@ -540,61 +540,61 @@ def test_create_dict_casting():
             "val_4": ["78"],
         }
 
-    obj_dataclass = ObjectCreator.create(data, DictsDataclass)
-    obj = ObjectCreator.create(data, DictsClass)
+    obj_dataclass = ObjectCreator.create_obj(data, DictsDataclass)
+    obj = ObjectCreator.create_obj(data, DictsClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj_dataclass.val_1 == {1.1: "2"}  # val_1: dict -> no format
     assert obj_dataclass.val_2 == {"3": 4}  # val_2: Dict -> no format
     assert obj_dataclass.val_3 == {"5": 6}  # val_3: Dict[str, int]
     assert obj_dataclass.val_4 == {7: "8"}  # val_4: dict[int, str]
 
-    obj = ObjectCreator.create({"val_1": ["123"]}, DictDataclass)
+    obj = ObjectCreator.create_obj({"val_1": ["123"]}, DictDataclass)
     assert obj.val_1 == {"1": 2}
 
-    obj = ObjectCreator.create({"val_1": [[1, "2"], ["3", "4"]]}, DictClass)
+    obj = ObjectCreator.create_obj({"val_1": [[1, "2"], ["3", "4"]]}, DictClass)
     assert obj.val_1 == {"1": 2, "3": 4}
 
-    obj = ObjectCreator.create({"val_1": [(1, "2"), ("3", "4")]}, DictClass)
+    obj = ObjectCreator.create_obj({"val_1": [(1, "2"), ("3", "4")]}, DictClass)
     assert obj.val_1 == {"1": 2, "3": 4}
 
     try:
         # data = [{1, "2"}, {"3", "4"}]. data[0][0] will raise error
-        ObjectCreator.create({"val_1": [{1, "2"}, {"3", "4"}]}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": [{1, "2"}, {"3", "4"}]}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=f"key-value {Iterable}", data=[{1, "2"}, {"3", "4"}])
 
     try:
         # data = ["1", "2"]. data[0][1] will raise error
-        ObjectCreator.create({"val_1": ["1", "2"]}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": ["1", "2"]}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=f"key-value {Iterable}", data=["1", "2"])
 
     try:
         # data = [("1")]. data[0][1] will raise error
-        ObjectCreator.create({"val_1": [("1")]}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": [("1")]}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=f"key-value {Iterable}", data=[("1")])
 
     try:
         # data = [("3", "4"), (1)]. data[1][1] will raise error
-        ObjectCreator.create({"val_1": [("3", "4"), (1)]}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": [("3", "4"), (1)]}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=f"key-value {Iterable}", data=[("3", "4"), (1)])
 
     try:
         # data = 123. 123 is not Iterable
-        ObjectCreator.create({"val_1": 123}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": 123}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=[dict, f"key-value {Iterable}"], data=123)
 
     try:
         # data = "123". data[0][0] will raise error
-        ObjectCreator.create({"val_1": "123"}, DictDataclass)
+        ObjectCreator.create_obj({"val_1": "123"}, DictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=f"key-value {Iterable}", data="123")
@@ -606,7 +606,7 @@ def test_create_dict_casting():
             }
         }
     }
-    obj = ObjectCreator.create(data, DictCompositeClass)
+    obj = ObjectCreator.create_obj(data, DictCompositeClass)
     assert isinstance(obj.val_1["1"], IntClass)
     assert obj.val_1["1"].val_1 == 2
 
@@ -619,7 +619,7 @@ def test_create_defaultdict_strict():
             "1": [2, 3]
         }
     }
-    obj = ObjectCreator.create(data, DefaultDictDataclass)
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
     obj.val_1["4"].append(5)
     obj.val_1["4"].append(6)
     assert isinstance(obj.val_1, defaultdict)
@@ -632,7 +632,7 @@ def test_create_defaultdict_strict():
         }
     }
     try:
-        ObjectCreator.create(data, DefaultDictDataclass)
+        ObjectCreator.create_obj(data, DefaultDictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data="3")
@@ -653,7 +653,7 @@ def test_create_defaultdict_strict():
             "2": [3, 4]
         }
     }
-    obj = ObjectCreator.create(data, DefaultDictsDataclass)
+    obj = ObjectCreator.create_obj(data, DefaultDictsDataclass)
     obj.val_1["5"].append(CompositeClass("composite 3"))
     obj.val_2["6"].append(7)
     assert isinstance(obj.val_1, defaultdict)
@@ -685,7 +685,7 @@ def test_create_defaultdict_casting():
             1: [2, 3.1, "4"]
         }
     }
-    obj = ObjectCreator.create(data, DefaultDictDataclass)
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
     assert isinstance(obj.val_1, defaultdict)
     assert dict(obj.val_1) == {"1": [2, 3, 4]}
 
@@ -694,7 +694,7 @@ def test_create_defaultdict_casting():
             "1": "234"
         }
     }
-    obj = ObjectCreator.create(data, DefaultDictDataclass)
+    obj = ObjectCreator.create_obj(data, DefaultDictDataclass)
     obj.val_1["5"].append(6)
     obj.val_1["5"].append(7)
     assert isinstance(obj.val_1, defaultdict)
@@ -709,7 +709,7 @@ def test_create_defaultdict_casting():
             }
         }
     }
-    obj = ObjectCreator.create(data, NestedDefaultDictDataclass)
+    obj = ObjectCreator.create_obj(data, NestedDefaultDictDataclass)
     obj.val_1["1"]["2"]["6"].append(7)
     obj.val_1["1"]["2"]["6"].append(8)
 
@@ -746,7 +746,7 @@ def test_create_ordereddict_strict():
             "7": 8,
         }
     }
-    obj = ObjectCreator.create(data, OrderedDictDataclass)
+    obj = ObjectCreator.create_obj(data, OrderedDictDataclass)
     obj.val_1["5"] = 6
     obj.val_1["3"] = 4
     assert isinstance(obj.val_1, OrderedDict)
@@ -762,13 +762,13 @@ def test_create_ordereddict_casting():
             "7": "8",
         }
     }
-    obj = ObjectCreator.create(data, OrderedDictDataclass)
+    obj = ObjectCreator.create_obj(data, OrderedDictDataclass)
     assert isinstance(obj.val_1, OrderedDict)
 
     data = {
         "val_1": [("1", 2.1), ("7", "8")]
     }
-    obj_2 = ObjectCreator.create(data, OrderedDictDataclass)
+    obj_2 = ObjectCreator.create_obj(data, OrderedDictDataclass)
     assert isinstance(obj_2.val_1, OrderedDict)
     assert obj.val_1 == obj_2.val_1
 
@@ -781,7 +781,7 @@ def test_create_ordereddict_casting():
         "val_1": [("1", 2), 123]
     }
     try:
-        ObjectCreator.create(data, OrderedDictDataclass)
+        ObjectCreator.create_obj(data, OrderedDictDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=f"key-value {Iterable}", data=[("1", 2), 123])
@@ -790,8 +790,8 @@ def test_create_ordereddict_casting():
 def test_create_set_strict():
     Config.MODE = Mode.STRICT
 
-    obj_dataclass = ObjectCreator.create({"val_1": {"1", "2"}}, SetDataclass)
-    obj = ObjectCreator.create({"val_1": {"1", "2"}}, SetClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": {"1", "2"}}, SetDataclass)
+    obj = ObjectCreator.create_obj({"val_1": {"1", "2"}}, SetClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert isinstance(obj.val_1, set)
     assert obj.val_1 == {"1", "2"}
@@ -803,20 +803,20 @@ def test_create_set_strict():
         "val_4": {7, 8},
 
     }
-    obj = ObjectCreator.create(data, SetsDataclass)
+    obj = ObjectCreator.create_obj(data, SetsDataclass)
     assert obj.val_1 == {1, "2"}
     assert obj.val_2 == {3.1, "4"}
     assert obj.val_3 == {"5", "6"}
     assert obj.val_4 == {7, 8}
 
     try:
-        ObjectCreator.create({"val_1": [1, 2]}, SetDataclass)
+        ObjectCreator.create_obj({"val_1": [1, 2]}, SetDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=set, data=[1, 2])
 
     try:
-        ObjectCreator.create({"val_1": {"1", 2}}, SetDataclass)
+        ObjectCreator.create_obj({"val_1": {"1", 2}}, SetDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=str, data=2)
@@ -825,12 +825,12 @@ def test_create_set_strict():
 def test_create_set_casting():
     Config.MODE = Mode.CASTING
 
-    obj_dataclass = ObjectCreator.create({"val_1": {1, "2"}}, SetDataclass)
-    obj = ObjectCreator.create({"val_1": [1, 2]}, SetClass)
-    obj_dict = ObjectCreator.create({"val_1": {"1": 3, 2: 4}}, SetClass)
-    obj_str = ObjectCreator.create({"val_1": "12"}, SetClass)
-    obj_range = ObjectCreator.create({"val_1": range(1, 3)}, SetClass)
-    obj_tuple = ObjectCreator.create({"val_1": (1, 2)}, SetClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": {1, "2"}}, SetDataclass)
+    obj = ObjectCreator.create_obj({"val_1": [1, 2]}, SetClass)
+    obj_dict = ObjectCreator.create_obj({"val_1": {"1": 3, 2: 4}}, SetClass)
+    obj_str = ObjectCreator.create_obj({"val_1": "12"}, SetClass)
+    obj_range = ObjectCreator.create_obj({"val_1": range(1, 3)}, SetClass)
+    obj_tuple = ObjectCreator.create_obj({"val_1": (1, 2)}, SetClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert obj_dataclass.__dict__ == obj_dict.__dict__
     assert obj_dataclass.__dict__ == obj_str.__dict__
@@ -846,14 +846,14 @@ def test_create_set_casting():
         "val_4": {7.1, "8"},
 
     }
-    obj = ObjectCreator.create(data, SetsDataclass)
+    obj = ObjectCreator.create_obj(data, SetsDataclass)
     assert obj.val_1 == {1, "2"}
     assert obj.val_2 == {3.1, "4"}
     assert obj.val_3 == {"5", "6"}
     assert obj.val_4 == {7, 8}
 
     try:
-        ObjectCreator.create({"val_1": 123}, SetDataclass)
+        ObjectCreator.create_obj({"val_1": 123}, SetDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=[set, Iterable], data=123)
@@ -862,8 +862,8 @@ def test_create_set_casting():
 def test_create_frozenset_strict():
     Config.MODE = Mode.STRICT
 
-    obj_dataclass = ObjectCreator.create({"val_1": frozenset({"1", "2"})}, FrozenSetDataclass)
-    obj = ObjectCreator.create({"val_1": {"1", "2"}}, FrozenSetClass)
+    obj_dataclass = ObjectCreator.create_obj({"val_1": frozenset({"1", "2"})}, FrozenSetDataclass)
+    obj = ObjectCreator.create_obj({"val_1": {"1", "2"}}, FrozenSetClass)
     assert obj_dataclass.__dict__ == obj.__dict__
     assert not isinstance(obj.val_1, set)
     assert isinstance(obj.val_1, frozenset)
@@ -876,20 +876,20 @@ def test_create_frozenset_strict():
         "val_4": {7, 8},
 
     }
-    obj = ObjectCreator.create(data, FrozenSetsDataclass)
+    obj = ObjectCreator.create_obj(data, FrozenSetsDataclass)
     assert obj.val_1 == {1, "2"}
     assert obj.val_2 == {3.1, "4"}
     assert obj.val_3 == {"5", "6"}
     assert obj.val_4 == {7, 8}
 
     try:
-        ObjectCreator.create({"val_1": [1, 2]}, FrozenSetDataclass)
+        ObjectCreator.create_obj({"val_1": [1, 2]}, FrozenSetDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=[set, frozenset], data=[1, 2])
 
     try:
-        ObjectCreator.create({"val_1": {"1", 2}}, FrozenSetDataclass)
+        ObjectCreator.create_obj({"val_1": {"1", 2}}, FrozenSetDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=str, data=2)
@@ -898,11 +898,11 @@ def test_create_frozenset_strict():
 def test_create_frozenset_casting():
     Config.MODE = Mode.CASTING
 
-    obj = ObjectCreator.create({"val_1": {1, "2"}}, FrozenSetClass)
-    obj_dict = ObjectCreator.create({"val_1": {"1": 3, 2: 4}}, FrozenSetClass)
-    obj_str = ObjectCreator.create({"val_1": "12"}, FrozenSetClass)
-    obj_range = ObjectCreator.create({"val_1": range(1, 3)}, FrozenSetClass)
-    obj_tuple = ObjectCreator.create({"val_1": (1, 2)}, FrozenSetClass)
+    obj = ObjectCreator.create_obj({"val_1": {1, "2"}}, FrozenSetClass)
+    obj_dict = ObjectCreator.create_obj({"val_1": {"1": 3, 2: 4}}, FrozenSetClass)
+    obj_str = ObjectCreator.create_obj({"val_1": "12"}, FrozenSetClass)
+    obj_range = ObjectCreator.create_obj({"val_1": range(1, 3)}, FrozenSetClass)
+    obj_tuple = ObjectCreator.create_obj({"val_1": (1, 2)}, FrozenSetClass)
     assert obj.__dict__ == obj_dict.__dict__
     assert obj.__dict__ == obj_str.__dict__
     assert obj.__dict__ == obj_range.__dict__
@@ -918,14 +918,14 @@ def test_create_frozenset_casting():
         "val_4": {7.1, "8"},
 
     }
-    obj = ObjectCreator.create(data, FrozenSetsDataclass)
+    obj = ObjectCreator.create_obj(data, FrozenSetsDataclass)
     assert obj.val_1 == {1, "2"}
     assert obj.val_2 == {3.1, "4"}
     assert obj.val_3 == {"5", "6"}
     assert obj.val_4 == {7, 8}
 
     try:
-        ObjectCreator.create({"val_1": 123}, FrozenSetClass)
+        ObjectCreator.create_obj({"val_1": 123}, FrozenSetClass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=Iterable, data=123)
@@ -934,18 +934,18 @@ def test_create_frozenset_casting():
 def test_create_list_strict():
     Config.MODE = Mode.STRICT
 
-    obj = ObjectCreator.create({"val_1": ["1", "2"]}, ListDataclass)
+    obj = ObjectCreator.create_obj({"val_1": ["1", "2"]}, ListDataclass)
     assert isinstance(obj.val_1, list)
     assert obj.val_1 == ["1", "2"]
 
     try:
-        ObjectCreator.create({"val_1": {1, 2}}, ListDataclass)
+        ObjectCreator.create_obj({"val_1": {1, 2}}, ListDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=list, data={1, 2})
 
     try:
-        ObjectCreator.create({"val_1": ["1", 2]}, ListDataclass)
+        ObjectCreator.create_obj({"val_1": ["1", 2]}, ListDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=str, data=2)
@@ -954,11 +954,11 @@ def test_create_list_strict():
 def test_create_list_casting():
     Config.MODE = Mode.CASTING
 
-    obj = ObjectCreator.create({"val_1": {1, "2"}}, ListDataclass)
-    obj_dict = ObjectCreator.create({"val_1": {"1": 3, 2: 4}}, ListDataclass)
-    obj_str = ObjectCreator.create({"val_1": "12"}, ListDataclass)
-    obj_range = ObjectCreator.create({"val_1": range(1, 3)}, ListDataclass)
-    obj_tuple = ObjectCreator.create({"val_1": (1, 2)}, ListDataclass)
+    obj = ObjectCreator.create_obj({"val_1": {1, "2"}}, ListDataclass)
+    obj_dict = ObjectCreator.create_obj({"val_1": {"1": 3, 2: 4}}, ListDataclass)
+    obj_str = ObjectCreator.create_obj({"val_1": "12"}, ListDataclass)
+    obj_range = ObjectCreator.create_obj({"val_1": range(1, 3)}, ListDataclass)
+    obj_tuple = ObjectCreator.create_obj({"val_1": (1, 2)}, ListDataclass)
     assert obj.__dict__ == obj_dict.__dict__
     assert obj.__dict__ == obj_str.__dict__
     assert obj.__dict__ == obj_range.__dict__
@@ -967,7 +967,7 @@ def test_create_list_casting():
     assert obj.val_1 == ["1", "2"]
 
     try:
-        ObjectCreator.create({"val_1": 123}, ListDataclass)
+        ObjectCreator.create_obj({"val_1": 123}, ListDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=[list, Iterable], data=123)
@@ -980,7 +980,7 @@ def test_create_tuple_strict():
         "val_1": ("1", (2, "3", "4"))
     }
 
-    obj = ObjectCreator.create(data, TupleDataclass)
+    obj = ObjectCreator.create_obj(data, TupleDataclass)
     assert isinstance(obj.val_1, tuple)
     assert obj.val_1 == ("1", (2, "3", "4"))
 
@@ -988,7 +988,7 @@ def test_create_tuple_strict():
         "val_1": ("1", [2, "3", "4"])
     }
     try:
-        ObjectCreator.create(data, TupleDataclass)
+        ObjectCreator.create_obj(data, TupleDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=tuple, data=[2, "3", "4"])
@@ -1001,14 +1001,14 @@ def test_create_tuple_casting():
         "val_1": ["1", {2: 2.1, "3": 3, "4": 4, "5": 6, "7": 8}]
     }
 
-    obj = ObjectCreator.create(data, TupleDataclass)
+    obj = ObjectCreator.create_obj(data, TupleDataclass)
     assert isinstance(obj.val_1, tuple)
     assert obj.val_1 == ("1", (2, "3", "4"))
 
     data = {
         "val_1": ["1", "234"]
     }
-    obj = ObjectCreator.create(data, TupleDataclass)
+    obj = ObjectCreator.create_obj(data, TupleDataclass)
     assert isinstance(obj.val_1, tuple)
     assert obj.val_1 == ("1", (2, "3", "4"))
 
@@ -1016,7 +1016,7 @@ def test_create_tuple_casting():
         "val_1": ["1", {2: 2.1, "3": 3}]
     }
     try:
-        ObjectCreator.create(data, TupleDataclass)
+        ObjectCreator.create_obj(data, TupleDataclass)
         assert False
     except InvalidData as e:
         assert e == InvalidData(msg=f"tuple expect 3 items but data has 2 items", data={2: 2.1, "3": 3})
@@ -1027,7 +1027,7 @@ def test_create_tuple_casting():
         "val_3": [11.1, "asd"],
         "val_4": {12.1: 13, "asd": 14},
     }
-    obj = ObjectCreator.create(data, TuplesDataclass)
+    obj = ObjectCreator.create_obj(data, TuplesDataclass)
     assert isinstance(obj.val_1, tuple)
     assert obj.val_1 == ("1", (2, "3", "4"))
     assert obj.val_2 == ("9", 10) or obj.val_2 == ("10", 9)
@@ -1044,30 +1044,30 @@ def test_create_union_strict():
         ]
     }
 
-    obj = ObjectCreator.create(data, UnionDataclass)
+    obj = ObjectCreator.create_obj(data, UnionDataclass)
     obj_comp = obj.val_1[2]
     assert isinstance(obj_comp, CompositeClass)
     assert obj_comp.composite == "3"
     obj.val_1[2] = obj_comp.__dict__
     assert obj.val_1 == ["1", 2, {"composite": "3"}]
 
-    obj = ObjectCreator.create({"val_1": None}, UnionDataclass)
+    obj = ObjectCreator.create_obj({"val_1": None}, UnionDataclass)
     assert obj.val_1 is None
 
     try:
-        ObjectCreator.create({"val_1": 1}, UnionDataclass)
+        ObjectCreator.create_obj({"val_1": 1}, UnionDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=[list, type(None)], data=1)
 
     try:
-        ObjectCreator.create({"val_1": {1, 2}}, UnionDataclass)
+        ObjectCreator.create_obj({"val_1": {1, 2}}, UnionDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=[list, type(None)], data={1, 2})
 
     try:
-        ObjectCreator.create({"val_1": [1.1]}, UnionDataclass)
+        ObjectCreator.create_obj({"val_1": [1.1]}, UnionDataclass)
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=[list, type(None)], data=[1.1])
@@ -1076,33 +1076,33 @@ def test_create_union_strict():
 def test_create_union_casting():
     Config.MODE = Mode.CASTING
 
-    obj = ObjectCreator.create({"val_1": {1}}, UnionDataclass)
+    obj = ObjectCreator.create_obj({"val_1": {1}}, UnionDataclass)
     assert obj.val_1 == [1]
 
-    obj = ObjectCreator.create({"val_1": ("2")}, UnionDataclass)
+    obj = ObjectCreator.create_obj({"val_1": ("2")}, UnionDataclass)
     assert obj.val_1 == [2]
 
-    obj = ObjectCreator.create({"val_1": [3.1]}, UnionDataclass)
+    obj = ObjectCreator.create_obj({"val_1": [3.1]}, UnionDataclass)
     assert obj.val_1 == [3]
 
-    obj = ObjectCreator.create({"val_1": [{"composite": "3"}]}, UnionDataclass)
+    obj = ObjectCreator.create_obj({"val_1": [{"composite": "3"}]}, UnionDataclass)
     assert isinstance(obj.val_1[0], CompositeClass)
     assert obj.val_1[0].composite == "3"
 
-    obj = ObjectCreator.create({"val_1": None}, UnionDataclass)
+    obj = ObjectCreator.create_obj({"val_1": None}, UnionDataclass)
     assert obj.val_1 is None
 
-    obj = ObjectCreator.create({"val_1": 1}, UnionDataclass)
+    obj = ObjectCreator.create_obj({"val_1": 1}, UnionDataclass)
     assert obj.val_1 is None  # can not cast to list -> cast to None
 
     data = {
         "val_1": [{1}]
     }
-    obj = ObjectCreator.create(data, UnionDataclass)
+    obj = ObjectCreator.create_obj(data, UnionDataclass)
     assert obj.val_1 == [str({1})]  # everything can be cast to str
 
     try:
-        ObjectCreator.create({"val_1": "a"}, UnionDataclass2)
+        ObjectCreator.create_obj({"val_1": "a"}, UnionDataclass2)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=[int, CompositeClass], data="a")
 
@@ -1124,18 +1124,18 @@ def test_create_obj_runtime_recipe():
     data = {"val_1": 123}
 
     try:
-        ObjectCreator.create(data, StrClass)
+        ObjectCreator.create_obj(data, StrClass)
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=str, data=123)
 
-    obj_str = ObjectCreator.create(data, StrClass, mode=Mode.CASTING)
+    obj_str = ObjectCreator.create_obj(data, StrClass, mode=Mode.CASTING)
     assert isinstance(obj_str.val_1, str)
 
-    obj_int = ObjectCreator.create(data, IntClass)
+    obj_int = ObjectCreator.create_obj(data, IntClass)
     assert isinstance(obj_int.val_1, int)
 
     int_recipe = CookbookRecipe.get(IntClass)
-    obj_str_int = ObjectCreator.create(data, StrClass, int_recipe)
+    obj_str_int = ObjectCreator.create_obj(data, StrClass, int_recipe)
     assert isinstance(obj_str_int.val_1, int)
 
 
@@ -1421,7 +1421,7 @@ def test_actions():
             "val_2_2": 5
         },
     }
-    obj = ObjectCreator.create(data, SetFieldDirectly)
+    obj = ObjectCreator.create_obj(data, SetFieldDirectly)
     assert obj.val_1 == "bounded_action_2(action_2(fields_action(action_1(bounded_action_1(model_action(2))))))"
     assert obj.val_2 == 9
     assert obj.parent_val == "fields_action(parent_action(action_2(model_action(origin))))"
