@@ -1409,5 +1409,20 @@ def test_decide_mode():
 
     assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").decide_mode(EmptyValue.FIELD) is Mode.STRICT
 
+
 def test_performance():
     print(Helper.load_json("files_storage/public_apis.json"))
+
+
+def test_actions():
+    data = {
+        "val_1": 2,
+        "val_2": {
+            "val_2_2": 5
+        },
+    }
+    obj = ObjectCreator.create_obj(data, SetFieldDirectly)
+
+    assert obj.val_1 == "bounded_action_2(action_2(action_1(bounded_action_1(2))))"
+    assert obj.val_2 == 6
+    assert obj.parent_val == "parent_action(action_2(origin))"

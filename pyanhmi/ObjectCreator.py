@@ -20,81 +20,28 @@ class ObjectCreator:
         if not CookbookRecipe.has(obj_type):
             CookbookRecipe.add(AuthenticRecipe(cls=obj_type))
 
-        # obj_type is cached
         recipe = recipe if recipe else CookbookRecipe.get(obj_type)
-        pre_validate_params = {}
-        for att_name, ingredient in recipe.ingredients.items():
-            if ingredient.is_final:
-                continue
-            if ingredient.is_class_var:
-                continue
-
+        params = {}
+        for att_name, ingredient in recipe.get_ingredient_to_create_obj().items():
             if att_name not in obj_params:
                 if is_field_exist(ingredient.default):
-                    pre_validate_params[att_name] = ingredient.default
+                    params[att_name] = ingredient.default
                     continue
                 raise InvalidData(f"Require {att_name} param to create {obj_type} instance")
 
-            pre_validate_params[att_name] = ingredient.create(obj_params[att_name], mode=Mode.DUCK)
-        pre_validated_obj = obj_type(**pre_validate_params)
-        print()
-        for att_name, validators in recipe.get_validators().items():
-            for validator in validators:
-                if validator.is_bound_method():
-                    validator(pre_validated_obj)
-                else:
-                    setattr(pre_validated_obj, att_name, validator(getattr(pre_validated_obj, att_name)))
+            params[att_name] = obj_params[att_name]
+        obj = obj_type(**params)
 
-        params = {}
-        for att_name, ingredient in recipe.ingredients.items():
-            if ingredient.is_final:
-                continue
-            if ingredient.is_class_var:
-                continue
+        for att_name in params.keys():
+            ingredient = recipe.get_ingredient(att_name)
+            # execute pre actions
+            for pre_action in ingredient.pre_actions.values():
+                pre_action.execute(obj)
 
-            params[att_name] = ingredient.create(getattr(pre_validated_obj, att_name), mode=mode)
-            # params[att_name] = ingredient.create(obj_params[att_name], mode=mode)
-        validated_obj = obj_type(**params)
-        return validated_obj
+            # assign evaluated value
+            setattr(obj, att_name, ingredient.create(getattr(obj, att_name), mode=mode))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # # obj_type is cached
-        # recipe = recipe if recipe else CookbookRecipe.get(obj_type)
-        # params = {}
-        # # todo obj_params.items() -> recipe.items()
-        # for param, obj_param in obj_params.items():
-        #     if param not in recipe.ingredients:
-        #         continue
-        #     if recipe.ingredients[param].is_final:
-        #         continue
-        #     if recipe.ingredients[param].is_class_var:
-        #         continue
-        #     params[param] = recipe.ingredients[param].create(obj_param, mode=mode)
-        #
-        # pre_validated_obj = obj_type(**params)
-        # for att_name, ingredient in recipe.ingredients.items():
-        #     for validator in ingredient.validators.values():
-        #         print(f"att_name: {att_name}, validator: {validator}")
-        #         setattr(pre_validated_obj, att_name, validator(pre_validated_obj))
-        # return pre_validated_obj
+            # execute post actions
+            for post_action in ingredient.post_actions.values():
+                post_action.execute(obj)
+        return obj

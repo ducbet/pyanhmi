@@ -1,7 +1,7 @@
 import typing
 from typing import Dict
 
-from common.Config import Config
+from common.Config import Config, EmptyValue
 from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Field import Field
@@ -22,7 +22,7 @@ class AuthenticRecipe(Recipe):
         super().__init__(self._extract_ingredients(obj))
         # print(f"AuthenticRecipe __init__ ", self.get_ingredient("val_1"))
         self.update_user_defined_recipe()
-        self.update_user_defined_ingredients(obj)
+        # self.update_user_defined_ingredients(obj)
         # print(f"AuthenticRecipe update_user_defined_ingredients ", self.get_ingredient("val_1"))
 
     def update_user_defined_recipe(self):
@@ -32,17 +32,18 @@ class AuthenticRecipe(Recipe):
             return
         self.update(user_defined_recipe)
 
-    def update_user_defined_ingredients(self, obj):
-        for att in Recipe.get_instance_attributes(obj):
-            assigned_field = getattr(obj, att, None)
-            if isinstance(assigned_field, Field):
-                self.update_ingredient(att, assigned_field)
-                continue
-            ingredient = self.get_ingredient(att)
-            if ingredient:
-                # print(f"ingredient.default = assigned_field. ingredient.default: {ingredient.default}, "
-                #       f"assigned_field: {assigned_field}")
-                ingredient.default = assigned_field
+    # def update_user_defined_ingredients(self, obj):
+    #     for att in Recipe.get_instance_attributes(obj):
+    #         # assigned_field = getattr(obj, att, None)
+    #         assigned_field = getattr(obj, att, EmptyValue.FIELD)
+    #         if isinstance(assigned_field, Field):
+    #             self.update_ingredient(att, assigned_field)
+    #             continue
+    #         ingredient = self.get_ingredient(att)
+    #         if ingredient:
+    #             # print(f"ingredient.default = assigned_field. ingredient.default: {ingredient.default}, "
+    #             #       f"assigned_field: {assigned_field}")
+    #             ingredient.default = assigned_field
 
 
     @staticmethod
@@ -62,7 +63,8 @@ class AuthenticRecipe(Recipe):
                 name=att,
                 attribute_type=attribute_type,
                 is_class_var=hasattr(cls, att),
-                based_on_cls=type(obj)
+                based_on_cls=type(obj),
+                default=getattr(obj, att, EmptyValue.FIELD)
             )
         return ingredients
 

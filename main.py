@@ -1,7 +1,4 @@
-import inspect
-
-from common.schema_classes_test import PydanticClass, SetFieldDirectly, user_validator, SetFieldParent, \
-    ParentWithProperty, Level1
+from common.schema_classes_test import SetFieldDirectly, PydanticClass
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.ObjectCreator import ObjectCreator
 
@@ -16,12 +13,6 @@ if __name__ == '__main__':
     print(CookbookRecipe.get(SetFieldDirectly).get_ingredient("val_1"))
     print(obj)
 
-    # print(CookbookValidators.get_all())
-    # obj = PydanticClass(**data)
-    # print(type(obj), obj)
+    assert obj.val_1 == "action_2(action_1(bounded_action_1(2)))"
+    assert obj.parent_val == "parent_action(action_2(origin))"
 
-
-    # print(user_validator, user_validator.__qualname__)
-    # print(SetFieldDirectly.val_1_validator, SetFieldDirectly.val_1_validator.__qualname__)
-    # print(SetFieldParent.parent_validator, SetFieldParent.parent_validator.__qualname__)
-    # print(Level1.lv1_method, Level1.lv1_method.__qualname__)

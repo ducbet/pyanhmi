@@ -1,6 +1,6 @@
 import typing
 
-from common.Config import Config
+from common.Config import Config, EmptyValue
 from common.Error import InvalidDatatype
 from pyanhmi.Field import Field
 
@@ -23,6 +23,10 @@ class Recipe:
     def add_ingredient(self, name: str, field):
         self.ingredients[name] = field
 
+    def get_ingredient_to_create_obj(self):
+        return {att_name: ingredient for att_name, ingredient in self.ingredients.items()
+                if not ingredient.is_final and not ingredient.is_class_var}
+
     @staticmethod
     def get_hash(cls):
         return hash(cls)
@@ -44,6 +48,20 @@ class Recipe:
             self.update_ingredient(other_name, other_ingredient)
         return self
 
-    def get_validators(self) -> dict:
-        return {att_name: ingredient.validators.values()
+    def get_pre_actions(self) -> dict:
+        return {att_name: ingredient.pre_actions.values()
                 for att_name, ingredient in self.ingredients.items()}
+
+    def execute_pre_actions(self, obj):
+        for ingredient in self.ingredients.values():
+            for action in ingredient.pre_actions.values():
+                action.execute(obj)
+
+    def get_post_actions(self) -> dict:
+        return {att_name: ingredient.post_actions.values()
+                for att_name, ingredient in self.ingredients.items()}
+
+    def execute_post_actions(self, obj):
+        for ingredient in self.ingredients.values():
+            for action in ingredient.post_actions.values():
+                action.execute(obj)

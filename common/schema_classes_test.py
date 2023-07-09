@@ -4,6 +4,7 @@ from typing import ClassVar, List, Final, FrozenSet, Optional, Tuple, Dict, Unio
     Callable
 
 from pydantic import BaseModel, field_validator
+from pydantic_core.core_schema import FieldValidationInfo
 
 from common.Config import Mode
 from pyanhmi.Field import Field
@@ -435,59 +436,63 @@ class StrictModeClass:
     )
 
 
-def user_validator(val):
-    return f"asdwqe -{val}-"
+def action_1(obj, attr_name, val):
+    obj.val_2 += 1
+    return f"action_1({val})"
 
 
-def val_1_validator(val):
-    return f"unbounded val_1_validator -{val}-"
-
-
-def parent_validator(val):
-    return f"unbounded parent_validator -{val}-"
+def action_2(obj, attr_name, val):
+    obj.val_2 += 1
+    return f"action_2({val})"
 
 
 @dataclass
 class SetFieldParent:
     parent_val: str = "origin"
 
-    def parent_validator(self):
-        print(f"parent_validator. self: {self}")
-        return f"parent_validator -{self.parent_val}-"
+    def parent_action(self, attr_name, value):
+        self.val_2 += 1
+        return f"parent_action({value})"
 
 
 @dataclass
 class SetFieldDirectly(SetFieldParent):
-    val_1: int = Field(default=0, mode=Mode.DUCK, validators=[
-        # "val_1_validator_2"
-    ])
+    val_1: int = 2
+    val_2: int = 0
 
     PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
         ingredients={
             "val_1": Field(default=5,
-                           mode=Mode.CASTING,
-                           validators=[
-                               # "val_1_validator",
-                               user_validator,
-                               val_1_validator,
+                           mode=Mode.DUCK,
+                           pre_actions=[
+                               "bounded_action_1",
+                               action_1,
+                           ],
+                           post_actions=[
+                               action_2,
+                               "action_2",
                            ]),
             "parent_val": Field(
-                           validators=[
-                               parent_validator,
-                               SetFieldParent.parent_validator,
+                           pre_actions=[
+                               action_2,
+                               SetFieldParent.parent_action,
                            ]),
         }
     )
 
-    def val_1_validator(self):
-        return f"val_1_validator {self.val_1}"
+    def bounded_action_1(self, attr_name, value):
+        print(f"bounded_action_1 self: {self}")
+        self.val_2 += 1
+        return f"bounded_action_1({value})"
 
-    def val_1_validator_2(self):
-        return f"val_1_validator_2 {self.val_1}"
+    def action_2(self, attr_name, value):
+        self.val_2 += 1
+        return f"bounded_action_2({value})"
 
-    def val_1_validator_3(self):
-        return f"val_1_validator_3 {self.val_1}"
-
+    def cls_action(self, attr_name, value):
+        if attr_name == "val_1":
+            return f"cls_action dedicated for val_1({value})"
+        return f"cls_action({value})"
 
 class PydanticParentClass(BaseModel):
     val_1: int
@@ -497,7 +502,8 @@ class PydanticCompositeClass(BaseModel):
     val_2_2: str
 
     @field_validator('val_2_2', mode="before")
-    def modify_val_2_2(cls, v):
+    def modify_val_2_2(cls, v, info: FieldValidationInfo):
+        print(info)
         return f"modify_val_2_2 {v}"
 
 

@@ -4,8 +4,8 @@ from typing import Any
 
 from common.Config import Config, Mode, EmptyValue, is_field_exist
 from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
-from common.Error import InvalidDatatype, ValidatorMissing
-from pyanhmi.Validator import Validator
+from common.Error import InvalidDatatype
+from actions.Action import Action
 
 
 class Field:
@@ -17,7 +17,8 @@ class Field:
                  getter_func: str = EmptyValue.FIELD,
                  mode: Mode = EmptyValue.FIELD,
                  default: Any = EmptyValue.FIELD,
-                 validators: typing.List = EmptyValue.FIELD,
+                 pre_actions: typing.List = EmptyValue.FIELD,
+                 post_actions: typing.List = EmptyValue.FIELD,
                  based_on_cls: typing.List = EmptyValue.FIELD
                  ):
         self.name = name
@@ -30,8 +31,10 @@ class Field:
         self.mode = mode
         self.default = default
         self.based_on_cls = based_on_cls
-        self.validator_funcs: list = validators
-        self.validators: dict = {}
+        self._pre_actions: list = pre_actions
+        self.pre_actions: dict = {}
+        self._post_actions: list = post_actions
+        self.post_actions: dict = {}
 
     @property
     def alias(self) -> str:
@@ -73,14 +76,14 @@ class Field:
     def is_class_var(self, is_class_var):
         self._is_class_var = is_class_var
 
-    def convert_validators(self, list_validators: list):
-        dict_validators = OrderedDict()
-        if not Field.is_a_value(list_validators):
-            return dict_validators
-        for validator_func in list_validators:
-            validator = Validator(validator_func, self.based_on_cls)
-            dict_validators[validator.__hash__] = validator
-        return dict_validators
+    def create_actions(self, action_funcs: list):
+        actions = OrderedDict()
+        if not Field.is_a_value(action_funcs):
+            return actions
+        for action_func in action_funcs:
+            action = Action(action_func, self.based_on_cls, self.name)
+            actions[action.__hash__] = action
+        return actions
 
     def get_attribute(self):
         return CookbookAttributes.get(self.attribute_type)
@@ -96,12 +99,6 @@ class Field:
         return Config.MODE
 
     def create(self, data, mode: Mode = EmptyValue.FIELD):
-        # print(f"validators: {self.validators}")
-        # for validator in self.validators.values():
-        #     print(f"create. validator: {validator}, data: {data}")
-        #     data = validator(data)
-
-        # print(f"mode: {self.decide_mode(mode)}")
         return self._auto_init.create(data, self.decide_mode(mode))
 
     def __eq__(self, other: "Field"):
@@ -116,8 +113,8 @@ class Field:
                f"is_class_var: {self.is_class_var}, " \
                f"auto_init: {self._auto_init}, " \
                f"mode: {self.mode}, " \
-               f"_validators: {self.validator_funcs}, " \
-               f"validators: {self.validators}, " \
+               f"pre_actions: {self.pre_actions}, " \
+               f"post_actions: {self.post_actions}, " \
                f"getter_func_name: {self.getter_func})"
 
     def update(self, other: "Field"):
@@ -134,8 +131,11 @@ class Field:
         self.mode = other.mode if Field.is_a_value(other.mode) else self.mode
         self.default = other.default if Field.is_a_value(other.default) else self.default
 
-        self.validators.update(self.convert_validators(self.validator_funcs))
-        self.validators.update(self.convert_validators(other.validator_funcs))
+        self.pre_actions.update(self.create_actions(self._pre_actions))
+        self.pre_actions.update(self.create_actions(other._pre_actions))
+
+        self.post_actions.update(self.create_actions(self._post_actions))
+        self.post_actions.update(self.create_actions(other._post_actions))
 
     @staticmethod
     def is_final_type(value_type):

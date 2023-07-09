@@ -29,11 +29,11 @@ class InvalidData(Exception):
         return self.message == other.message
 
 
-class ValidatorMissing(Exception):
-    def __init__(self, cls, validator, msg=""):
-        message = "Validator Missing"
+class ActionMissing(Exception):
+    def __init__(self, cls, action, msg=""):
+        message = "Action Missing"
         message += f". {msg}" if msg else ""
-        message += f"{validator} is not exist in {cls}"
+        message += f"{action} is not exist in {cls}"
         super().__init__(message)
         self.message = message
 
