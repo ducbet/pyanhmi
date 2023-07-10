@@ -56,7 +56,7 @@ class Recipe:
         return hash(cls)
 
     def __repr__(self):
-        return f"Recipe(ingredients={[self.ingredients.keys()]})"
+        return f"Recipe(ingredients={list(self.ingredients.keys())})"
 
     def update_ingredient(self, other_name, other_ingredient):
         if other_name not in self.ingredients:

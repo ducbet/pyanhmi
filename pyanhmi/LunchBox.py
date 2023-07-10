@@ -1,23 +1,36 @@
 from collections import defaultdict
-from typing import Tuple, Any, Optional, List, Iterable, Union
+from typing import Tuple, Any, Optional, List, Union, overload, TypeVar
 
-from pyanhmi.Creator import _create, bulk_create
-from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
 from common.Config import Config, Mode, EmptyValue
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
+from pyanhmi.Creator import create
+from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
 from pyanhmi.Recipe.Recipe import Recipe
+
+T = TypeVar("T")
 
 
 class LunchBox:
+    @overload
+    def __init__(self) -> None:
+        ...
 
-    def __init__(self, data: dict = None,
-                 classes: Optional[Union[type[Any], List[type[Any]]]] = None,
+    @overload
+    def __init__(self, data: dict, classes: type[T], recipes: Recipe, mode: Mode = None) -> None:
+        ...
+
+    @overload
+    def __init__(self, data: dict, classes: List[type[T]], recipes: List[Recipe], mode: Mode = None) -> None:
+        ...
+
+    def __init__(self, data: Optional[dict] = None,
+                 classes: Optional[Union[type[T], List[type[T]]]] = None,
                  recipes: Optional[Union[Recipe, List[Recipe]]] = None,
-                 mode: Mode = EmptyValue.FIELD):
+                 mode: Optional[Mode] = None) -> None:
         self.sources = defaultdict(list)
         self.obj_count = 0
         self.max_idx = 0
-        for obj in bulk_create(data=data, classes=classes, recipes=recipes, mode=mode):
+        for obj in create(data=data, classes=classes, recipes=recipes, mode=mode):
             self.add(obj)
 
     @property

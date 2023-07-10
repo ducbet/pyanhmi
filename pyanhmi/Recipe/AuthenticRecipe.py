@@ -57,4 +57,4 @@ class AuthenticRecipe(Recipe):
         return self.get_hash(self.based_on_cls)
 
     def __repr__(self):
-        return f"AuthenticRecipe(based_on_cls={self.based_on_cls}, ingredients={[self.ingredients.keys()]})"
+        return f"AuthenticRecipe(based_on_cls={self.based_on_cls}, ingredients={list(self.ingredients.keys())})"

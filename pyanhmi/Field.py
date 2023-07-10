@@ -75,13 +75,8 @@ class Field:
     def get_attribute(self):
         return CookbookAttributes.get(self.attribute_type)
 
-    def decide_mode(self, mode: Mode) -> Mode:
-        if Field.is_a_value(mode):
-            return mode
-        return self.mode
-
     def create(self, data, mode: Mode = EmptyValue.FIELD):
-        return self._auto_init._create(data, self.decide_mode(mode))
+        return self._auto_init.create(data, mode if mode else self.mode)
 
     def __eq__(self, other: "Field"):
         # todo check again???
