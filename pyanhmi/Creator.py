@@ -1,4 +1,4 @@
-from typing import Any, Optional, List, Union, Tuple, TypeVar, overload
+from typing import Any, Optional, List, Union, Tuple, TypeVar, overload, Type
 
 from common.Config import Mode, EmptyValue, is_field_exist
 from common.Error import InvalidDatatype, InvalidData
@@ -51,19 +51,18 @@ def _create(data: dict, cls: T, recipe: Recipe = None, mode: Mode = None) -> T:
         model_post_action.execute(obj)
     return obj
 
+@overload
+def create(data: dict, classes: Type[T], recipes: Recipe = None, mode: Mode = None) -> T: ...
+
 
 @overload
-def create(data: dict, classes: T, recipes: Recipe = None, mode: Mode = None) -> T: ...
-
-
-@overload
-def create(data: dict, classes: List[T], recipes: List[Recipe] = None, mode: Mode = None) -> Tuple[T]: ...
+def create(data: dict, classes: List[Type], recipes: List[Recipe] = None, mode: Mode = None) -> tuple: ...
 
 
 def create(data: dict,
-           classes: Union[T, List[T]],
+           classes: Union[Type[T], List[Type]],
            recipes: Optional[Union[Recipe, List[Recipe]]] = None,
-           mode: Mode = None) -> Union[Tuple[T], T]:
+           mode: Mode = None) -> Union[T, tuple]:
     """
 
     :param data:
