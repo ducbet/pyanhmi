@@ -5,35 +5,35 @@ from common.Config import Config
 from pyanhmi.Attributes.Attribute import Attribute
 from pyanhmi.Cookbook.Cookbook import Cookbook
 
+T = typing.TypeVar("T")
 
 class CookbookAttributes(Cookbook):
-    ATTRIBUTES: typing.Dict[typing.Union[str, typing.Type], Attribute] = dict()
+    ATTRIBUTES: typing.Dict[typing.Any, typing.Type[Attribute]] = dict()
 
     @staticmethod
-    def add(attribute):
+    def add(attribute: typing.Type[Attribute]) -> typing.Type[Attribute]:
         CookbookAttributes.ATTRIBUTES.update({att_type: attribute for att_type in attribute.TYPES})
         return attribute  # return for Attribute's decorator
 
     @staticmethod
-    def add_custom_attribute(cls):
+    def add_custom_attribute(cls: typing.Type[T]) -> None:
         from pyanhmi import CustomAttribute  # avoid circular import error
         CookbookAttributes.ATTRIBUTES[cls] = CustomAttribute
 
     @staticmethod
-    def has(att_type):
+    def has(att_type: typing.Any) -> bool:
         return att_type in CookbookAttributes.ATTRIBUTES
 
     @staticmethod
-    def get(value_type):
+    def get(value_type: typing.Any) -> Attribute:
         """
-        Return instance of Attribute child. E.g: DictAttribute(value_type),...
         :param value_type:
-        :return:
+        :return: instance of Attribute's child. E.g: DictAttribute(value_type),...
         """
         return CookbookAttributes._get_attribute_instance(value_type)(value_type)
 
     @staticmethod
-    def _get_attribute_instance(value_type) -> Attribute:
+    def _get_attribute_instance(value_type: typing.Any) -> typing.Type[Attribute]:
         """
         :param value_type: can be hash(string) value
         :return:

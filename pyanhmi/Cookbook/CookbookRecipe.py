@@ -12,23 +12,22 @@ class CookbookRecipe(Cookbook):
         CookbookRecipe.RECIPES[recipe.__hash__()] = recipe
 
     @staticmethod
-    def has(recipe):
+    def has(recipe: typing.Union[Recipe, typing.Type]) -> bool:
         """
-        Accept both recipe or class of AuthenticRecipe
+        typing.Type is class of AuthenticRecipe
         :param recipe:
         :return:
         """
         return Recipe.get_hash(recipe) in CookbookRecipe.RECIPES
 
     @staticmethod
-    def get(recipe):
+    def get(recipe: typing.Union[Recipe, typing.Type]) -> typing.Optional[Recipe]:
         """
-        Accept both recipe or class of AuthenticRecipe
         :param recipe:
         :return:
         """
         return CookbookRecipe.RECIPES.get(Recipe.get_hash(recipe))
 
     @staticmethod
-    def get_all():
+    def get_all() -> typing.List[Recipe]:
         return list(CookbookRecipe.RECIPES.values())

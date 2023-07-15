@@ -6,6 +6,8 @@ from common.Config import Mode
 
 
 class Attribute(ABC):
+    TYPES = []  # will be declared in children
+
     def __init__(self, field_type):
         self.field_type = field_type
 

@@ -43,7 +43,7 @@ class Field:
         return self._alias
 
     @alias.setter
-    def alias(self, alias):
+    def alias(self, alias: str) -> None:
         self._alias = alias
 
     @property
@@ -53,7 +53,7 @@ class Field:
         return self._getter_func
 
     @getter_func.setter
-    def getter_func(self, func_name):
+    def getter_func(self, func_name) -> None:
         self._getter_func = func_name
 
     @property

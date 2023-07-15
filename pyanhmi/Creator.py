@@ -9,7 +9,7 @@ from pyanhmi.Recipe.Recipe import Recipe
 T = TypeVar("T")
 
 
-def _create(data: dict, cls: T, recipe: Recipe = None, mode: Mode = None) -> T:
+def _create(data: dict, cls: Type[T], recipe: Recipe = None, mode: Mode = None) -> T:
     """
 
     :param data:
@@ -50,6 +50,7 @@ def _create(data: dict, cls: T, recipe: Recipe = None, mode: Mode = None) -> T:
     for model_post_action in recipe.model_post_actions.values():
         model_post_action.execute(obj)
     return obj
+
 
 @overload
 def create(data: dict, classes: Type[T], recipes: Recipe = None, mode: Mode = None) -> T: ...
