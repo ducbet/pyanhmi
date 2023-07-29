@@ -46,8 +46,8 @@ class LunchBox:
         return obj[1]
 
     def add(self, obj):
-        if not CookbookRecipe.has(type(obj)):
-            CookbookRecipe.add(AuthenticRecipe(obj=obj))
+        # if not CookbookRecipe.has(type(obj)):
+        #     CookbookRecipe.add(AuthenticRecipe(obj=obj))
         self.sources[type(obj)].append((self.obj_count, obj))
         self.obj_count += 1
         self.max_idx += 1
@@ -149,8 +149,8 @@ class LunchBox:
         return result
 
     def convert(self, cls):
-        if not CookbookRecipe.has(cls):
-            CookbookRecipe.add(AuthenticRecipe(cls=cls))
+        # if not CookbookRecipe.has(cls):
+        #     CookbookRecipe.add(AuthenticRecipe(cls=cls))
 
         values = self.export()
         obj_params = {cls.LOCALIZE_RULES[k]: v for k, v in values.items() if k in cls.LOCALIZE_RULES}

@@ -19,14 +19,6 @@ class AuthenticRecipe(Recipe):
         obj = Helper.try_mock_obj(cls)
         CookbookAttributes.add_custom_attribute(cls)  # have to add CustomAttribute before creating ingredients
         super().__init__(self._extract_ingredients(obj), based_on_cls=cls)
-        self.update_user_defined_recipe()
-
-    def update_user_defined_recipe(self):
-        # prioritize user_defined_recipe inside class instead of automatically generated from type hint
-        user_defined_recipe = getattr(self.based_on_cls, Config.PYANHMI_RECIPE, None)
-        if not user_defined_recipe:
-            return
-        self.update(user_defined_recipe)
 
     @staticmethod
     def _extract_ingredients(obj):
@@ -38,7 +30,8 @@ class AuthenticRecipe(Recipe):
             attribute_type = field_types.get(att, typing.Any)
 
             for user_defined_type in CookbookAttributes.get_user_defined_types(attribute_type):
-                CookbookRecipe.add(AuthenticRecipe(cls=user_defined_type))
+                if not CookbookRecipe.has(cls):
+                    CookbookRecipe.add(cls=user_defined_type)
 
             ingredients[att] = Field(
                 name=att,
@@ -48,13 +41,6 @@ class AuthenticRecipe(Recipe):
                 default=getattr(obj, att, EmptyValue.FIELD)
             )
         return ingredients
-
-    def __hash__(self):
-        """
-        Hash value is hash value of based_on_cls variable (in order to find recipe in set, dict)
-        :return:
-        """
-        return self.get_hash(self.based_on_cls)
 
     def __repr__(self):
         return f"AuthenticRecipe(based_on_cls={self.based_on_cls}, ingredients={list(self.ingredients.keys())})"

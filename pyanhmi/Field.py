@@ -1,3 +1,4 @@
+import copy
 import typing
 from collections import OrderedDict
 from typing import Any
@@ -32,9 +33,9 @@ class Field:
         self.default = default
         self.based_on_cls = based_on_cls  # can be None when defined by user
         self.pre_action_funcs: list = pre_actions if pre_actions else []
-        self.pre_actions: dict = {}
+        self.pre_actions = []
         self.post_action_funcs: list = post_actions if post_actions else []
-        self.post_actions: dict = {}
+        self.post_actions = []
 
     @property
     def alias(self) -> str:
@@ -65,12 +66,12 @@ class Field:
         self._attribute_type = attribute_type
         self._auto_init = self.get_attribute()
 
-    def create_actions(self, action_funcs: typing.List[typing.Union[str, typing.Callable]]) -> typing.Dict[int, Action]:
-        actions = {}
-        for action_func in action_funcs:
-            action = Action(action_func, self.based_on_cls, self.name)
-            actions[action.__hash__] = action
-        return actions
+    # def create_actions(self, action_funcs: typing.List[typing.Union[str, typing.Callable]]) -> typing.Dict[int, Action]:
+    #     actions = {}
+    #     for action_func in action_funcs:
+    #         action = Action(action_func, self.based_on_cls, self.name)
+    #         actions[action.__hash__] = action
+    #     return actions
 
     def get_attribute(self):
         return CookbookAttributes.get(self.attribute_type)
@@ -91,29 +92,32 @@ class Field:
                f"is_class_var: {self.is_class_var}, " \
                f"auto_init: {self._auto_init}, " \
                f"mode: {self.mode}, " \
-               f"pre_actions: {self.pre_actions}, " \
-               f"post_actions: {self.post_actions}, " \
                f"getter_func_name: {self.getter_func})"
 
-    def update(self, other: "Field"):
-        if not isinstance(other, Field):
-            raise InvalidDatatype(expects=Field, data=other)
+    @staticmethod
+    def copy(cls, other: "Field"):
+        params = copy.deepcopy(other.__dict__)
+        return cls(**params)
 
-        self.name = other.name if Field.is_a_value(other.name) else self.name
-        self.alias = other.alias if other.alias else self.alias
-        self.getter_func = other.getter_func if other.getter_func else self.getter_func
-        self.is_ignored = other.is_ignored if other.is_ignored else self.is_ignored
-        self.attribute_type = other.attribute_type if Field.is_a_value(other.attribute_type) else self.attribute_type
-        self.is_final = other.is_final if Field.is_a_value(other.is_final) else self.is_final
-        self.is_class_var = other.is_class_var if Field.is_a_value(other.is_class_var) else self.is_class_var
-        self.mode = other.mode  # todo check is it ok? check config mode???
-        self.default = other.default if Field.is_a_value(other.default) else self.default
+    @staticmethod
+    def updated(cls, field_1: "Field", field_2: "Field"):
+        # if not isinstance(other, Field):
+        #     raise InvalidDatatype(expects=Field, data=other)
+        new_field = Field.copy(cls, field_1)
 
-        self.pre_actions.update(self.create_actions(self.pre_action_funcs))
-        self.pre_actions.update(self.create_actions(other.pre_action_funcs))
+        new_field.name = field_2.name if Field.is_a_value(field_2.name) else new_field.name
+        new_field.alias = field_2.alias if field_2.alias else new_field.alias
+        new_field.getter_func = field_2.getter_func if field_2.getter_func else new_field.getter_func
+        new_field.is_ignored = field_2.is_ignored if field_2.is_ignored else new_field.is_ignored
+        new_field.attribute_type = field_2.attribute_type if Field.is_a_value(field_2.attribute_type) else new_field.attribute_type
+        new_field.is_final = field_2.is_final if Field.is_a_value(field_2.is_final) else new_field.is_final
+        new_field.is_class_var = field_2.is_class_var if Field.is_a_value(field_2.is_class_var) else new_field.is_class_var
+        new_field.mode = field_2.mode  # todo check is it ok? check config mode???
+        new_field.default = field_2.default if Field.is_a_value(field_2.default) else new_field.default
 
-        self.post_actions.update(self.create_actions(self.post_action_funcs))
-        self.post_actions.update(self.create_actions(other.post_action_funcs))
+        new_field.pre_action_funcs.extend(field_2.pre_action_funcs)
+        new_field.post_action_funcs.extend(field_2.pre_action_funcs)
+        return new_field
 
     @staticmethod
     def is_final_type(value_type):

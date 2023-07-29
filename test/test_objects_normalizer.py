@@ -1359,10 +1359,9 @@ def test_is_normalizable_fields():
 def test_add_recipe():
     Config.MODE = Mode.STRICT
 
-    recipe = AuthenticRecipe(cls=StrictModeClass)
-    CookbookRecipe.add(recipe)
+    CookbookRecipe.add(StrictModeClass)
 
-    assert CookbookRecipe.has(recipe)
+    # assert CookbookRecipe.has(recipe)
     assert CookbookRecipe.has(StrictModeClass)
     assert CookbookRecipe.get(StrictModeClass) is not None
 
@@ -1371,10 +1370,9 @@ def test_add_recipe():
     assert val_1_ingredient.mode == Mode.DUCK
     assert val_1_ingredient.alias == "val 1's alias"
 
-    recipe = AuthenticRecipe(cls=UnionDataclass2)
-    CookbookRecipe.add(recipe)
+    CookbookRecipe.add(UnionDataclass2)
 
-    assert CookbookRecipe.has(recipe)
+    # assert CookbookRecipe.has(recipe)
     assert CookbookRecipe.has(UnionDataclass2)
 
     assert CookbookRecipe.get(UnionDataclass2) is not None
@@ -1382,8 +1380,7 @@ def test_add_recipe():
 
     assert CookbookRecipe.get(FrozenSetDataclass) is None
 
-    recipe = AuthenticRecipe(SetFieldDirectly)
-    CookbookRecipe.add(recipe)
+    CookbookRecipe.add(SetFieldDirectly)
     val_1_ingredient = CookbookRecipe.get(SetFieldDirectly).get_ingredient("val_1")
     # user defined recipe is override authentic recipe
     assert val_1_ingredient.mode == Mode.DUCK
@@ -1393,8 +1390,7 @@ def test_add_recipe():
 def test_decide_mode():
     Config.MODE = Mode.STRICT
 
-    recipe = AuthenticRecipe(cls=StrictModeClass)
-    CookbookRecipe.add(recipe)
+    CookbookRecipe.add(StrictModeClass)
     assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").mode is Mode.DUCK
 
     # mode is passed at runtime (create function) has the highest priority
