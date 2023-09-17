@@ -429,11 +429,11 @@ class FinalDataclass:
 class StrictModeClass:
     val_1: int
 
-    # PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
-    #     ingredients={
-    #         "val_1": Field(mode=Mode.DUCK, alias="val 1's alias")
-    #     }
-    # )
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        ingredients={
+            "val_1": Field(mode=Mode.DUCK, alias="val 1's alias")
+        }
+    )
 
 
 def action_1(obj, attr_name, val):
@@ -463,31 +463,31 @@ class SetFieldDirectly(SetFieldParent):
     val_1: int = 2
     val_2: int = 0
 
-    # PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
-    #     model_pre_actions=[
-    #         "model_action"
-    #     ],
-    #     fields_pre_actions=[
-    #         "fields_action"
-    #     ],
-    #     ingredients={
-    #         "val_1": Field(default=5,
-    #                        mode=Mode.DUCK,
-    #                        pre_actions=[
-    #                            "bounded_action_1",
-    #                            action_1,
-    #                        ],
-    #                        post_actions=[
-    #                            action_2,
-    #                            "action_2",
-    #                        ]),
-    #         "parent_val": Field(
-    #                        pre_actions=[
-    #                            action_2,
-    #                            SetFieldParent.parent_action,
-    #                        ]),
-    #     }
-    # )
+    PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+        model_pre_actions=[
+            "model_action"
+        ],
+        fields_pre_actions=[
+            # "fields_action"
+        ],
+        ingredients={
+            "val_1": Field(default=5,
+                           mode=Mode.DUCK,
+                           pre_actions=[
+                               "bounded_action_1",
+                               action_1,
+                           ],
+                           post_actions=[
+                               action_2,
+                               "action_2",
+                           ]),
+            "parent_val": Field(
+                           pre_actions=[
+                               action_2,
+                               SetFieldParent.parent_action,
+                           ]),
+        }
+    )
 
     def bounded_action_1(self, attr_name, value):
         # print(f"bounded_action_1 attr_name: {attr_name}, self.val_2: {self.val_2}")

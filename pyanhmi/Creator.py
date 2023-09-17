@@ -21,10 +21,11 @@ def _create(data: dict, cls: Type[T], recipe: Recipe = None, mode: Mode = None) 
     if not isinstance(data, dict):
         raise InvalidDatatype(msg="data must be dict", expects=dict, data=data)
 
-    recipe = recipe if recipe else CookbookRecipe.get(cls, recipe)
+    # recipe = recipe if recipe else CookbookRecipe.get(cls, recipe)
+    recipe = CookbookRecipe.get(cls, recipe)
     init_params = {}
     # print(f"_create. CookbookRecipe: {CookbookRecipe.RECIPES}")
-    # print(f"_create. recipe: {recipe}")
+    print(f"_create. recipe: {recipe}")
     for att_name, ingredient in recipe.get_ingredient_to_create_obj().items():
         if att_name not in data:
             if is_field_exist(ingredient.default):
@@ -73,22 +74,34 @@ def create(data: dict,
     :param mode:
     :return:
     """
-    if not data or not classes:
+    # if not data or not classes:
+    #     # must have both data and classes
+    #     return tuple()
+    if not classes:
         # must have both data and classes
         return tuple()
+
 
     if isinstance(classes, list):
         if not isinstance(recipes, list):
             recipes = [recipes] * len(classes)
         result = []
         for idx, cls in enumerate(classes):
-            recipe = recipes[idx] or getattr(cls, Config.PYANHMI_RECIPE, None)
+            recipe = recipes[idx]
             if not CookbookRecipe.has(cls, recipe):
                 CookbookRecipe.add(cls=cls, recipe=recipe)
+            # recipe = CookbookRecipe.get(cls, recipe)
             result.append(_create(data, cls, recipe, mode))
         return tuple(result)
 
-    recipe = recipes or getattr(classes, Config.PYANHMI_RECIPE, None)
+    # print(f"")
+    # print(f"create. recipe 1: {recipes}")
+    recipe = recipes
+    # print(f"create. recipe 2: {recipe}")
     if not CookbookRecipe.has(classes, recipe):
+        # print(f"create. CookbookRecipe.add: cls: {classes}, recipe {recipe}")
         CookbookRecipe.add(cls=classes, recipe=recipe)
+    # print(f"create. recipe 3: {recipe}")
+    # recipe = CookbookRecipe.get(classes, recipe)
+    # print(f"create. cls: {classes}, recipe 4: {recipe.get_ingredient('val_1')}")
     return _create(data, classes, recipe, mode)

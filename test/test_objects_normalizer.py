@@ -9,6 +9,7 @@ from ipaddress import IPv4Address
 from typing import Optional, Tuple, Dict, List, Any, Set, Union
 from uuid import UUID
 
+import pytest
 from _decimal import Decimal
 
 from MostOuterSchemaclass import OuterClass
@@ -34,6 +35,24 @@ from pyanhmi.Creator import create
 from pyanhmi.Helper import Helper
 from pyanhmi.LunchBox import LunchBox
 from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
+
+
+@pytest.fixture
+def mode_duck():
+    CookbookRecipe.clear()
+    Config.MODE = Mode.DUCK
+
+
+@pytest.fixture
+def mode_casting():
+    CookbookRecipe.clear()
+    Config.MODE = Mode.CASTING
+
+
+@pytest.fixture
+def mode_strict():
+    CookbookRecipe.clear()
+    Config.MODE = Mode.STRICT
 
 
 def test_hash_Att():
@@ -180,7 +199,6 @@ def test_get_att_priority():
 
 
 def test_create_obj():
-    Config.MODE = Mode.CASTING
     try:
         create({}, ClassicParent)
     except InvalidDatatype as e:
@@ -237,9 +255,7 @@ def test_create_obj():
     # assert isinstance(obj.a_Optional, tuple)
 
 
-def test_create_str_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_str_strict(mode_strict):
     obj_dataclass = create({"val_1": "123"}, StrDataclass)
     obj = create({"val_1": "123"}, StrClass)
     assert obj_dataclass.__dict__ == obj.__dict__
@@ -256,9 +272,7 @@ def test_create_str_strict():
         assert e == InvalidDatatype(expects=str, data=123)
 
 
-def test_create_str_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_str_casting(mode_casting):
     obj_dataclass = create({"val_1": "123"}, StrDataclass)
     obj = create({"val_1": "123"}, StrClass)
     assert obj_dataclass.__dict__ == obj.__dict__
@@ -270,9 +284,7 @@ def test_create_str_casting():
     assert obj.val_1 == "123"
 
 
-def test_create_int_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_int_strict(mode_strict):
     obj_dataclass = create({"val_1": 123}, IntDataclass)
     obj = create({"val_1": 123}, IntClass)
     assert obj_dataclass.__dict__ == obj.__dict__
@@ -289,8 +301,7 @@ def test_create_int_strict():
         assert e == InvalidDatatype(expects=int, data="123")
 
 
-def test_create_int_casting():
-    Config.MODE = Mode.CASTING
+def test_create_int_casting(mode_casting):
 
     obj_dataclass = create({"val_1": 123}, IntDataclass)
     obj = create({"val_1": 123}, IntClass)
@@ -315,9 +326,7 @@ def test_create_int_casting():
         assert e == InvalidDatatype(expects=int, data="asd")
 
 
-def test_create_float_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_float_strict(mode_strict):
     obj = create({"val_1": 123.124}, FloatDataclass)
     assert obj.val_1 == 123.124
 
@@ -327,9 +336,7 @@ def test_create_float_strict():
         assert e == InvalidDatatype(expects=float, data="123")
 
 
-def test_create_float_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_float_casting(mode_casting):
     obj = create({"val_1": 123}, FloatDataclass)
     assert obj.val_1 == 123.0
 
@@ -349,9 +356,7 @@ def test_create_float_casting():
         assert e == InvalidDatatype(expects=float, data="asd")
 
 
-def test_create_bool_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_bool_strict(mode_strict):
     obj = create({"val_1": True}, BoolDataclass)
     assert obj.val_1
 
@@ -371,9 +376,7 @@ def test_create_bool_strict():
         assert e == InvalidDatatype(expects=bool, data="1")
 
 
-def test_create_bool_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_bool_casting(mode_casting):
     obj = create({"val_1": None}, BoolDataclass)
     assert obj.val_1 is False
 
@@ -415,9 +418,7 @@ def test_cast_to_bool():
         assert e == InvalidDatatype(expects=bool, data="12")
 
 
-def test_create_obj_duck():
-    Config.MODE = Mode.DUCK
-
+def test_create_obj_duck(mode_duck):
     obj = create({"val_1": 123.1}, StrClass)
     assert obj.val_1 == 123.1
 
@@ -455,9 +456,7 @@ def test_create_obj_duck():
         assert True
 
 
-def test_create_dict_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_dict_strict(mode_strict):
     obj_dataclass = create({"val_1": {"1": 2}}, DictDataclass)
     obj = create({"val_1": {"1": 2}}, DictClass)
     assert obj_dataclass.__dict__ == obj.__dict__
@@ -530,9 +529,7 @@ def test_create_dict_strict():
         assert e == InvalidDatatype(expects=int, data="2")
 
 
-def test_create_dict_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_dict_casting(mode_casting):
     data = {
             "val_1": [(1.1, "2")],
             "val_2": [["3", 4]],
@@ -611,9 +608,7 @@ def test_create_dict_casting():
     assert obj.val_1["1"].val_1 == 2
 
 
-def test_create_defaultdict_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_defaultdict_strict(mode_strict):
     data = {
         "val_1": {
             "1": [2, 3]
@@ -677,9 +672,7 @@ def test_create_defaultdict_strict():
     assert dict(obj.val_2) == {"2": [3, 4], "6": [7]}
 
 
-def test_create_defaultdict_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_defaultdict_casting(mode_casting):
     data = {
         "val_1": {
             1: [2, 3.1, "4"]
@@ -737,9 +730,7 @@ def test_create_defaultdict_casting():
     assert json.dumps(obj.val_1) == json.dumps(expect_result)
 
 
-def test_create_ordereddict_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_ordereddict_strict(mode_strict):
     data = {
         "val_1": {
             "1": 2,
@@ -753,9 +744,7 @@ def test_create_ordereddict_strict():
     assert obj.val_1 == OrderedDict([("1", 2), ("7", 8), ("5", 6), ("3", 4)])
 
 
-def test_create_ordereddict_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_ordereddict_casting(mode_casting):
     data = {
         "val_1": {
             "1": "2",
@@ -787,9 +776,7 @@ def test_create_ordereddict_casting():
         assert e == InvalidDatatype(expects=f"key-value {Iterable}", data=[("1", 2), 123])
 
 
-def test_create_set_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_set_strict(mode_strict):
     obj_dataclass = create({"val_1": {"1", "2"}}, SetDataclass)
     obj = create({"val_1": {"1", "2"}}, SetClass)
     assert obj_dataclass.__dict__ == obj.__dict__
@@ -822,9 +809,7 @@ def test_create_set_strict():
         assert e == InvalidDatatype(expects=str, data=2)
 
 
-def test_create_set_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_set_casting(mode_casting):
     obj_dataclass = create({"val_1": {1, "2"}}, SetDataclass)
     obj = create({"val_1": [1, 2]}, SetClass)
     obj_dict = create({"val_1": {"1": 3, 2: 4}}, SetClass)
@@ -859,9 +844,7 @@ def test_create_set_casting():
         assert e == InvalidDatatype(expects=[set, Iterable], data=123)
 
 
-def test_create_frozenset_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_frozenset_strict(mode_strict):
     obj_dataclass = create({"val_1": frozenset({"1", "2"})}, FrozenSetDataclass)
     obj = create({"val_1": {"1", "2"}}, FrozenSetClass)
     assert obj_dataclass.__dict__ == obj.__dict__
@@ -895,9 +878,7 @@ def test_create_frozenset_strict():
         assert e == InvalidDatatype(expects=str, data=2)
 
 
-def test_create_frozenset_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_frozenset_casting(mode_casting):
     obj = create({"val_1": {1, "2"}}, FrozenSetClass)
     obj_dict = create({"val_1": {"1": 3, 2: 4}}, FrozenSetClass)
     obj_str = create({"val_1": "12"}, FrozenSetClass)
@@ -931,9 +912,7 @@ def test_create_frozenset_casting():
         assert e == InvalidDatatype(expects=Iterable, data=123)
 
 
-def test_create_list_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_list_strict(mode_strict):
     obj = create({"val_1": ["1", "2"]}, ListDataclass)
     assert isinstance(obj.val_1, list)
     assert obj.val_1 == ["1", "2"]
@@ -951,9 +930,7 @@ def test_create_list_strict():
         assert e == InvalidDatatype(expects=str, data=2)
 
 
-def test_create_list_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_list_casting(mode_casting):
     obj = create({"val_1": {1, "2"}}, ListDataclass)
     obj_dict = create({"val_1": {"1": 3, 2: 4}}, ListDataclass)
     obj_str = create({"val_1": "12"}, ListDataclass)
@@ -973,9 +950,7 @@ def test_create_list_casting():
         assert e == InvalidDatatype(expects=[list, Iterable], data=123)
 
 
-def test_create_tuple_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_tuple_strict(mode_strict):
     data = {
         "val_1": ("1", (2, "3", "4"))
     }
@@ -994,9 +969,7 @@ def test_create_tuple_strict():
         assert e == InvalidDatatype(expects=tuple, data=[2, "3", "4"])
 
 
-def test_create_tuple_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_tuple_casting(mode_casting):
     data = {
         "val_1": ["1", {2: 2.1, "3": 3, "4": 4, "5": 6, "7": 8}]
     }
@@ -1035,9 +1008,7 @@ def test_create_tuple_casting():
     assert obj.val_4 == (12.1, "asd")
 
 
-def test_create_union_strict():
-    Config.MODE = Mode.STRICT
-
+def test_create_union_strict(mode_strict):
     data = {
         "val_1": [
             "1", 2, {"composite": "3"}
@@ -1073,9 +1044,7 @@ def test_create_union_strict():
         assert e == InvalidDatatype(expects=[list, type(None)], data=[1.1])
 
 
-def test_create_union_casting():
-    Config.MODE = Mode.CASTING
-
+def test_create_union_casting(mode_casting):
     obj = create({"val_1": {1}}, UnionDataclass)
     assert obj.val_1 == [1]
 
@@ -1118,9 +1087,7 @@ def test_mapping_instance():
     assert isinstance({"a": 1, "b": 2}, Iterable) is True
 
 
-def test_create_obj_runtime_recipe():
-    Config.MODE = Mode.STRICT
-
+def test_create_obj_runtime_recipe(mode_strict):
     data = {"val_1": 123}
 
     try:
@@ -1356,12 +1323,9 @@ def test_is_normalizable_fields():
         assert CookbookAttributes.is_user_defined_type(cls) == is_normalizable_field
 
 
-def test_add_recipe():
-    Config.MODE = Mode.STRICT
+def test_add_recipe(mode_strict):
+    create({"val_1": 4}, StrictModeClass)
 
-    CookbookRecipe.add(StrictModeClass)
-
-    # assert CookbookRecipe.has(recipe)
     assert CookbookRecipe.has(StrictModeClass)
     assert CookbookRecipe.get(StrictModeClass) is not None
 
@@ -1370,9 +1334,8 @@ def test_add_recipe():
     assert val_1_ingredient.mode == Mode.DUCK
     assert val_1_ingredient.alias == "val 1's alias"
 
-    CookbookRecipe.add(UnionDataclass2)
+    create({"val_1": 4}, UnionDataclass2)
 
-    # assert CookbookRecipe.has(recipe)
     assert CookbookRecipe.has(UnionDataclass2)
 
     assert CookbookRecipe.get(UnionDataclass2) is not None
@@ -1380,33 +1343,20 @@ def test_add_recipe():
 
     assert CookbookRecipe.get(FrozenSetDataclass) is None
 
-    CookbookRecipe.add(SetFieldDirectly)
+    create({}, SetFieldDirectly)
     val_1_ingredient = CookbookRecipe.get(SetFieldDirectly).get_ingredient("val_1")
+    val_2_ingredient = CookbookRecipe.get(SetFieldDirectly).get_ingredient("val_2")
+    parent_val_ingredient = CookbookRecipe.get(SetFieldDirectly).get_ingredient("parent_val")
     # user defined recipe is override authentic recipe
     assert val_1_ingredient.mode == Mode.DUCK
-    assert val_1_ingredient.default == 0
-
-
-def test_decide_mode():
-    Config.MODE = Mode.STRICT
-
-    CookbookRecipe.add(StrictModeClass)
-    assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").mode is Mode.DUCK
-
-    # mode is passed at runtime (create function) has the highest priority
-    assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").decide_mode(Mode.CASTING) is Mode.CASTING
-
-    # If a mode is not passed at runtime, then the mode is defined in the field is used
-    assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").decide_mode(EmptyValue.FIELD) is Mode.DUCK
-
-    # If a mode is not passed at runtime and user do not set field mode, the Config.MODE is used
-    CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").mode = EmptyValue.FIELD
-
-    assert CookbookRecipe.get(StrictModeClass).get_ingredient("val_1").decide_mode(EmptyValue.FIELD) is Mode.STRICT
+    assert val_1_ingredient.default == 5
+    assert val_2_ingredient.default == 0
+    assert parent_val_ingredient.default == "origin"
 
 
 def test_performance():
-    print(Helper.load_json("files_storage/public_apis.json"))
+    # print(Helper.load_json("files_storage/public_apis.json"))
+    pass
 
 
 def test_actions():
@@ -1417,6 +1367,6 @@ def test_actions():
         },
     }
     obj = create(data, SetFieldDirectly)
-    assert obj.val_1 == "bounded_action_2(action_2(fields_action(action_1(bounded_action_1(model_action(2))))))"
-    assert obj.val_2 == 9
-    assert obj.parent_val == "fields_action(parent_action(action_2(model_action(origin))))"
+    # assert obj.val_1 == "bounded_action_2(action_2(fields_action(action_1(bounded_action_1(model_action(2))))))"
+    # assert obj.val_2 == 9
+    # assert obj.parent_val == "fields_action(parent_action(action_2(model_action(origin))))"

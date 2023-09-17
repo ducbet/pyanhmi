@@ -46,8 +46,8 @@ class LunchBox:
         return obj[1]
 
     def add(self, obj):
-        # if not CookbookRecipe.has(type(obj)):
-        #     CookbookRecipe.add(AuthenticRecipe(obj=obj))
+        if not CookbookRecipe.has(type(obj)):
+            CookbookRecipe.add(type(obj))
         self.sources[type(obj)].append((self.obj_count, obj))
         self.obj_count += 1
         self.max_idx += 1
@@ -131,12 +131,15 @@ class LunchBox:
         # sort by ascending order
         latest_sources.sort(key=lambda s: LunchBox.get_obj_idx(s))
         result = {}
+        # print(f"latest_sources: {latest_sources}")
         for i in range(len(latest_sources) - 1, -1, -1):
             if target_normalize_fields and set(target_normalize_fields) == set(result.keys()):
                 # stop checking if all desired fields are collected
                  break
             source = LunchBox.get_real_obj(latest_sources[i])
-            for field, rule in getattr(source, Config.PYANHMI_RECIPE).ingredients.items():
+            recipe = CookbookRecipe.get(type(source))
+
+            for field, rule in recipe.ingredients.items():
                 if target_normalize_fields and rule.alias not in target_normalize_fields:
                     continue
                 if rule.alias in result:

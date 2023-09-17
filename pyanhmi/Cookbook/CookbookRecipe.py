@@ -1,6 +1,7 @@
 import typing
 from collections import defaultdict
 
+from common.Config import Config
 from pyanhmi.Cookbook.Cookbook import Cookbook
 from pyanhmi.Recipe.Recipe import Recipe
 
@@ -19,12 +20,25 @@ class CookbookRecipe(Cookbook):
             authentic_recipe = AuthenticRecipe(cls=cls)
             CookbookRecipe.RECIPES[cls] = {}
             CookbookRecipe.RECIPES[cls]["AUTHENTIC_RECIPE"] = authentic_recipe
+
+            user_defined_recipe = getattr(cls, Config.PYANHMI_RECIPE, None)
+            if user_defined_recipe:
+                user_defined_recipe_2 = Recipe.updated(Recipe, authentic_recipe, user_defined_recipe)
+                CookbookRecipe.RECIPES[cls][user_defined_recipe] = user_defined_recipe_2
+
             recipies = CookbookRecipe.RECIPES.get(cls)
         if not recipe:
             return
         authentic_recipe = recipies["AUTHENTIC_RECIPE"]
         variation = Recipe.updated(Recipe, authentic_recipe, recipe)
+        print(f"add. cls: {cls}. authentic_recipe: {authentic_recipe}")
+        print(f"authentic_recipe: {authentic_recipe.get_ingredient('val_1')}")
+        print(f"add. cls: {cls}. recipe: {recipe}")
+        print(f"recipe: {recipe.get_ingredient('val_1')}")
+        print(f"add. cls: {cls}. variation: {variation}")
+        print(f"variation: {variation.get_ingredient('val_1')}")
         recipies[recipe] = variation
+        print(f"cls: {cls}. recipe: {recipe}, recipies[recipe]: {recipies[recipe]}")
 
     @staticmethod
     def has(cls: typing.Type[T], recipe: Recipe = None) -> bool:
@@ -42,16 +56,25 @@ class CookbookRecipe(Cookbook):
         return recipe in CookbookRecipe.RECIPES[cls]
 
     @staticmethod
-    def get(cls: typing.Type[T], recipe: Recipe = None) -> typing.Optional[Recipe]:
+    def get(cls: typing.Type[T], recipe: typing.Union[str, Recipe] = None) -> typing.Optional[Recipe]:
         """
         :param cls:
         :param recipe:
         :return:
         """
         if cls in CookbookRecipe.RECIPES:
-            return CookbookRecipe.RECIPES[cls].get(recipe,
-                                                   CookbookRecipe.RECIPES[cls].get("AUTHENTIC_RECIPE"))
+            # print(f"^get. cls: {cls}, recipe: {recipe}")
+            if recipe:
+                return CookbookRecipe.RECIPES[cls].get(recipe)
+            return CookbookRecipe.RECIPES[cls].get(getattr(cls, Config.PYANHMI_RECIPE, None)) or \
+                CookbookRecipe.RECIPES[cls].get("AUTHENTIC_RECIPE")
 
     @staticmethod
     def get_all() -> typing.List[Recipe]:
         return list(CookbookRecipe.RECIPES.values())
+
+    @staticmethod
+    def clear():
+        for cls, recipies in CookbookRecipe.RECIPES.items():
+            recipies.clear()
+        CookbookRecipe.RECIPES.clear()

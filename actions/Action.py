@@ -27,6 +27,7 @@ class Action:
         self.func = func
         self.based_on_cls = based_on_cls
         self.attr_name = attr_name  # only be used for unbounded actions
+        # print(f"Action: cls: {self.based_on_cls}, attr: {self.attr_name}, func: {self.func}")
 
     @staticmethod
     def get_hash(cls, func):

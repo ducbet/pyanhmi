@@ -1,7 +1,3 @@
-# content of test_sample.py
-import inspect
-from pprint import pprint
-
 from common.schema_classes_test import Children, Parent, ChildrenWithClassVar, ChildrenWithProperty, ParentWithProperty, \
     ChildrenAndParentWithProperty, ClassicParent, ClassicChildren, ClassicChildrenWithClassVar, \
     ClassicParentWithProperty, ClassicChildrenWithProperty, ClassicChildrenAndParentWithProperty, Level4
