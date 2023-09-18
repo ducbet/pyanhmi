@@ -32,7 +32,6 @@ class AuthenticRecipe(Recipe):
             for user_defined_type in CookbookAttributes.get_user_defined_types(attribute_type):
                 if not CookbookRecipe.has(cls):
                     CookbookRecipe.add(cls=user_defined_type)
-
             ingredients[att] = Field(
                 name=att,
                 attribute_type=attribute_type,
@@ -40,6 +39,7 @@ class AuthenticRecipe(Recipe):
                 based_on_cls=type(obj),
                 default=getattr(obj, att, EmptyValue.FIELD)
             )
+            print(f"for att in Recipe.get_instance_attributes(obj). att: {att}, ingredients[att]: {ingredients[att]}")
         return ingredients
 
     def __repr__(self):

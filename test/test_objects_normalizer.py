@@ -1125,36 +1125,31 @@ def test_bulk_create():
 
 
 def test_set_normalize_rule():
-    # todo
-    pass
-    # product = Product(id=1, name="Pro")
-    # product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
-    #
-    # objects_normalizer = ObjectsNormalizer()
-    # objects_normalizer.add(product)
-    #
-    # product_rules = product.__getattribute__(Config.PYANHMI_RECIPE).ingredients
-    #
-    # assert product_rules["id"].name == "id"
-    # assert product_rules["id"].alias == "product_id"
-    # assert product_rules["id"].getter_func == "id"
-    # assert product_rules["name"].name == "name"
-    # assert product_rules["name"].alias == "product_name"
-    # assert product_rules["name"].getter_func == "name"
-    #
-    # objects_normalizer.add(product_description)
-    # product_description_rules = product_description.__getattribute__(Config.PYANHMI_RECIPE).ingredients
-    # assert product_description_rules["description"].name == "description"
-    # assert product_description_rules["description"].alias == "product_description"
-    # assert product_description_rules["description"].getter_func == "normalize_description"
-    # assert product_description_rules["product_id"].name == "product_id"
-    # assert product_description_rules["product_id"].alias == "product_id"
-    # assert product_description_rules["product_id"].getter_func == "product_id"
-    # assert product_description_rules["image"].name == "image"
-    # assert product_description_rules["image"].alias == "image"
-    #
-    # assert CookbookRecipe.get(type(product)) is not None
-    # assert CookbookRecipe.get(type(product_description)) is not None
+    product = Product(id=1, name="Pro")
+    product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
+
+    objects_normalizer = LunchBox()
+    objects_normalizer.add(product)
+
+    product_rules = CookbookRecipe.get(Product).ingredients
+
+    assert product_rules["id"].name == "id"
+    assert product_rules["id"].alias == "product_id"
+    assert product_rules["id"].getter_func == "id"
+    assert product_rules["name"].name == "name"
+    assert product_rules["name"].alias == "product_name"
+    assert product_rules["name"].getter_func == "name"
+
+    objects_normalizer.add(product_description)
+    product_description_rules = CookbookRecipe.get(ProductDescription).ingredients
+    assert product_description_rules["description"].name == "description"
+    assert product_description_rules["description"].alias == "product_description"
+    assert product_description_rules["description"].getter_func == "normalize_description"
+    assert product_description_rules["product_id"].name == "product_id"
+    assert product_description_rules["product_id"].alias == "product_id"
+    assert product_description_rules["product_id"].getter_func == "product_id"
+    assert product_description_rules["image"].name == "image"
+    assert product_description_rules["image"].alias == "image"
 
 
 def test_add_source():
@@ -1290,13 +1285,13 @@ def test_get_all_objs():
         objects_normalizer.add(rand_obj)
         rand_result.append(rand_obj)
 
-    assert objects_normalizer.get_all_objs() == [product, product_description, product_2, product_description] + rand_result
+    assert objects_normalizer.get_all_objs() == [product, product_description, product_2,
+                                                 product_description] + rand_result
 
 
 def test_get_normalizable_fields():
-    # todo
-    normalizable_fields = CookbookAttributes.get_user_defined_types(AttributeTypesChild)
-    assert normalizable_fields == {AttributeTypesChild, AttributeTypesParent, CompositeClass}
+    assert CookbookAttributes.get_user_defined_types(AttributeTypesChild) == {AttributeTypesChild, AttributeTypesParent}
+    assert CookbookAttributes.get_user_defined_types(DictsDataclass) == {DictsDataclass}
 
 
 def test_is_normalizable_fields():

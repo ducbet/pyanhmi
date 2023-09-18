@@ -520,7 +520,6 @@ class PydanticCompositeClass(BaseModel):
 
     @field_validator('val_2_2', mode="before")
     def modify_val_2_2(cls, v, info: FieldValidationInfo):
-        print(info)
         return f"modify_val_2_2 {v}"
 
 

@@ -25,7 +25,6 @@ def _create(data: dict, cls: Type[T], recipe: Recipe = None, mode: Mode = None) 
     recipe = CookbookRecipe.get(cls, recipe)
     init_params = {}
     # print(f"_create. CookbookRecipe: {CookbookRecipe.RECIPES}")
-    print(f"_create. recipe: {recipe}")
     for att_name, ingredient in recipe.get_ingredient_to_create_obj().items():
         if att_name not in data:
             if is_field_exist(ingredient.default):

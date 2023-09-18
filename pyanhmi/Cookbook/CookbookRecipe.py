@@ -31,14 +31,7 @@ class CookbookRecipe(Cookbook):
             return
         authentic_recipe = recipies["AUTHENTIC_RECIPE"]
         variation = Recipe.updated(Recipe, authentic_recipe, recipe)
-        print(f"add. cls: {cls}. authentic_recipe: {authentic_recipe}")
-        print(f"authentic_recipe: {authentic_recipe.get_ingredient('val_1')}")
-        print(f"add. cls: {cls}. recipe: {recipe}")
-        print(f"recipe: {recipe.get_ingredient('val_1')}")
-        print(f"add. cls: {cls}. variation: {variation}")
-        print(f"variation: {variation.get_ingredient('val_1')}")
         recipies[recipe] = variation
-        print(f"cls: {cls}. recipe: {recipe}, recipies[recipe]: {recipies[recipe]}")
 
     @staticmethod
     def has(cls: typing.Type[T], recipe: Recipe = None) -> bool:
