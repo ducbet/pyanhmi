@@ -1234,12 +1234,12 @@ def test_get_latest_objs():
     }
     objects_normalizer = LunchBox(data=data, classes=[Product, ProductDescription])
     product = objects_normalizer.get_latest_objs(Product)
-    assert product is LunchBox.get_real_obj(objects_normalizer.sources[Product][-1])
+    assert product is LunchBox.get_item_obj(objects_normalizer.sources[Product][-1])
 
     product, product_description = objects_normalizer.get_latest_objs(Product, ProductDescription)
 
-    assert product is LunchBox.get_real_obj(objects_normalizer.sources[Product][-1])
-    assert product_description is LunchBox.get_real_obj(objects_normalizer.sources[ProductDescription][-1])
+    assert product is LunchBox.get_item_obj(objects_normalizer.sources[Product][-1])
+    assert product_description is LunchBox.get_item_obj(objects_normalizer.sources[ProductDescription][-1])
 
     try:
         objects_normalizer.get_latest_objs(ClassicParent)

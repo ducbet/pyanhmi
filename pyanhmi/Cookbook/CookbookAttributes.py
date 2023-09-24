@@ -50,10 +50,6 @@ class CookbookAttributes(Cookbook):
         result = CookbookAttributes.ATTRIBUTES.get(origin_type)
         return result if result else CookbookAttributes.ATTRIBUTES.get(typing.Any)
 
-    @staticmethod
-    def get_all():
-        return CookbookAttributes.ATTRIBUTES
-
     def get_user_define_modules(func):
         """
         See is_user_defined_type description

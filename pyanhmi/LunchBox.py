@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Tuple, Any, Optional, List, Union, overload, TypeVar
+from typing import Tuple, Any, Optional, List, Union, overload, TypeVar, Dict, Type
 
 from common.Config import Config, Mode, EmptyValue
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
@@ -27,7 +27,7 @@ class LunchBox:
                  classes: Optional[Union[type[T], List[type[T]]]] = None,
                  recipes: Optional[Union[Recipe, List[Recipe]]] = None,
                  mode: Optional[Mode] = None) -> None:
-        self.sources = defaultdict(list)
+        self.sources: Dict[Type, List[Tuple[int, Any]]] = defaultdict(list)
         self.obj_count = 0
         self.last_idx = 0
         for obj in create(data=data, classes=classes, recipes=recipes, mode=mode):
@@ -43,28 +43,36 @@ class LunchBox:
         return self.obj_count == self.last_idx
 
     @staticmethod
-    def get_obj_idx(obj):
-        return obj[0]
+    def get_item_idx(item) -> int:
+        """
+        Get item's index
+        :param item:
+        :return:
+        """
+        return item[0]
 
     @staticmethod
-    def get_real_obj(obj):
-        return obj[1]
+    def get_item_obj(item) -> Any:
+        """
+        Get real object of item
+        :param item:
+        :return:
+        """
+        return item[1]
 
-    def add(self, obj):
+    def add(self, obj: Any) -> None:
         if not CookbookRecipe.has(type(obj)):
             CookbookRecipe.add(type(obj))
         self.sources[type(obj)].append((self.obj_count, obj))
         self.obj_count += 1
         self.last_idx += 1
 
-    def get_latest_objs_of_each_source(self):
+    def get_latest_items_of_each_source(self) -> Dict[Type, Any]:
         """
-        Get latest object in each source
+        Get latest item in each source
         :return:
         """
-        # select latest object in each source
-        latest_objs = {cls: objs[-1] for cls, objs in self.sources.items()}
-        return latest_objs
+        return {cls: objs[-1] for cls, objs in self.sources.items()}
 
     def get_latest_objs(self, *args):
         """
@@ -73,16 +81,16 @@ class LunchBox:
         :return:
         """
         if len(args) == 0:
-            return tuple([LunchBox.get_real_obj(self.sources[obj_type][-1]) for obj_type in self.sources.keys()])
+            return tuple([LunchBox.get_item_obj(self.sources[obj_type][-1]) for obj_type in self.sources.keys()])
         elif len(args) == 1:
-            return LunchBox.get_real_obj(self.sources[args[0]][-1])
+            return LunchBox.get_item_obj(self.sources[args[0]][-1])
         else:
-            return tuple([LunchBox.get_real_obj(self.sources[obj_type][-1]) for obj_type in args])
+            return tuple([LunchBox.get_item_obj(self.sources[obj_type][-1]) for obj_type in args])
 
     @staticmethod
     def _get_obj_by_idx_in_slice(sources_slice: list, obj_idx: int) -> Tuple[int, Any]:
         for cls_idx in range(0, len(sources_slice)):
-            if LunchBox.get_obj_idx(sources_slice[cls_idx]) == obj_idx:
+            if LunchBox.get_item_idx(sources_slice[cls_idx]) == obj_idx:
                 return cls_idx, sources_slice[cls_idx]
         return -1, None
 
@@ -91,7 +99,7 @@ class LunchBox:
         latest_obj = sources_slice[0]
         latest_idx = 0
         for idx in range(1, len(sources_slice)):
-            if LunchBox.get_obj_idx(sources_slice[idx]) > LunchBox.get_obj_idx(latest_obj):
+            if LunchBox.get_item_idx(sources_slice[idx]) > LunchBox.get_item_idx(latest_obj):
                 latest_obj = sources_slice[idx]
                 latest_idx = idx
         return latest_idx, latest_obj
@@ -106,7 +114,7 @@ class LunchBox:
         oldest_obj = sources_slice[0]
         oldest_idx = 0
         for cls_idx in range(1, len(sources_slice)):
-            if LunchBox.get_obj_idx(sources_slice[cls_idx]) < LunchBox.get_obj_idx(oldest_obj):
+            if LunchBox.get_item_idx(sources_slice[cls_idx]) < LunchBox.get_item_idx(oldest_obj):
                 oldest_obj = sources_slice[cls_idx]
                 oldest_idx = cls_idx
         return oldest_idx, oldest_obj
@@ -125,23 +133,23 @@ class LunchBox:
                              for source_idx, source_obj_idx in enumerate(objs_idx)]
             oldest_idx, oldest_obj = self._get_obj_by_idx_in_slice(sources_slice, obj_idx) if self.is_obj_idx_continuous \
                 else self._get_oldest_obj_in_slice(sources_slice)
-            result.append(LunchBox.get_real_obj(oldest_obj))
+            result.append(LunchBox.get_item_obj(oldest_obj))
             objs_idx[oldest_idx] += 1
             if objs_idx[oldest_idx] == len(sources_values[oldest_idx]):
                 objs_idx[oldest_idx] = -1  # finish this source
         return result
 
     def export(self, target_normalize_fields=None):
-        latest_sources = list(self.get_latest_objs_of_each_source().values())
+        latest_sources = list(self.get_latest_items_of_each_source().values())
         # sort by ascending order
-        latest_sources.sort(key=lambda s: LunchBox.get_obj_idx(s))
+        latest_sources.sort(key=lambda s: LunchBox.get_item_idx(s))
         result = {}
         # print(f"latest_sources: {latest_sources}")
         for i in range(len(latest_sources) - 1, -1, -1):
             if target_normalize_fields and set(target_normalize_fields) == set(result.keys()):
                 # stop checking if all desired fields are collected
                  break
-            source = LunchBox.get_real_obj(latest_sources[i])
+            source = LunchBox.get_item_obj(latest_sources[i])
             recipe = CookbookRecipe.get(type(source))
 
             for field, rule in recipe.ingredients.items():

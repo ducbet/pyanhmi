@@ -63,10 +63,6 @@ class CookbookRecipe(Cookbook):
                 CookbookRecipe.RECIPES[cls].get("AUTHENTIC_RECIPE")
 
     @staticmethod
-    def get_all() -> typing.List[Recipe]:
-        return list(CookbookRecipe.RECIPES.values())
-
-    @staticmethod
     def clear():
         for cls, recipies in CookbookRecipe.RECIPES.items():
             recipies.clear()

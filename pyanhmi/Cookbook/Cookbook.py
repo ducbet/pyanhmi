@@ -16,8 +16,3 @@ class Cookbook(ABC):
     @abstractmethod
     def add(item):
         pass
-
-    @staticmethod
-    @abstractmethod
-    def get_all():
-        pass
