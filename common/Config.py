@@ -38,9 +38,9 @@ class Config:
     NoneAtt_priority = 5
     AnyAtt_priority = 0
 
-    ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     MODE = Mode.STRICT
 
-
-
+    IGNORE_FOLDER = {"test", "venv"}
+    ROOT_DIRS = {dir.split(".")[0] for dir in os.listdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                 if dir[0] not in (".", "_")}
 

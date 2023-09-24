@@ -29,13 +29,18 @@ class LunchBox:
                  mode: Optional[Mode] = None) -> None:
         self.sources = defaultdict(list)
         self.obj_count = 0
-        self.max_idx = 0
+        self.last_idx = 0
         for obj in create(data=data, classes=classes, recipes=recipes, mode=mode):
             self.add(obj)
 
     @property
     def is_obj_idx_continuous(self):
-        return self.obj_count == self.max_idx
+        """
+        Check whether the added obj has been deleted or not
+        If the object count != the last index -> there is object deleted -> return False
+        :return:
+        """
+        return self.obj_count == self.last_idx
 
     @staticmethod
     def get_obj_idx(obj):
@@ -50,7 +55,7 @@ class LunchBox:
             CookbookRecipe.add(type(obj))
         self.sources[type(obj)].append((self.obj_count, obj))
         self.obj_count += 1
-        self.max_idx += 1
+        self.last_idx += 1
 
     def get_latest_objs_of_each_source(self):
         """
@@ -116,7 +121,7 @@ class LunchBox:
 
         result = []
         for obj_idx in range(self.obj_count):
-            sources_slice = [sources_values[source_idx][source_obj_idx] if source_obj_idx != -1 else (self.max_idx, None)
+            sources_slice = [sources_values[source_idx][source_obj_idx] if source_obj_idx != -1 else (self.last_idx, None)
                              for source_idx, source_obj_idx in enumerate(objs_idx)]
             oldest_idx, oldest_obj = self._get_obj_by_idx_in_slice(sources_slice, obj_idx) if self.is_obj_idx_continuous \
                 else self._get_oldest_obj_in_slice(sources_slice)

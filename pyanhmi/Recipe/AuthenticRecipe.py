@@ -39,7 +39,6 @@ class AuthenticRecipe(Recipe):
                 based_on_cls=type(obj),
                 default=getattr(obj, att, EmptyValue.FIELD)
             )
-            print(f"for att in Recipe.get_instance_attributes(obj). att: {att}, ingredients[att]: {ingredients[att]}")
         return ingredients
 
     def __repr__(self):

@@ -1,3 +1,4 @@
+import functools
 import os
 import typing
 
@@ -53,21 +54,49 @@ class CookbookAttributes(Cookbook):
     def get_all():
         return CookbookAttributes.ATTRIBUTES
 
+    def get_user_define_modules(func):
+        """
+        See is_user_defined_type description
+        :return:
+        """
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        # Init Config.USER_DEFINE_MODULES. Only executed once
+        Config.USER_DEFINE_MODULES = {module for module in Config.ROOT_DIRS if module not in Config.IGNORE_FOLDER}
+        return wrapper
+
     @staticmethod
-    def is_user_defined_type(value_type):
-        ignore_folder = ("test", "venv")
-        user_define_modules = {module.split(".")[0] for module in os.listdir(Config.ROOT_PATH) if module[0] not in (".", "_") and module not in ignore_folder}
-        return value_type.__module__.split(".")[0] in user_define_modules
-        # return value_type.__module__ not in ("builtins", "typing", "ipaddress", "enum", "decimal", "uuid", "datetime")
+    @get_user_define_modules
+    def is_user_defined_type(value_type) -> bool:
+        """
+        Check whether value_type is the type defined by user or not
+        Example of not user-defined types: int, str, list
+        :param value_type:
+        :return:
+        """
+        return value_type.__module__.split(".")[0] in Config.USER_DEFINE_MODULES
 
     @staticmethod
     def get_user_defined_types(cls):
-        # return [field for field in TypeCheckManager.get_field_types(cls) if _is_normalizable_fields(field)]
+        """
+        Return the set contain user-defined types of
+        1. The class itself
+        2. Class's Attributes
+        :param cls:
+        :return:
+        """
         return {attribute_type for attribute_type in CookbookAttributes.get_attribute_types(cls)
                 if CookbookAttributes.is_user_defined_type(attribute_type)}
 
     @staticmethod
-    def get_attribute_types(cls):
+    def get_attribute_types(cls: typing.Any) -> typing.Set[typing.Any]:
+        """
+        Retrieve user-defined types recursively
+        :param cls:
+        :return:
+        """
         result = set()
         result.add(cls)
         try:

@@ -16,17 +16,18 @@ if __name__ == '__main__':
 
     lunch_box = LunchBox()
     lunch_box.add(product)
+    lunch_box.add(product_description)
 
     # product_rules = product.__getattribute__(Config.PYANHMI_RECIPE).ingredients
     # product_rules = CookbookRecipe.get(Product).__getattribute__(Config.PYANHMI_RECIPE).ingredients
-    product_rules = CookbookRecipe.get(Product).ingredients
-
-    assert product_rules["id"].name == "id"
-    assert product_rules["id"].alias == "product_id"
-    assert product_rules["id"].getter_func == "id"
-    assert product_rules["name"].name == "name"
-    assert product_rules["name"].alias == "product_name"
-    assert product_rules["name"].getter_func == "name"
+    # product_rules = CookbookRecipe.get(Product).ingredients
+    #
+    # assert product_rules["id"].name == "id"
+    # assert product_rules["id"].alias == "product_id"
+    # assert product_rules["id"].getter_func == "id"
+    # assert product_rules["name"].name == "name"
+    # assert product_rules["name"].alias == "product_name"
+    # assert product_rules["name"].getter_func == "name"
     #
     # lunch_box.add(product_description)
     # product_description_rules = product_description.__getattribute__(Config.PYANHMI_RECIPE).ingredients
