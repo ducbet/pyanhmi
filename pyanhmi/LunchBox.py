@@ -1,10 +1,9 @@
 from collections import defaultdict
 from typing import Tuple, Any, Optional, List, Union, overload, TypeVar, Dict, Type
 
-from common.Config import Config, Mode, EmptyValue
+from common.Config import Mode
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Creator import create
-from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
 from pyanhmi.Recipe.Recipe import Recipe
 
 T = TypeVar("T")
@@ -34,10 +33,10 @@ class LunchBox:
             self.add(obj)
 
     @property
-    def is_obj_idx_continuous(self):
+    def is_item_idx_continuous(self):
         """
-        Check whether the added obj has been deleted or not
-        If the object count != the last index -> there is object deleted -> return False
+        Check whether the added items have been deleted or not
+        If the item count != the last index -> there is object deleted -> return False
         :return:
         """
         return self.obj_count == self.last_idx
@@ -131,8 +130,9 @@ class LunchBox:
         for obj_idx in range(self.obj_count):
             sources_slice = [sources_values[source_idx][source_obj_idx] if source_obj_idx != -1 else (self.last_idx, None)
                              for source_idx, source_obj_idx in enumerate(objs_idx)]
-            oldest_idx, oldest_obj = self._get_obj_by_idx_in_slice(sources_slice, obj_idx) if self.is_obj_idx_continuous \
-                else self._get_oldest_obj_in_slice(sources_slice)
+            # oldest_idx, oldest_obj = self._get_obj_by_idx_in_slice(sources_slice, obj_idx) if self.is_item_idx_continuous \
+            #     else self._get_oldest_obj_in_slice(sources_slice)
+            oldest_idx, oldest_obj = self._get_obj_by_idx_in_slice(sources_slice, obj_idx)
             result.append(LunchBox.get_item_obj(oldest_obj))
             objs_idx[oldest_idx] += 1
             if objs_idx[oldest_idx] == len(sources_values[oldest_idx]):

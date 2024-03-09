@@ -14,5 +14,3 @@ from .Attributes.SetAttribute import SetAttribute
 from .Attributes.StrAttribute import StrAttribute
 from .Attributes.TupleAttribute import TupleAttribute
 from .Attributes.UnionAttribute import UnionAttribute
-
-

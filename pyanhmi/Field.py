@@ -27,6 +27,7 @@ class Field:
         self.is_final = self.is_final_type(attribute_type)
         self.is_class_var = is_class_var
         self.mode = mode if mode else Config.MODE
+        print(f"self.name: {self.name}, self.mode: {self.mode}, mode: {mode}, Config.MODE: {Config.MODE}")
         self.default = default
         self.based_on_cls = based_on_cls  # can be None when defined by user
         self.pre_action_funcs: list = pre_actions if pre_actions else []

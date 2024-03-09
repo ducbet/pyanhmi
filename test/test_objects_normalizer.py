@@ -13,7 +13,7 @@ import pytest
 from _decimal import Decimal
 
 from MostOuterSchemaclass import OuterClass
-from common.Config import Config, Mode, EmptyValue
+from common.Config import Config, Mode
 from common.Error import InvalidDatatype, InvalidData
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
 from common.schema_class import Product, ProductDescription
@@ -32,9 +32,7 @@ from pyanhmi.Attributes.UnionAttribute import UnionAttribute
 from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Creator import create
-from pyanhmi.Helper import Helper
 from pyanhmi.LunchBox import LunchBox
-from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
 
 
 @pytest.fixture
@@ -80,8 +78,10 @@ def test_hash_Att():
     uniton_1 = UnionAttribute(typing.Union[typing.Tuple[str, str], typing.Tuple[int, int]])
     uniton_2 = UnionAttribute(typing.Union[typing.Tuple[int, int], typing.Tuple[str, str]])
 
-    uniton_obj_1 = UnionAttribute(typing.Union[typing.Tuple[str, AttributeTypesParent], typing.Tuple[int, AttributeTypesChild]])
-    uniton_obj_2 = UnionAttribute(typing.Union[typing.Tuple[int, AttributeTypesChild], typing.Tuple[str, AttributeTypesParent]])
+    uniton_obj_1 = UnionAttribute(
+        typing.Union[typing.Tuple[str, AttributeTypesParent], typing.Tuple[int, AttributeTypesChild]])
+    uniton_obj_2 = UnionAttribute(
+        typing.Union[typing.Tuple[int, AttributeTypesChild], typing.Tuple[str, AttributeTypesParent]])
 
     assert len({any_1, any_2}) == 1
     assert len({list_str, list_int}) == 2
@@ -192,10 +192,13 @@ def test_get_att_priority():
     assert ListAttribute(typing.List[int]).get_att_priority() == Config.ListAtt_priority
     assert DictAttribute(typing.Dict[str, AttributeTypesParent]).get_att_priority() == Config.ObjAtt_priority
     assert ListAttribute(typing.List[AttributeTypesParent]).get_att_priority() == Config.ObjAtt_priority
-    assert UnionAttribute(typing.Union[typing.Dict[str, AttributeTypesParent], typing.Tuple[str, int]]).get_att_priority() == Config.ObjAtt_priority
+    assert UnionAttribute(typing.Union[typing.Dict[str, AttributeTypesParent], typing.Tuple[
+        str, int]]).get_att_priority() == Config.ObjAtt_priority
     assert ListAttribute(typing.List[str]).get_att_priority() == Config.ListAtt_priority
-    assert UnionAttribute(Optional[Tuple[Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]).get_att_priority() == Config.ObjAtt_priority
-    assert UnionAttribute(Optional[Tuple[Dict[str, Union[List[str], Set[int]]], Any]]).get_att_priority() == Config.TupleAtt_priority
+    assert UnionAttribute(Optional[Tuple[
+        Dict[str, Union[List[AttributeTypesParent], Set[int]]], Any]]).get_att_priority() == Config.ObjAtt_priority
+    assert UnionAttribute(
+        Optional[Tuple[Dict[str, Union[List[str], Set[int]]], Any]]).get_att_priority() == Config.TupleAtt_priority
 
 
 def test_create_obj():
@@ -302,7 +305,6 @@ def test_create_int_strict(mode_strict):
 
 
 def test_create_int_casting(mode_casting):
-
     obj_dataclass = create({"val_1": 123}, IntDataclass)
     obj = create({"val_1": 123}, IntClass)
     assert obj_dataclass.__dict__ == obj.__dict__
@@ -531,11 +533,11 @@ def test_create_dict_strict(mode_strict):
 
 def test_create_dict_casting(mode_casting):
     data = {
-            "val_1": [(1.1, "2")],
-            "val_2": [["3", 4]],
-            "val_3": {"5": "6"},
-            "val_4": ["78"],
-        }
+        "val_1": [(1.1, "2")],
+        "val_2": [["3", 4]],
+        "val_3": {"5": "6"},
+        "val_4": ["78"],
+    }
 
     obj_dataclass = create(data, DictsDataclass)
     obj = create(data, DictsClass)
@@ -620,7 +622,6 @@ def test_create_defaultdict_strict(mode_strict):
     assert isinstance(obj.val_1, defaultdict)
     assert dict(obj.val_1) == {"1": [2, 3], "4": [5, 6]}
 
-
     data = {
         "val_1": {
             "1": [2, "3"]
@@ -631,7 +632,6 @@ def test_create_defaultdict_strict(mode_strict):
         assert False
     except InvalidDatatype as e:
         assert e == InvalidDatatype(expects=int, data="3")
-
 
     data = {
         "val_1": {
@@ -764,7 +764,6 @@ def test_create_ordereddict_casting(mode_casting):
     obj.val_1["5"] = "6"
     obj.val_1["3"] = "4"
     assert obj.val_1 == OrderedDict([("1", 2), ("7", 8), ("5", "6"), ("3", "4")])
-
 
     data = {
         "val_1": [("1", 2), 123]
