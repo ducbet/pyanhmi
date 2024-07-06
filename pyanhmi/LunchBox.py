@@ -140,28 +140,35 @@ class LunchBox:
         return result
 
     def export(self, target_normalize_fields=None):
+        print(f"---------")
+        print(f"target_normalize_fields: {target_normalize_fields}")
         latest_sources = list(self.get_latest_items_of_each_source().values())
         # sort by ascending order
         latest_sources.sort(key=lambda s: LunchBox.get_item_idx(s))
         result = {}
-        # print(f"latest_sources: {latest_sources}")
         for i in range(len(latest_sources) - 1, -1, -1):
             if target_normalize_fields and set(target_normalize_fields) == set(result.keys()):
+                print(f"target_normalize_fields and set(target_normalize_fields) == set(result.keys())")
+                # todo and all key are not default
                 # stop checking if all desired fields are collected
-                 break
+                break
             source = LunchBox.get_item_obj(latest_sources[i])
             recipe = CookbookRecipe.get(type(source))
 
+
             for field, rule in recipe.ingredients.items():
                 if target_normalize_fields and rule.alias not in target_normalize_fields:
+                    print(f"target_normalize_fields and rule.alias not in target_normalize_fields")
                     continue
                 if rule.alias in result:
+                    print(f"field: {rule.alias} in result")
                     continue
                 normalized_func = source.__getattribute__(rule.getter_func)
                 if hasattr(normalized_func, "__call__"):
                     result[rule.alias] = normalized_func()  # call method
                 else:
                     result[rule.alias] = normalized_func  # normalized_func is attribute value
+                print(f"field: {field}, normalized_func: {normalized_func}, rule.alias: {rule.alias}, result: {result}")
         return result
 
     def convert(self, cls):
