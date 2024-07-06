@@ -7,7 +7,7 @@ from enum import Enum, unique, auto
 
 
 @unique
-class Mode(Enum):
+class CastingMode(Enum):
     DUCK = 0
     STRICT = 1
     CASTING = 2
@@ -38,7 +38,7 @@ class Config:
     NoneAtt_priority = 5
     AnyAtt_priority = 0
 
-    MODE = Mode.STRICT
+    MODE = CastingMode.STRICT
 
     IGNORE_FOLDER = {"test", "venv"}
     ROOT_DIRS = {dir.split(".")[0] for dir in os.listdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

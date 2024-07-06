@@ -6,7 +6,7 @@ from typing import ClassVar, List, Final, FrozenSet, Optional, Tuple, Dict, Unio
 from pydantic import BaseModel, field_validator
 from pydantic_core.core_schema import FieldValidationInfo
 
-from common.Config import Mode
+from common.Config import CastingMode
 from pyanhmi.Field import Field
 from pyanhmi.Recipe.Recipe import Recipe
 
@@ -431,7 +431,7 @@ class StrictModeClass:
 
     PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
         ingredients={
-            "val_1": Field(mode=Mode.DUCK, alias="val 1's alias")
+            "val_1": Field(mode=CastingMode.DUCK, alias="val 1's alias")
         }
     )
 
@@ -472,7 +472,7 @@ class SetFieldDirectly(SetFieldParent):
         ],
         ingredients={
             "val_1": Field(default=5,
-                           mode=Mode.DUCK,
+                           mode=CastingMode.DUCK,
                            pre_actions=[
                                "bounded_action_1",
                                action_1,

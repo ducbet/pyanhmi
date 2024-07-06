@@ -1,6 +1,6 @@
 import pytest
 
-from common.Config import Config, Mode
+from common.Config import Config, CastingMode
 from common.schema_classes_test import StrDataclass, StrClass, IntDataclass, IntClass
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Creator import create
@@ -9,7 +9,7 @@ from pyanhmi.Creator import create
 @pytest.fixture
 def mode_casting():
     CookbookRecipe.clear()
-    Config.MODE = Mode.CASTING
+    Config.MODE = CastingMode.CASTING
     print("            --mode_casting--")
 
 

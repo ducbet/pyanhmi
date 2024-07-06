@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Tuple, Any, Optional, List, Union, overload, TypeVar, Dict, Type
 
-from common.Config import Mode
+from common.Config import CastingMode
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Creator import create
 from pyanhmi.Recipe.Recipe import Recipe
@@ -15,17 +15,17 @@ class LunchBox:
         ...
 
     @overload
-    def __init__(self, data: dict, classes: type[T], recipes: Recipe, mode: Mode = None) -> None:
+    def __init__(self, data: dict, classes: type[T], recipes: Recipe, mode: CastingMode = None) -> None:
         ...
 
     @overload
-    def __init__(self, data: dict, classes: List[type[T]], recipes: List[Recipe], mode: Mode = None) -> None:
+    def __init__(self, data: dict, classes: List[type[T]], recipes: List[Recipe], mode: CastingMode = None) -> None:
         ...
 
     def __init__(self, data: Optional[dict] = None,
                  classes: Optional[Union[type[T], List[type[T]]]] = None,
                  recipes: Optional[Union[Recipe, List[Recipe]]] = None,
-                 mode: Optional[Mode] = None) -> None:
+                 mode: Optional[CastingMode] = None) -> None:
         self.sources: Dict[Type, List[Tuple[int, Any]]] = defaultdict(list)
         self.obj_count = 0
         self.last_idx = 0

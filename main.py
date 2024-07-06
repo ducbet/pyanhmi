@@ -1,4 +1,4 @@
-from common.Config import Mode, Config
+from common.Config import CastingMode, Config
 from common.demo_schema_class import User
 from common.schema_class import Product, ProductDescription
 from common.schema_classes_test import StrClass, StrDataclass
@@ -8,7 +8,7 @@ from pyanhmi.Creator import create
 
 if __name__ == '__main__':
     CookbookRecipe.clear()
-    Config.MODE = Mode.STRICT
+    Config.MODE = CastingMode.STRICT
 
     db_1_users = {
         # "tmd@gmail.com": {
