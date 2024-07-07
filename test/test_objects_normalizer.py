@@ -16,7 +16,7 @@ from MostOuterSchemaclass import OuterClass
 from common.Config import Config, CastingMode, ExportOrder
 from common.Error import InvalidDatatype, InvalidData
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
-from common.schema_class import Product, ProductDescription, Product2
+from common.schema_class import Product, ProductDescription, Product2, ConvertedProduct
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, StrClass, \
     IntClass, CompositeClass, FrozenSetDataclass, OrderedDictDataclass, StrDataclass, \
     IntDataclass, DictsDataclass, DictDataclass, DictClass, DictsClass, DictCompositeClass, DefaultDictDataclass, \
@@ -1244,6 +1244,30 @@ def test_export():
         "product_id": 1,
         "product_description": "IPAD PRO 5 DESC",
     }
+
+
+def test_convert():
+    product = Product(id=1, name="Pro")
+    product_1 = Product(id=1, name="ipad Pro")
+    product_2 = Product2(id=1)
+    product_description = ProductDescription(product_id=1, description="ipad Pro 5 Desc")
+
+    objects_normalizer = LunchBox()
+    objects_normalizer.add(product)
+    objects_normalizer.add(product_1)
+    objects_normalizer.add(product_2)
+    objects_normalizer.add(product_description)
+    assert objects_normalizer.convert(ConvertedProduct) == \
+           ConvertedProduct(id=1,
+                            name="ipad Pro",  # product_1
+                            description="IPAD PRO 5 DESC",  # product_description
+                            image="")  # product_description
+    assert objects_normalizer.convert(ConvertedProduct, export_order=ExportOrder.FIFO) == \
+           ConvertedProduct(id=1,
+                            name="Pro",  # product
+                            description="IPAD PRO 5 DESC",
+                            image="")  # product_description
+
 
 
 def test_get_latest_objs():
