@@ -13,10 +13,10 @@ import pytest
 from _decimal import Decimal
 
 from MostOuterSchemaclass import OuterClass
-from common.Config import Config, CastingMode
+from common.Config import Config, CastingMode, ExportOrder
 from common.Error import InvalidDatatype, InvalidData
 from common.NestedDirectory.NestNestedDirectory.nested_schemaclass import NestedClass
-from common.schema_class import Product, ProductDescription
+from common.schema_class import Product, ProductDescription, Product2
 from common.schema_classes_test import ClassicParent, AttributeTypesChild, Level4, AttributeTypesParent, StrClass, \
     IntClass, CompositeClass, FrozenSetDataclass, OrderedDictDataclass, StrDataclass, \
     IntDataclass, DictsDataclass, DictDataclass, DictClass, DictsClass, DictCompositeClass, DefaultDictDataclass, \
@@ -1144,7 +1144,7 @@ def test_set_normalize_rule():
     product_description_rules = CookbookRecipe.get(ProductDescription).ingredients
     assert product_description_rules["description"].name == "description"
     assert product_description_rules["description"].alias == "product_description"
-    assert product_description_rules["description"].getter_func == "normalize_description"
+    assert product_description_rules["description"].getter_func == "upper"
     assert product_description_rules["product_id"].name == "product_id"
     assert product_description_rules["product_id"].alias == "product_id"
     assert product_description_rules["product_id"].getter_func == "product_id"
@@ -1178,34 +1178,61 @@ def test_add_source():
 
 
 def test_export():
-    # todo
-    return 
     product = Product(id=1, name="Pro")
-    product_1 = Product(id=1, name="")
-    product_description = ProductDescription(product_id=5, description="Pro 5 Desc")
+    product_1 = Product(id=1, name="ipad Pro")
+    product_2 = Product2(id=1)
+
+    product_description = ProductDescription(product_id=1, description="ipad Pro 5 Desc")
     objects_normalizer = LunchBox()
-
     objects_normalizer.add(product)
-    # assert objects_normalizer.export() == {
-    #     "product_id": 1,
-    #     "product_name": "Pro",
-    # }
-    # assert objects_normalizer.export(["product_id"]) == {
-    #     "product_id": 1,
-    # }
 
-    objects_normalizer.add(product_1)
     assert objects_normalizer.export() == {
         "product_id": 1,
         "product_name": "Pro",
     }
-    return
+    assert objects_normalizer.export(["product_id"]) == {
+        "product_id": 1,
+    }
+
+    objects_normalizer.add(product_1)
+    assert objects_normalizer.export() == {
+        "product_id": 1,
+        "product_name": "ipad Pro",  # product_1
+    }
+    assert objects_normalizer.export(export_order=ExportOrder.FIFO) == {
+        "product_id": 1,
+        "product_name": "Pro",  # product
+    }
+
+    objects_normalizer.add(product_2)
+    assert objects_normalizer.export() == {
+        "product_id": 1,
+        "product_name": "ipad Pro",  # product_1
+        "product_description": "sample des",  # product_2
+    }
+    assert objects_normalizer.export(export_order=ExportOrder.FIFO) == {
+        "product_id": 1,
+        "product_name": "Pro",  # product
+        "product_description": "sample des",  # product_2
+    }
+    assert objects_normalizer.export(is_override=True) == {
+        "product_id": 1,
+        "product_name": "sample name",  # product_2
+        "product_description": "sample des",  # product_2
+    }
+
     objects_normalizer.add(product_description)
     assert objects_normalizer.export() == {
-        "product_id": 5,
-        "product_description": "normalized Pro 5 Desc",
-        "product_name": "Pro 2",
-        "image": "",
+        "product_id": 1,
+        "product_name": "ipad Pro",  # product_1
+        "product_description": "IPAD PRO 5 DESC",  # product_description
+        "image": "",  # product_description
+    }
+    assert objects_normalizer.export(export_order=ExportOrder.FIFO) == {
+        "product_id": 1,
+        "product_name": "Pro",  # product
+        "product_description": "IPAD PRO 5 DESC",  # product_description
+        "image": "",  # product_description
     }
 
     objects_normalizer.add(product)
@@ -1215,13 +1242,7 @@ def test_export():
     }
     assert objects_normalizer.export(["product_id", "product_description"]) == {
         "product_id": 1,
-        "product_description": "normalized Pro 5 Desc",
-    }
-    assert objects_normalizer.export() == {
-        "product_id": 1,
-        "product_description": "normalized Pro 5 Desc",
-        "product_name": "Pro",
-        "image": "",
+        "product_description": "IPAD PRO 5 DESC",
     }
 
 
@@ -1242,6 +1263,8 @@ def test_get_latest_objs():
     assert product is LunchBox.get_item_obj(objects_normalizer.sources[Product][-1])
     assert product_description is LunchBox.get_item_obj(objects_normalizer.sources[ProductDescription][-1])
 
+    assert objects_normalizer.get_latest_objs(Product, ProductDescription) == objects_normalizer.get_latest_objs()
+
     try:
         objects_normalizer.get_latest_objs(ClassicParent)
     except IndexError as e:
@@ -1258,6 +1281,18 @@ def test_get_latest_objs():
         objects_normalizer.get_latest_objs(Product, ClassicParent)
     except IndexError as e:
         assert "list index out of range" in str(e)
+
+
+def test_get_fields_list():
+    data = {
+        "id": 5,
+        "product_id": 5,
+        "description": "Pro 5 Desc",
+        "image": "",
+        "name": "Pro",
+    }
+    objects_normalizer = LunchBox(data=data, classes=[Product, ProductDescription])
+    assert objects_normalizer.get_fields_list() == {'image', 'product_id', 'product_description', 'product_name'}
 
 
 def test_get_all_objs():

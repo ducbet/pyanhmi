@@ -45,7 +45,7 @@ if __name__ == '__main__':
     objects_normalizer = LunchBox()
     objects_normalizer.add(user_1)
     objects_normalizer.add(user_2)
-    # print(objects_normalizer.export())
+    print(objects_normalizer.export())
 
 
     products = {

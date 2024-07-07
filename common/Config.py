@@ -1,9 +1,5 @@
-import functools
 import os
-import time
-from abc import ABC, abstractmethod
 from enum import Enum, unique, auto
-
 
 
 @unique
@@ -12,6 +8,12 @@ class CastingMode(Enum):
     STRICT = 1
     CASTING = 2
     DUCK_TEST = 3
+
+
+@unique
+class ExportOrder(Enum):
+    LIFO = 0
+    FIFO = 1
 
 
 @unique

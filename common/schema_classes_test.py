@@ -471,7 +471,7 @@ class SetFieldDirectly(SetFieldParent):
             # "fields_action"
         ],
         ingredients={
-            "val_1": Field(default=5,
+            "val_1": Field(default=5,  # todo: redundant?
                            mode=CastingMode.DUCK,
                            pre_actions=[
                                "bounded_action_1",
