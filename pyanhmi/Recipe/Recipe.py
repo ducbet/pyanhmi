@@ -44,12 +44,13 @@ class Recipe:
         self.ingredients[name] = field
 
     def get_ingredient_to_create_obj(self):
+        """
+        get the ingredients which are needed to create an object
+        ※ include default attribute too because user can pass param and overriding it
+        :return:
+        """
         return {att_name: ingredient for att_name, ingredient in self.ingredients.items()
-                if not ingredient.is_final and not ingredient.is_class_var}
-
-    # @staticmethod
-    # def get_hash(cls):
-    #     return hash(cls)
+                if not ingredient.is_final}
 
     def __repr__(self):
         return f"Recipe(ingredients={list(self.ingredients.keys())})"
