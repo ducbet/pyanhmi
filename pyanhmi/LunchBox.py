@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Tuple, Any, Optional, List, Union, overload, TypeVar, Dict, Type
 
-from common.Config import Mode
+from common.Config import CastingMode, ExportOrder
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Creator import create
 from pyanhmi.Recipe.Recipe import Recipe
@@ -15,17 +15,17 @@ class LunchBox:
         ...
 
     @overload
-    def __init__(self, data: dict, classes: type[T], recipes: Recipe, mode: Mode = None) -> None:
+    def __init__(self, data: dict, classes: type[T], recipes: Recipe, mode: CastingMode = None) -> None:
         ...
 
     @overload
-    def __init__(self, data: dict, classes: List[type[T]], recipes: List[Recipe], mode: Mode = None) -> None:
+    def __init__(self, data: dict, classes: List[type[T]], recipes: List[Recipe], mode: CastingMode = None) -> None:
         ...
 
     def __init__(self, data: Optional[dict] = None,
                  classes: Optional[Union[type[T], List[type[T]]]] = None,
                  recipes: Optional[Union[Recipe, List[Recipe]]] = None,
-                 mode: Optional[Mode] = None) -> None:
+                 mode: Optional[CastingMode] = None) -> None:
         self.sources: Dict[Type, List[Tuple[int, Any]]] = defaultdict(list)
         self.obj_count = 0
         self.last_idx = 0
@@ -86,6 +86,18 @@ class LunchBox:
         else:
             return tuple([LunchBox.get_item_obj(self.sources[obj_type][-1]) for obj_type in args])
 
+    def get_fields_list(self):
+        """
+        Get all possible fields from all sources in lunchbox
+        :return:
+        """
+        fields = set()
+        for obj in self.get_latest_objs():
+            recipe = CookbookRecipe.get(type(obj))
+            for field, rule in recipe.ingredients.items():
+                fields.add(rule.alias)
+        return fields
+
     @staticmethod
     def _get_obj_by_idx_in_slice(sources_slice: list, obj_idx: int) -> Tuple[int, Any]:
         for cls_idx in range(0, len(sources_slice)):
@@ -118,7 +130,7 @@ class LunchBox:
                 oldest_idx = cls_idx
         return oldest_idx, oldest_obj
 
-    def get_all_objs(self):
+    def get_all_objs(self) -> list:
         """
         Get all objects of all sources by ascending order
         :return:
@@ -139,29 +151,61 @@ class LunchBox:
                 objs_idx[oldest_idx] = -1  # finish this source
         return result
 
-    def export(self, target_normalize_fields=None):
-        latest_sources = list(self.get_latest_items_of_each_source().values())
-        # sort by ascending order
-        latest_sources.sort(key=lambda s: LunchBox.get_item_idx(s))
-        result = {}
-        # print(f"latest_sources: {latest_sources}")
-        for i in range(len(latest_sources) - 1, -1, -1):
-            if target_normalize_fields and set(target_normalize_fields) == set(result.keys()):
+    def export(self, target_normalize_fields=None, export_order: ExportOrder = ExportOrder.LIFO,
+               is_override: bool = False):
+        """
+        check from the last added source (LIFO)
+        :param target_normalize_fields:
+        :param export_order:
+        :param is_override:
+        :return:
+        """
+
+        def is_done():
+            if not is_override:
+                # if not is_override then continue checking other source
+                return False
+            if target_normalize_fields == set(result.keys()):
                 # stop checking if all desired fields are collected
-                 break
-            source = LunchBox.get_item_obj(latest_sources[i])
+                return True
+            return False
+
+        def get_field_val():
+            normalized_func = source.__getattribute__(rule.getter_func)
+            if hasattr(normalized_func, "__call__"):
+                return normalized_func()  # call method
+            else:
+                return normalized_func  # normalized_func is attribute value
+
+        all_fields = self.get_fields_list()
+        target_normalize_fields = target_normalize_fields or all_fields
+        target_normalize_fields = all_fields.intersection(set(target_normalize_fields))  # remove undesired fields
+
+        all_objs = self.get_all_objs()
+        sources = all_objs if export_order == ExportOrder.FIFO else reversed(all_objs)
+
+        not_default_values = set()  # used to mark all assigned not-default value
+        result = {}
+        for source in sources:
+            if is_done():
+                break
             recipe = CookbookRecipe.get(type(source))
 
             for field, rule in recipe.ingredients.items():
-                if target_normalize_fields and rule.alias not in target_normalize_fields:
+                if rule.alias not in target_normalize_fields:
                     continue
-                if rule.alias in result:
+                if is_override and rule.alias in result:
+                    # keep using the latest added obj (lifo) or first added obj (fifo)
                     continue
-                normalized_func = source.__getattribute__(rule.getter_func)
-                if hasattr(normalized_func, "__call__"):
-                    result[rule.alias] = normalized_func()  # call method
-                else:
-                    result[rule.alias] = normalized_func  # normalized_func is attribute value
+                if rule.alias in not_default_values:
+                    # the not-default value is added to result already
+                    continue
+                new_val = get_field_val()
+
+                if new_val != rule.default:
+                    not_default_values.add(rule.alias)
+
+                result[rule.alias] = new_val
         return result
 
     def convert(self, cls):

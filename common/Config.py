@@ -1,17 +1,19 @@
-import functools
 import os
-import time
-from abc import ABC, abstractmethod
 from enum import Enum, unique, auto
 
 
-
 @unique
-class Mode(Enum):
+class CastingMode(Enum):
     DUCK = 0
     STRICT = 1
     CASTING = 2
     DUCK_TEST = 3
+
+
+@unique
+class ExportOrder(Enum):
+    LIFO = 0
+    FIFO = 1
 
 
 @unique
@@ -38,7 +40,7 @@ class Config:
     NoneAtt_priority = 5
     AnyAtt_priority = 0
 
-    MODE = Mode.STRICT
+    MODE = CastingMode.STRICT
 
     IGNORE_FOLDER = {"test", "venv"}
     ROOT_DIRS = {dir.split(".")[0] for dir in os.listdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

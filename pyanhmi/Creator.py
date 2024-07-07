@@ -1,6 +1,6 @@
 from typing import Any, Optional, List, Union, Tuple, TypeVar, overload, Type
 
-from common.Config import Mode, EmptyValue, is_field_exist, Config
+from common.Config import CastingMode, EmptyValue, is_field_exist, Config
 from common.Error import InvalidDatatype, InvalidData
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
@@ -9,7 +9,7 @@ from pyanhmi.Recipe.Recipe import Recipe
 T = TypeVar("T")
 
 
-def _create(data: dict, cls: Type[T], recipe: Recipe = None, mode: Mode = None) -> T:
+def _create(data: dict, cls: Type[T], recipe: Recipe = None, mode: CastingMode = None) -> T:
     """
 
     :param data:
@@ -54,17 +54,17 @@ def _create(data: dict, cls: Type[T], recipe: Recipe = None, mode: Mode = None) 
 
 
 @overload
-def create(data: dict, classes: Type[T], recipes: Recipe = None, mode: Mode = None) -> T: ...
+def create(data: dict, classes: Type[T], recipes: Recipe = None, mode: CastingMode = None) -> T: ...
 
 
 @overload
-def create(data: dict, classes: List[Type], recipes: List[Recipe] = None, mode: Mode = None) -> tuple: ...
+def create(data: dict, classes: List[Type], recipes: List[Recipe] = None, mode: CastingMode = None) -> tuple: ...
 
 
 def create(data: dict,
            classes: Union[Type[T], List[Type]],
            recipes: Optional[Union[Recipe, List[Recipe]]] = None,
-           mode: Mode = None) -> Union[T, tuple]:
+           mode: CastingMode = None) -> Union[T, tuple]:
     """
 
     :param data:

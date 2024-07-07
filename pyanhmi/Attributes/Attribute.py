@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from typing import Any
 
-from common.Config import Mode
+from common.Config import CastingMode
 
 
 class Attribute(ABC):
@@ -18,14 +18,14 @@ class Attribute(ABC):
         # print(f"ObjectAttribute: __repr__ ",  f"{self.__class__.__name__}({self.field_type})")
         return f"{self.__class__.__name__}({self.field_type})"
 
-    def create(self, data: Any, mode: Mode):
-        if mode is Mode.CASTING:
+    def create(self, data: Any, mode: CastingMode):
+        if mode is CastingMode.CASTING:
             return self.casting_create(data)
-        if mode is Mode.STRICT:
+        if mode is CastingMode.STRICT:
             return self.strict_create(data)
-        if mode is Mode.DUCK:
+        if mode is CastingMode.DUCK:
             return data
-        if mode is Mode.DUCK_TEST:
+        if mode is CastingMode.DUCK_TEST:
             return self.duck_test_create(data)
 
     @abstractmethod

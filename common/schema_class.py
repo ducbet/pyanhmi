@@ -31,21 +31,20 @@ class ProductDescription:
 
     PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
         ingredients={
-            "description": Field(alias="product_description", getter_func="normalize_description"),
+            "description": Field(alias="product_description", getter_func="upper"),
         }
     )
 
-    # @ObjectsNormalizer.normalize_func(att_name="description")
-    def normalize_description(self):
-        return f"normalized {self.description}"
+    # @ObjectsNormalizer.normalize_func(att_name="description")  # todo
+    def upper(self):
+        return (self.description or "").upper()
 
 
 @dataclass
-class ProductReport:
+class Product2:
     id: int
-    name: str
-    description: str
-    image: str = ""
+    name: str = "sample name"
+    description: str = "sample des"
 
     PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
         ingredients={

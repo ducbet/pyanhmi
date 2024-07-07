@@ -2,7 +2,7 @@ import copy
 import typing
 from typing import Any
 
-from common.Config import Config, Mode, EmptyValue, is_field_exist
+from common.Config import Config, CastingMode, EmptyValue, is_field_exist
 from pyanhmi.Cookbook.CookbookAttributes import CookbookAttributes
 
 
@@ -13,7 +13,7 @@ class Field:
                  alias: str = None,
                  is_ignored: bool = False,
                  getter_func: str = None,
-                 mode: Mode = None,
+                 mode: CastingMode = None,
                  default: Any = EmptyValue.FIELD,
                  pre_actions: typing.List = None,
                  post_actions: typing.List = None,
@@ -27,7 +27,6 @@ class Field:
         self.is_final = self.is_final_type(attribute_type)
         self.is_class_var = is_class_var
         self.mode = mode if mode else Config.MODE
-        print(f"self.name: {self.name}, self.mode: {self.mode}, mode: {mode}, Config.MODE: {Config.MODE}")
         self.default = default
         self.based_on_cls = based_on_cls  # can be None when defined by user
         self.pre_action_funcs: list = pre_actions if pre_actions else []
@@ -71,7 +70,7 @@ class Field:
     def get_attribute(self):
         return CookbookAttributes.get(self.attribute_type)
 
-    def create(self, data, mode: Mode = EmptyValue.FIELD):
+    def create(self, data, mode: CastingMode = EmptyValue.FIELD):
         return self._auto_init.create(data, mode if mode else self.mode)
 
     def __eq__(self, other: "Field"):
