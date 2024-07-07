@@ -14,9 +14,6 @@ def mode_casting():
 
 
 def test_create_str_casting(mode_casting):
-    # CookbookRecipe.clear()
-    # Config.MODE = Mode.CASTING
-
     obj_dataclass = create({"val_1": "123"}, StrDataclass)
     obj = create({"val_1": "123"}, StrClass)
     assert obj_dataclass.__dict__ == obj.__dict__

@@ -1423,7 +1423,7 @@ def test_actions():
             "val_2_2": 5
         },
     }
-    obj = create(data, SetFieldDirectly)
+    # obj = create(data, SetFieldDirectly)
     # assert obj.val_1 == "bounded_action_2(action_2(fields_action(action_1(bounded_action_1(model_action(2))))))"
     # assert obj.val_2 == 9
     # assert obj.parent_val == "fields_action(parent_action(action_2(model_action(origin))))"

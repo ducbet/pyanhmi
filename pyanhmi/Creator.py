@@ -24,7 +24,6 @@ def _create(data: dict, cls: Type[T], recipe: Recipe = None, mode: CastingMode =
     # recipe = recipe if recipe else CookbookRecipe.get(cls, recipe)
     recipe = CookbookRecipe.get(cls, recipe)
     init_params = {}
-    # print(f"_create. CookbookRecipe: {CookbookRecipe.RECIPES}")
     for att_name, ingredient in recipe.get_ingredient_to_create_obj().items():
         if att_name not in data:
             if is_field_exist(ingredient.default):
@@ -80,7 +79,6 @@ def create(data: dict,
         # must have both data and classes
         return tuple()
 
-
     if isinstance(classes, list):
         if not isinstance(recipes, list):
             recipes = [recipes] * len(classes)
@@ -93,14 +91,8 @@ def create(data: dict,
             result.append(_create(data, cls, recipe, mode))
         return tuple(result)
 
-    # print(f"")
-    # print(f"create. recipe 1: {recipes}")
     recipe = recipes
-    # print(f"create. recipe 2: {recipe}")
     if not CookbookRecipe.has(classes, recipe):
-        # print(f"create. CookbookRecipe.add: cls: {classes}, recipe {recipe}")
         CookbookRecipe.add(cls=classes, recipe=recipe)
-    # print(f"create. recipe 3: {recipe}")
     # recipe = CookbookRecipe.get(classes, recipe)
-    # print(f"create. cls: {classes}, recipe 4: {recipe.get_ingredient('val_1')}")
     return _create(data, classes, recipe, mode)
