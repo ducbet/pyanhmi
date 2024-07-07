@@ -4,6 +4,7 @@ from typing import Tuple, Any, Optional, List, Union, overload, TypeVar, Dict, T
 from common.Config import CastingMode, ExportOrder
 from pyanhmi.Cookbook.CookbookRecipe import CookbookRecipe
 from pyanhmi.Creator import create
+from pyanhmi.Recipe.AuthenticRecipe import AuthenticRecipe
 from pyanhmi.Recipe.Recipe import Recipe
 
 T = TypeVar("T")
@@ -208,10 +209,17 @@ class LunchBox:
                 result[rule.alias] = new_val
         return result
 
-    def convert(self, cls):
-        # if not CookbookRecipe.has(cls):
-        #     CookbookRecipe.add(AuthenticRecipe(cls=cls))
-
-        values = self.export()
-        obj_params = {cls.LOCALIZE_RULES[k]: v for k, v in values.items() if k in cls.LOCALIZE_RULES}
+    def convert(self, cls, export_order: ExportOrder = ExportOrder.LIFO, is_override: bool = False):
+        """
+        create new object based on values in lunchbox
+        :param cls:
+        :param export_order:
+        :param is_override:
+        :return:
+        """
+        if not CookbookRecipe.has(cls):
+            CookbookRecipe.add(cls)
+        export_values = self.export(export_order=export_order, is_override=is_override)
+        alias_mapping = {field.alias: field_name for field_name, field in CookbookRecipe.get(cls).ingredients.items()}
+        obj_params = {alias_mapping[alias]: val for alias, val in export_values.items() if alias in alias_mapping}
         return cls(**obj_params)
