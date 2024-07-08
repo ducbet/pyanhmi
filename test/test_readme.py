@@ -45,15 +45,15 @@ def test_convert(mode_strict):
     lunchbox.add(user_1)
     lunchbox.add(user_2)
     assert lunchbox.convert(ReportUser) == ReportUser(mail=user_2.user_email,
-                                                                name=user_2.full_name,
-                                                                first_name=user_2.first_name,
-                                                                last_name=user_2.last_name,
-                                                                address=user_1.address)
+                                                      name=user_2.full_name,
+                                                      first_name=user_2.first_name,
+                                                      last_name=user_2.last_name,
+                                                      address=user_1.address)
     assert lunchbox.export() == {'user_name': 'Trieu Minh Duc',
-                                           'user_email': 'tmd@gmail.com',
-                                           'first_name': 'Trieu',
-                                           'last_name': 'Duc',
-                                           'address': 'Ba Dinh, Ha Noi'}
+                                 'user_email': 'tmd@gmail.com',
+                                 'first_name': 'Trieu',
+                                 'last_name': 'Duc',
+                                 'address': 'Ba Dinh, Ha Noi'}
 
 
 def test_create_nested_object(mode_strict):

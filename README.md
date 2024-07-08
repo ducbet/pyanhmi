@@ -78,17 +78,17 @@ This makes object initialization and conversion scripts become bulky.
     
     # 4. Use `lunchbox.export()` to export data to a dictionary
     assert lunchbox.export() == {'user_name': 'Trieu Minh Duc',
-                                           'user_email': 'tmd@gmail.com',
-                                           'first_name': 'Trieu',
-                                           'last_name': 'Duc',
-                                           'address': 'Ba Dinh, Ha Noi'}
+                                 'user_email': 'tmd@gmail.com',
+                                 'first_name': 'Trieu',
+                                 'last_name': 'Duc',
+                                 'address': 'Ba Dinh, Ha Noi'}
     
     # 4. Use `lunchbox.convert(ReportUser)` to create an object of type `ReportUser`
     assert lunchbox.convert(ReportUser) == ReportUser(mail=user_2.user_email,
-                                                                name=user_2.full_name,
-                                                                first_name=user_2.first_name,
-                                                                last_name=user_2.last_name,
-                                                                address=user_1.address)
+                                                      name=user_2.full_name,
+                                                      first_name=user_2.first_name,
+                                                      last_name=user_2.last_name,
+                                                      address=user_1.address)
 ```
 
 <b>Features</b>:
