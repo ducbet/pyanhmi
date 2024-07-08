@@ -19,9 +19,6 @@ class Product:
         }
     )
 
-    def sample_Product_method(self):
-        return
-
 
 @dataclass
 class ProductDescription:
