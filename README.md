@@ -27,7 +27,11 @@ This makes object initialization and conversion scripts become bulky.
                 "name": Field(alias="user_name"),
             }
         )
-    
+
+    # 2. Create objects (or use existing objects)
+    # Create object in the normal way
+    user_1 = UserDb1(email='tmd@gmail.com', name='Trieu Duc', address='Ba Dinh, Ha Noi')
+
     @dataclass
     class UserDb2:
         user_email: str
@@ -41,25 +45,6 @@ This makes object initialization and conversion scripts become bulky.
             }
         )
 
-    @dataclass
-    class ReportUser:
-        mail: str
-        name: str
-        first_name: str
-        last_name: str
-        address: str
-    
-        PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
-            ingredients={
-                "mail": Field(alias="user_email"),
-                "name": Field(alias="user_name"),
-            }
-        )
-
-    # 2. Create objects (or use existing objects)
-    # Create object in the normal way
-    user_1 = UserDb1(email='tmd@gmail.com', name='Trieu Duc', address='Ba Dinh, Ha Noi')
-    
     db_2_users = {
         "user_email": "tmd@gmail.com",
         "full_name": "Trieu Minh Duc",
@@ -82,7 +67,23 @@ This makes object initialization and conversion scripts become bulky.
                                  'first_name': 'Trieu',
                                  'last_name': 'Duc',
                                  'address': 'Ba Dinh, Ha Noi'}
+
+    # 1. Define instructions for each object type
+    @dataclass
+    class ReportUser:
+        mail: str
+        name: str
+        first_name: str
+        last_name: str
+        address: str
     
+        PYANHMI_RECIPE: ClassVar[Recipe] = Recipe(
+            ingredients={
+                "mail": Field(alias="user_email"),
+                "name": Field(alias="user_name"),
+            }
+        )
+ 
     # 4. Use `lunchbox.convert(ReportUser)` to create an object of type `ReportUser`
     assert lunchbox.convert(ReportUser) == ReportUser(mail=user_2.user_email,
                                                       name=user_2.full_name,
