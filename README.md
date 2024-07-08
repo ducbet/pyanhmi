@@ -215,3 +215,9 @@ This makes object initialization and conversion scripts become bulky.
         "product_description": "sample des",  # product_2
     }
 ```
+
+<b>More info</b>:
+- Please check test files for more examples
+  - https://github.com/ducbet/pyanhmi/blob/master/test/test_objects_normalizer.py
+  - https://github.com/ducbet/pyanhmi/blob/master/test/test_readme.py
+- Supported types when initializing object: https://github.com/ducbet/pyanhmi/tree/master/pyanhmi/Attributes
