@@ -1,10 +1,10 @@
-<b>Problem</b>: Complex systems often use multiple databases simultaneously (MySQL, Redis, Elasticsearch,...).<br>
-So that, one value can be stored in various places with different keys.<br>
-For example, the "UserName" field can be named as "username", "name", "user_name" or "UserName".<br>
+<b>Problem</b>: You have to build a data warehouse. Data comes from multiple databases: MySQL, Redis, Elasticsearch,...<br>
+As a result, one value can be stored in various places with different keys (and we do not want/have permission to modify the database).<br>
+E.g: the same "UserName" field can be named as "username", "name", "user_name" or "UserName".<br>
 This library can help object initialization and data normalization/conversion scripts become less bulky.
 
-<b>Target</b>: Create a library that simplifies the object initialization and data conversion process. 
-This library aims to make minimal changes to the existing source. 
+<b>Target</b>: Create a library that simplifies the object initialization and data conversion process. <br>
+This library aims to make minimal changes to the existing source. <br>
 For example, you do not need to inherit the class from BaseModel like other libraries (Pydantic, etc.).
 
 <b>Idea about normalization/conversion</b>: https://note.com/airitech/n/n14e7f1d908c1
