@@ -1,11 +1,13 @@
 <b>Problem</b>: Complex systems often use multiple databases simultaneously (MySQL, Redis, Elasticsearch,...).<br>
 So that, one value can be stored in various places with different keys.<br>
 For example, the "UserName" field can be named as "username", "name", "user_name" or "UserName".<br>
-This makes object initialization and conversion scripts become bulky.
+This library can help object initialization and data normalization/conversion scripts become less bulky.
 
-<b>Target</b>: Create a library that simplifies the object initialization and data conversion process.
+<b>Target</b>: Create a library that simplifies the object initialization and data conversion process. 
+This library aims to make minimal changes to the existing source. 
+For example, you do not need to inherit the class from BaseModel like other libraries (Pydantic, etc.).
 
-<b>Idea</b>: https://note.com/airitech/n/n14e7f1d908c1
+<b>Idea about normalization/conversion</b>: https://note.com/airitech/n/n14e7f1d908c1
 
 
 <b>Usage</b>:
@@ -93,7 +95,7 @@ This makes object initialization and conversion scripts become bulky.
 ```
 
 <b>Features</b>:
-- Initialize objects recursively from a dictionary: Do not need to inherit from BaseModel like other libraries. You can use pyanhmi with minimal changes to existing classes
+- Initialize objects recursively from a dictionary
     ```
       @dataclass
       class NestedObj:
@@ -130,7 +132,7 @@ This makes object initialization and conversion scripts become bulky.
     outer_obj.outer[1]["new_key"] += 19
     print(outer_obj.outer[1])  # output: defaultdict(<class 'int'>, {'key': 2, 'new_key': 19})
     ```
-- Strict mode: Raise an error if the data does not match the type defined in the class.  
+- Use "STRICT" mode if you want to validate the input. Pyanhmi will raise an error if the input data does not match the type defined in the class.  
 ```
   Config.MODE = CastingMode.STRICT
   db_1_users = {
@@ -143,7 +145,7 @@ This makes object initialization and conversion scripts become bulky.
   except InvalidDatatype as e:
     assert e == InvalidDatatype(expects=str, data=10000)
 ```
-- Casting mode: Automatically cast types as defined in the class
+- Use "CASTING" mode: Automatically cast input data to the types defined in the class
 ```
   Config.MODE = CastingMode.CASTING
   db_1_users = {
@@ -221,4 +223,4 @@ This makes object initialization and conversion scripts become bulky.
 - Please check test files for more examples
   - https://github.com/ducbet/pyanhmi/blob/master/test/test_objects_normalizer.py
   - https://github.com/ducbet/pyanhmi/blob/master/test/test_readme.py
-- Supported types when initializing object: https://github.com/ducbet/pyanhmi/tree/master/pyanhmi/Attributes
+- List of supported types when initializing object: https://github.com/ducbet/pyanhmi/tree/master/pyanhmi/Attributes
